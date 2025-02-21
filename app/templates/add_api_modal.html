@@ -1,0 +1,51 @@
+<div class="modal fade" id="addApiModal" tabindex="-1" aria-labelledby="addApiModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addApiModalLabel">Add New API</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/api/edit_api" method="POST" class="modal-body">
+                <div class="mb-3">
+                    <label for="APIName" class="form-label">API Name</label>
+                    <input type="text" class="form-control" id="APIName" name="APIName" placeholder="API Name ...">
+                </div>
+                <div class="mb-3">
+                    <label for="TableName" class="form-label">Table Name</label>
+                    <select name="TableName" class="form-select">
+                        {% for Table in TableList %}
+                        <option value="{{ Table }}">{{ Table }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="OrderBy" class="form-label">Order By</label>
+                    <select name="OrderBy" class="form-select">
+                        {% for col in ColName %}
+                        <option value="{{ col }}">{{ col }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="OrderType" class="form-label">Order Type</label>
+                    <select name="OrderType" class="form-select">
+                        <option value="Desc">Desc</option>
+                        <option value="Asc">Asc</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="LastUpdateTableName" class="form-label">Last Update Table Name</label>
+                    <select name="LastUpdateTableName" class="form-select">
+                        {% for Table in TableList %}
+                        <option value="{{ Table }}">{{ Table }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-success" name="submit" value="Save changes">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

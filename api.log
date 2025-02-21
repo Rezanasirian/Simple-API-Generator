@@ -1,0 +1,27 @@
+2024-05-03 00:36:08,072 - services.logger - INFO - Executing SQL: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-03 00:36:08,073 - services.logger - INFO - API call successful: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-03 00:36:29,517 - services.logger - INFO - Executing SQL: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-03 00:36:29,517 - services.logger - INFO - API call successful: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-03 01:34:27,264 - services.logger - INFO - Executing SQL: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-03 01:34:27,265 - services.logger - INFO - API call successful: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-03 01:34:31,697 - services.logger - INFO - Executing SQL: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-03 01:34:31,698 - services.logger - INFO - API call successful: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY
+2024-05-17 00:29:04,043 - services.logger - ERROR - Error in construct_condition_details: invalid literal for int() with base 10: ''
+2024-05-17 00:29:04,044 - services.logger - ERROR - Error in manage_conditions: invalid literal for int() with base 10: ''
+2024-05-17 00:29:04,044 - services.logger - ERROR - Error in handle_post_request: invalid literal for int() with base 10: ''
+2024-05-17 00:29:04,045 - services.logger - ERROR - Error in edit_api: invalid literal for int() with base 10: ''
+2024-05-17 00:37:33,143 - services.logger - ERROR - Error in construct_condition_details: invalid literal for int() with base 10: ''
+2024-05-17 00:37:33,143 - services.logger - ERROR - Error in manage_conditions API_LON_Loan: invalid literal for int() with base 10: ''
+2024-05-17 00:37:33,143 - services.logger - ERROR - Error in handle_post_requestAPI_LON_Loan: invalid literal for int() with base 10: ''
+2024-05-17 00:37:33,144 - services.logger - ERROR - Error in edit_apiAPI_LON_Loan: invalid literal for int() with base 10: ''
+2025-02-19 22:18:28,440 - services.logger - ERROR - Error in edit_api: 'current_user' is undefined
+2025-02-19 22:22:13,032 - services.logger - ERROR - Error in edit_api: 'current_user' is undefined
+2025-02-19 22:22:22,618 - services.logger - ERROR - Error in edit_api: 'current_user' is undefined
+2025-02-19 22:26:56,058 - services.logger - ERROR - Error in edit_api: 'current_user' is undefined
+2025-02-19 22:27:03,929 - services.logger - ERROR - Error in edit_api: 'current_user' is undefined
+2025-02-19 22:27:27,143 - services.logger - ERROR - Error in edit_api: 'current_user' is undefined
+2025-02-19 22:36:12,384 - services.logger - ERROR - Error in edit_api API_LON_Loan: Could not build url for endpoint 'auth.logout'. Did you mean 'static' instead?
+2025-02-20 14:01:16,994 - services.logger - ERROR - Error in manage_conditions API_LON_Loan: list indices must be integers or slices, not str
+2025-02-20 14:01:16,995 - services.logger - ERROR - Error in handle_post_request API_LON_Loan: list indices must be integers or slices, not str
+2025-02-20 15:14:48,135 - services.logger - ERROR - Error in manage_conditions API_LON_Loan: list indices must be integers or slices, not str
+2025-02-20 15:14:48,135 - services.logger - ERROR - Error in handle_post_request API_LON_Loan: list indices must be integers or slices, not str

@@ -1,0 +1,44 @@
+<div class="modal fade" id="EditApi" tabindex="-1" aria-labelledby="EditApiLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ url_for('API_Edit.edit_api', key=API_Name) }}" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="EditApiLabel">Edit API Properties</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="TableName" class="form-label">Table Name</label>
+                        <select class="form-control" id="TableName" name="TableName"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="OrderBy" class="form-label">Order By</label>
+                        <select class="form-control" id="OrderBy" name="OrderBy"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="OrderType" class="form-label">Order Type</label>
+                        <select class="form-control" id="OrderType" name="OrderType">
+                            <option value="Asc">Ascending</option>
+                            <option value="Desc">Descending</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="LastUpdateTableName" class="form-label">Last Update Table Name</label>
+                        <select class="form-control" id="LastUpdateTableName" name="LastUpdateTableName"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" name="submit" value="Save API Properties">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    window.tableList = {{tableList | tojson }};
+    window.colName = {{colName | tojson}};
+    window.apiProp = {{api_prop|tojson}}
+
+</script>
+<script src="{{ url_for('static', filename='js/editApi.js') }}"></script>

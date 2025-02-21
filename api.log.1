@@ -1,0 +1,86 @@
+2024-05-03 00:10:04,155 - services.logger - ERROR - Error processing request: failed to execute: HTTPSConnectionPool(host='srv24682.agri-bank.com', port=8443): Max retries exceeded with url: /v1/statement (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7fe18e8ffe90>: Failed to resolve 'srv24682.agri-bank.com' ([Errno -2] Name or service not known)"))
+Traceback (most recent call last):
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connection.py", line 203, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno -2] Name or service not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 790, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 491, in _make_request
+    raise new_e
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 467, in _make_request
+    self._validate_conn(conn)
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1096, in _validate_conn
+    conn.connect()
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connection.py", line 611, in connect
+    self.sock = sock = self._new_conn()
+                       ^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connection.py", line 210, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x7fe18e8ffe90>: Failed to resolve 'srv24682.agri-bank.com' ([Errno -2] Name or service not known)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/requests/adapters.py", line 486, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 844, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/urllib3/util/retry.py", line 515, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='srv24682.agri-bank.com', port=8443): Max retries exceeded with url: /v1/statement (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7fe18e8ffe90>: Failed to resolve 'srv24682.agri-bank.com' ([Errno -2] Name or service not known)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/trino/client.py", line 780, in execute
+    response = self._request.post(self._query, additional_http_headers)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/trino/client.py", line 542, in post
+    http_response = self._post(
+                    ^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/trino/client.py", line 879, in decorated
+    raise error
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/trino/client.py", line 866, in decorated
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/requests/sessions.py", line 637, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='srv24682.agri-bank.com', port=8443): Max retries exceeded with url: /v1/statement (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7fe18e8ffe90>: Failed to resolve 'srv24682.agri-bank.com' ([Errno -2] Name or service not known)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/rezansrn/Api-Project/API/app/api/routes/API_Generator.py", line 25, in handle_api
+    rows = c.execute(sqlCommand)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/trino/dbapi.py", line 589, in execute
+    self._iterator = iter(self._query.execute())
+                          ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rezansrn/miniconda3/envs/Api_env/lib/python3.11/site-packages/trino/client.py", line 782, in execute
+    raise trino.exceptions.TrinoConnectionError("failed to execute: {}".format(e))
+trino.exceptions.TrinoConnectionError: failed to execute: HTTPSConnectionPool(host='srv24682.agri-bank.com', port=8443): Max retries exceeded with url: /v1/statement (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7fe18e8ffe90>: Failed to resolve 'srv24682.agri-bank.com' ([Errno -2] Name or service not known)"))
+2024-05-03 00:10:05,164 - services.logger - INFO - Executing SQL: SELECT * FROM HIVE.AGRIDW.Rpt_BOM_loan ORDER BY acct_no Desc OFFSET 0 ROWS FETCH NEXT 100 ROWS ONLY

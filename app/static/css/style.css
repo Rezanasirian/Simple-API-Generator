@@ -1,0 +1,147 @@
+/* General body styling */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar styling for better alignment and padding */
+.navbar {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.navbar .btn-primary {
+    margin-right: 10px;
+}
+
+/* Styling for form inputs and select boxes */
+input[type="text"],
+select.form-select {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    height: 38px;
+    font-size: 16px;
+}
+
+/* Button styling */
+.btn-primary, .btn-outline-success, .btn-secondary, .btn-success {
+    border-radius: 0.25rem;
+    padding: 8px 12px;
+    font-size: 16px;
+}
+
+.btn-outline-success {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background: #28a745;
+    color: #fff;
+}
+
+/* Modal content styling */
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 0.3rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+    font-size: 18px;
+}
+
+.modal-body {
+    padding-top: 20px;
+    font-size: 16px;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding-top: 10px;
+}
+
+/* List styling */
+.list-group-item {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    border-radius: 0.25rem;
+    padding: 10px 15px;
+}
+
+.list-group-item .btn-group .btn {
+    padding: 5px 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-dialog {
+        width: 95%;
+        margin: 10px auto;
+    }
+}
+
+/* Improvements for select2 components if used */
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+    border-radius: 0.25rem;
+    border-color: #ced4da;
+}
+
+.select2-container .select2-selection--single {
+    height: 38px;
+    line-height: 36px;
+    padding: 0 12px;
+}
+
+/* Ensure the container uses flexbox to align children inline */
+#dynamicSubstringContainer {
+    margin-top: 10px;
+}
+
+.substring-option {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjusts space between items */
+    margin-bottom: 10px;
+}
+
+.substring-option input {
+    flex-grow: 1; /* Inputs take up available space */
+}
+
+.substring-option button {
+    white-space: nowrap; /* Prevents button text from wrapping */
+}
+
+/* Specific styling for error page */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+.card {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #dc3545; /* Bootstrap danger color */
+    color: white;
+}
+
+.card-body {
+    background-color: white;
+    padding: 20px;
+    border-top: 1px solid #dc3545;
+}
+
+.card-text {
+    margin-bottom: 20px;
+}

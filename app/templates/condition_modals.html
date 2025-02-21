@@ -1,0 +1,195 @@
+
+
+
+
+{% for key, value in conditions.items() %}
+<div class="modal fade" id="editConditionModal-{{ key }}" tabindex="-1" aria-labelledby="editConditionLabel-{{ key }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ url_for('API_Edit.edit_api', key=API_Name) }}" id="sqlForm-{{ key }}" method="POST" onsubmit="updateSQLCode('{{ key }}');">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editConditionLabel-{{ key }}">Edit Condition: {{ value.Name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="Parameter-{{ key }}" class="form-label">Parameter</label>
+                        <input type="text" class="form-control" id="Parameter-{{ key }}" name="Parameter" value="{{ key }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="name-{{ key }}" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name-{{ key }}" name="Name" value="{{ value.Name }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="operator-{{ key }}" class="form-label">Operator</label>
+                        <select class="form-control" id="operator-{{ key }}" name="Operator">
+                            {% for op in Operator %}
+                            <option value="{{ op }}" {% if op == value.operator %}selected{% endif %}>{{ op }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="column-{{ key }}" class="form-label">Column</label>
+                        <select class="form-control" id="column-{{ key }}" name="Column">
+                            {% for col in Column %}
+                            <option value="{{ col }}" {% if col == value.Column %}selected{% endif %}>{{ col }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                  <!-- Cast Options -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="castCheck" id="castCheck-{{ key }}" {% if value.transformations.cast %} checked {% endif %} onchange="toggleVisibility('castOptions-{{ key }}', this.checked)">
+                        <label class="form-check-label" for="castCheck-{{ key }}">Cast</label>
+                        <div id="castOptions-{{ key }}" style="padding-left:20px; display: {{ 'block' if value.transformations.cast else 'none' }};">
+                            <select class="form-control" name="castOptions">
+                                {% for opt in castOptions %}
+                                <option value="{{ opt }}" {% if opt == value.transformations.cast %}selected{% endif %}>{{ opt }}</option>
+                                {% endfor %}
+                                <!-- Add other data types as needed -->
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <!-- Substring Options -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="substringCheck" id="substringCheck-{{ key }}" {% if value.transformations.get('substring') %} checked {% endif %} onchange="toggleVisibility('substringOptions-{{ key }}', this.checked)">
+                        <label class="form-check-label" for="substringCheck-{{ key }}">Substring</label>
+                        <div id="substringOptions-{{ key }}" style="{{ 'display:block;' if value.transformations.substring else 'display:none;' }} padding-left:20px;">
+                            <input type="number" class="form-control mb-2" name="substringStart" id="substringStart-{{ key }}" placeholder="Start index" value="{{ value.transformations.get('substring', [])[0] if value.transformations.get('substring') else '' }}">
+                            <input type="number" class="form-control" name="substringLength" id="substringLength-{{ key }}" placeholder="Length" value="{{ value.transformations.get('substring', [])[1] if value.transformations.get('substring') else '' }}">
+                        </div>
+                    </div>
+                    <!-- dynamicSubstring Options -->
+                    
+                    
+                    <!-- Dynamic Substring Options -->
+                    <div class="mb-3">
+                        <label class="form-label">Dynamic Substring Options:</label>
+                        <div id="dynamicSubstringContainer-{{ key }}">
+                            {% if value.transformations.dynamicsubstring %}
+                                {% for ds in value.transformations.dynamicsubstring %}
+                                    <div class="substring-option" id="substring-{{ key }}-{{ loop.index }}">
+                                        <input type="text" class="form-control mb-2" placeholder="Value Length" name="dynamicSubstringLength-{{ key }}-{{ loop.index }}" value="{{ ds.valuelength }}">
+                                        <input type="number" class="form-control mb-2" placeholder="Start Index" name="substringStartDynamic-{{ key }}-{{ loop.index }}" value="{{ ds.start }}">
+                                        <input type="number" class="form-control mb-2" placeholder="Substring Length" name="substringLengthDynamic-{{ key }}-{{ loop.index }}" value="{{ ds.length }}">
+                                        <button type="button" class="btn btn-danger" onclick="removeSubstringOption1('{{ key }}', '{{ loop.index }}')">Remove</button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addSubstringOption1('{{ key }}')">Add Substring</button>
+                    </div>
+
+                    <!-- Replace Options -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name = "replaceCheck" id="replaceCheck-{{ key }}" {% if value.transformations.get('replace') %} checked {% endif %} onchange="toggleVisibility('replaceOptions-{{ key }}', this.checked)">
+                        <label class="form-check-label" for="replaceCheck-{{ key }}">Replace</label>
+                        <div id="replaceOptions-{{ key }}" style="{{ 'display:block;' if value.transformations.replace else 'display:none;' }} padding-left:20px;">
+                            <input type="text" class="form-control mb-2" name="replaceOld"  id="replaceOld-{{ key }}" placeholder="Old value" value="{{ value.transformations.get('replace', [])[0] if value.transformations.get('replace') else '' }}">
+                            <input type="text" class="form-control" name="replaceNew" id="replaceNew-{{ key }}" placeholder="New value" value="{{ value.transformations.get('replace', [])[1] if value.transformations.get('replace') else '' }}">
+                        </div>
+                    </div>
+
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="trimCheck" id="trimCheck-{{ key }}" {% if value.transformations.get('trim') %} checked {% endif %} onchange="toggleVisibility('trimOptions-{{ key }}', this.checked)">
+                        <label class="form-check-label" for="trimCheck-{{ key }}">Trim</label>
+                        <div id="trimOptions-{{ key }}">
+                            <!-- You can place additional settings related to trim here if necessary -->
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ignoreIf-{{ key }}" class="form-label">Ignore If</label>
+                        <select class="form-control" id="ignoreIf-{{ key }}" name="IgnoreIf">
+                            {% for ignore in IgnoreIf %}
+                            <option value="{{ ignore }}" {% if ignore == value.ignoreIf %}selected{% endif %}>{{ ignore }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>
+                            <input type="checkbox" id="toggleEditor-{{ key }}"> Show SQL Editor
+                        </label>
+                        <!-- Container for the editor, initially hidden -->
+                        <div id="editor-{{ key }}" style="height: 150px; width: 100%; display: none;"></div>
+                        <input type="hidden" name="sqlCode" id="sqlCode-{{ key }}">
+
+                        <script>
+                            function addSubstringOption1(key) {
+                                const container = document.getElementById('dynamicSubstringContainer-' + key);
+                                const newIndex = container.children.length + 1;  // Unique index for the new entry
+                                const html = `
+                                    <div class="substring-option" id="substring-${key}-${newIndex}">
+                                        <input type="text" class="form-control mb-2" placeholder="Value Length" name="dynamicSubstringLength-${key}-${newIndex}">
+                                        <input type="number" class="form-control mb-2" placeholder="Start Index" name="substringStartDynamic-${key}-${newIndex}">
+                                        <input type="number" class="form-control mb-2" placeholder="Substring Length" name="substringLengthDynamic-${key}-${newIndex}">
+                                        <button type="button" class="btn btn-danger" onclick="removeSubstringOption1('${key}', '${newIndex}')">Remove</button>
+                                    </div>
+                                `;
+                                container.insertAdjacentHTML('beforeend', html);
+                            }
+    
+                            function removeSubstringOption1(key, index) {
+                                const element = document.getElementById(`substring-${key}-${index}`);
+                                if (element) element.remove();
+                            }
+
+                            function toggleVisibility(id, show) {
+                                document.getElementById(id).style.display = show ? 'block' : 'none';
+                            }
+                            document.addEventListener("DOMContentLoaded", function() {
+                                var editor = ace.edit("editor-{{ key }}", {
+                                    theme: "ace/theme/monokai",
+                                    mode: "ace/mode/sql",
+                                    autoScrollEditorIntoView: true,
+                                    maxLines: 10,
+                                    minLines: 5
+                                });
+                                editor.setOptions({
+                                    enableBasicAutocompletion: true,
+                                    enableSnippets: true,
+                                    enableLiveAutocompletion: false
+                                });
+                                var sqlCommand = "{{ value.sqlCommand | default('', true) }}";
+                                if (sqlCommand) {
+                                    document.getElementById('toggleEditor-{{ key }}').checked = true;
+                                    document.getElementById('editor-{{ key }}').style.display = 'block';
+                                    editor.setValue(sqlCommand, 1); // Moves cursor to the end
+                                    editor.resize();
+                                }
+                                document.getElementById('toggleEditor-{{ key }}').addEventListener('change', function() {
+                                    var editorContainer = document.getElementById('editor-{{ key }}');
+                                    if (this.checked) {
+                                        editorContainer.style.display = 'block';
+                                        editor.resize();
+                                    } else {
+                                        editorContainer.style.display = 'none';
+                                    }
+                                });
+
+                            });
+
+                            function updateSQLCode(key) {
+                                var sqlCode = ace.edit("editor-" + key).getValue();
+                                document.getElementById('sqlCode-' + key).value = sqlCode;
+                            }
+
+
+                            
+    
+                        </script>
+                    </div>
+                </div>  
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-success" name="submit" value="edit condition">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
