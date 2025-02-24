@@ -1,0 +1,110 @@
+<div class="modal fade" id="ConditionModal" tabindex="-1" aria-labelledby="ConditionLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+         <form  id="Modal" method="post">
+            <div class="modal-header">
+               <h5 class="modal-title" id="ModalTitle"> </h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+            </div>
+            <div class="modal-content">
+               <div class="container">
+                  <div class="container">
+                     <div class="row">
+                        <div class="col">
+                           <input type="hidden" class="form-control" id="apiName" name="apiName">
+                           <label for="Parameter" class="form-label">Parameter</label>
+                           <input type="text" class="form-control" id="Parameter" name="Parameter">
+                        </div>
+                        <div class="col">
+                           <label for="Name" class="form-label">Name</label>
+                           <input type="text" class="form-control" id="Name" name="Name">
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col">
+                           <label for="Operator" class="form-label">Operator</label>
+                           <select class="form-control" id="Operator" name="Operator">
+                              <!-- Options will be added dynamically by JS -->
+                           </select>
+                        </div>
+                        <div class="col">
+                           <label for="Column" class="form-label">Column</label>
+                           <select class="form-control" id="Column" name="Column">
+                              <!-- Options will be added dynamically by JS -->
+                           </select>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col">
+                           <label for="IgnoreIf" class="form-label">Ignore If</label>
+                           <select class="form-control" id="IgnoreIf" name="IgnoreIf">
+                           </select>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col">
+                           <input type="checkbox" class="form-check-input" id="substringCheck" name="substringCheck" >
+                           <label class="form-check-label" for="substringCheck">Substring</label>
+                           <div id="div-substringCheck" style=" padding-left:20px;">
+                              <input type="number" class="form-control mb-2" id = "substringStart" name = "substringStart" placeholder = "Start index" >
+                              <input type="number" class="form-control" id = "substringLength" name = "substringLength" placeholder = "Length">
+                           </div>
+                        </div>
+                        <div class="col">
+                           <input type="checkbox" class="form-check-input" id="replaceCheck" name="replaceCheck" >
+                           <label class="form-check-label" for="replaceCheck">Replace</label>
+                           <div id="div-replaceCheck" style="padding-left:20px;">
+                              <input type="text" class="form-control mb-2" id="replaceOld" placeholder="Old value" >
+                              <input type="text" class="form-control" id="replaceNew" placeholder="edit value" >
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col">
+                           <input type="checkbox" class="form-check-input" id="castCheck"  name="castCheck" >
+                           <label class="form-check-label" for="cast-Options">Cast</label>
+                           <div id="div-castCheck" style=" padding-left:20px;">
+
+                              <select class="form-control" name="cast-Options" id="cast-Options">
+
+                              </select>
+                           </div>
+                        </div>
+                        <div class="col">
+                           <input type="checkbox" class="form-check-input" id="trimCheck"  name="trimCheck" >
+                           <label class="form-check-label" for="trimCheck">Trim</label>
+                           <div id="trimOptions" >
+                              <!-- You can place additional settings related to trim here if necessary -->
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col">
+                           <label class="form-label">Dynamic Substring Options:</label>
+                           <button type="button" class="btn btn-primary"  id= "dynamicSubstring" onclick="addSubstringOption()">Add Substring</button>
+                           <div id="dynamicSubstringContainer">
+                              <!-- Substring entries will be added here dynamically -->
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <label>
+                            <input type="checkbox" id="EditorCheck"> Show SQL Editor
+                        </label>
+                        <!-- Container for the editor, initially hidden -->
+                        <div id="editor" style="height: 150px; width: 100%; display: none;"></div>
+                        <input type="hidden" name="sqlCode" id="sqlCode">
+                     </div>
+                  </div>
+
+               </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-success" name="submit" value="edit condition">
+            </div>
+         </form>
+
+      </div>
+   </div>
+</div>
