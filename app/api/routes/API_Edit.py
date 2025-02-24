@@ -50,8 +50,8 @@ def handle_post_request(key, request, api, api_prop):
         action = request.form.get('submit')
         if action == 'Save API Properties':
             save_api_properties(key, request, api, api_prop)
-        elif action in ['Add Condition', 'edit condition']:
-            manage_conditions(key, request, api, api_prop)
+        # elif action in ['Add Condition', 'edit condition']:
+        #     manage_conditions(key, request, api, api_prop)
     except Exception as e:
         logging.error(f"Error in handle_post_request {key}: {e}")
         raise
@@ -70,66 +70,66 @@ def save_api_properties(key, request, api, api_prop):
         logging.error(f"Error in save_api_properties {key}: {e}")
         raise
 
-def manage_conditions(key, request, api, api_prop):
-    try:
-        get_parameter = request.form.get("Parameter")
-        condition_details = construct_condition_details(request)
-        api.update_condition(key, get_parameter, condition_details)
-    except Exception as e:
-        logging.error(f"Error in manage_conditions {key}: {e}")
-        raise
+# def manage_conditions(key, request, api, api_prop):
+#     try:
+#         get_parameter = request.form.get("Parameter")
+#         condition_details = construct_condition_details(request)
+#         api.update_condition(key, get_parameter, )
+#     except Exception as e:
+#         logging.error(f"Error in manage_conditions {key}: {e}")
+#         raise
 
-def construct_condition_details(request):
-    try:
-        condition_details = {
-            "operator": request.form.get("Operator"),
-            "Name": request.form.get("Name"),
-            "Column": request.form.get("Column"),
-            "ignoreIf": request.form.get("IgnoreIf"),
-            "transformations": {}
-        }
+# def construct_condition_details(request):
+    # try:
+    #     condition_details = {
+    #         "operator": request.form.get("Operator"),
+    #         "Name": request.form.get("Name"),
+    #         "Column": request.form.get("Column"),
+    #         "ignoreIf": request.form.get("IgnoreIf"),
+    #         "transformations": {}
+    #     }
+    #
+    #     if request.form.get("castCheck"):
+    #         condition_details["transformations"]["cast"] = request.form.get("castOptions")
+    #
+    #     # Handling dynamic substrings
+    #     dynamicsubstring = []
+    #     index = 1
+    #     while True:
+    #         dynamic_length = request.form.get(f"dynamicSubstringLength-{index}")
+    #         if not dynamic_length:
+    #             break
+    #         start_index = request.form.get(f"substringStartDynamic-{index}")
+    #         length = request.form.get(f"substringLengthDynamic-{index}")
+    #         if start_index and length:
+    #             dynamicsubstring.append({
+    #                 "valuelength": dynamic_length,
+    #                 "start": int(start_index),
+    #                 "length": int(length)
+    #             })
+    #         index += 1
+    #     if dynamicsubstring:
+    #         condition_details["transformations"]["dynamicsubstring"] = dynamicsubstring
+    #
+    #     if request.form.get("substringCheck"):
+    #         condition_details["transformations"]["substring"] = [
+    #             int(request.form.get("substringStart")),
+    #             int(request.form.get("substringLength"))
+    #         ]
+    #
+    #     if request.form.get("replaceCheck"):
+    #         condition_details["transformations"]["replace"] = [
+    #             request.form.get("replaceOld"),
+    #             request.form.get("replaceNew")
+    #         ]
+    #
+    #     if request.form.get("trimCheck"):
+    #         condition_details["transformations"]["trim"] = True
+    #
+    #     if request.form.get("sqlCode"):
+    #         condition_details["sqlCommand"] = request.form.get("sqlCode")
 
-        if request.form.get("castCheck"):
-            condition_details["transformations"]["cast"] = request.form.get("castOptions")
-
-        # Handling dynamic substrings 
-        dynamicsubstring = []
-        index = 1
-        while True:
-            dynamic_length = request.form.get(f"dynamicSubstringLength-{index}")
-            if not dynamic_length:
-                break
-            start_index = request.form.get(f"substringStartDynamic-{index}")
-            length = request.form.get(f"substringLengthDynamic-{index}")
-            if start_index and length:
-                dynamicsubstring.append({
-                    "valuelength": dynamic_length,
-                    "start": int(start_index),
-                    "length": int(length)
-                })
-            index += 1
-        if dynamicsubstring:
-            condition_details["transformations"]["dynamicsubstring"] = dynamicsubstring
-
-        if request.form.get("substringCheck"):
-            condition_details["transformations"]["substring"] = [
-                int(request.form.get("substringStart")),
-                int(request.form.get("substringLength"))
-            ]
-
-        if request.form.get("replaceCheck"):
-            condition_details["transformations"]["replace"] = [
-                request.form.get("replaceOld"),
-                request.form.get("replaceNew")
-            ]
-
-        if request.form.get("trimCheck"):
-            condition_details["transformations"]["trim"] = True
-
-        if request.form.get("sqlCode"):
-            condition_details["sqlCommand"] = request.form.get("sqlCode")
-
-        return condition_details
-    except Exception as e:
-        logging.error(f"Error in construct_condition_details: {e}")
-        raise
+    #     return condition_details
+    # except Exception as e:
+    #     logging.error(f"Error in construct_condition_details: {e}")
+    #     raise

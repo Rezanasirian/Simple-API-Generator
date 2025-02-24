@@ -5,6 +5,7 @@ from app.models import db, User
 from app.api.routes.API_Builder import API_Builder_np
 from app.api.routes.API_Edit import API_Edit_np
 from app.api.routes.API_Generator import create_api_blueprint
+from SimpleApiGenerator.app.api.routes.API_Edit_conditoin import API_Edit_Condition_np
 from services.APIQueryBuilder import APIQueryBuilder
 from auth import auth as auth_blueprint
 from admin import admin as admin_blueprint
@@ -29,6 +30,8 @@ def create_app():
     #
     app.register_blueprint(API_Builder_np, url_prefix='/api')
     app.register_blueprint(API_Edit_np, url_prefix='/api')
+    app.register_blueprint(API_Edit_Condition_np, url_prefix='/api')
+
     # app.register_blueprint(auth_blueprint)
     # app.register_blueprint(admin_blueprint)
     # app.register_blueprint(main_blueprint)

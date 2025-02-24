@@ -4,46 +4,46 @@
         "OrderBy": "acct_no",
         "OrderType": "Asc",
         "LastUpdateTableName": "Rpt_BOM_loan",
-        "conditions": [{
-            "acct_no": {
-                "operator": ">",
-                "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
-                "Column": "x",
-                "ignoreIf": "-3",
-                "transformations": {
-                    "cast": "int",
-                    "substring": [
-                        2,
-                        11
-                    ],
-                    "replace": [
-                        "/",
-                        ""
-                    ],
-                    "trim": true
+        "conditions": [
+            {
+                "acct_no": {
+                    "operator": "<",
+                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
+                    "Column": "acct_no",
+                    "ignoreIf": "-3",
+                    "transformations": {
+                        "substring": [
+                            2,
+                            11
+                        ],
+                        "replace": [
+                            null,
+                            null
+                        ],
+                        "trim": true
+                    }
+                }
+            },
+            {
+                "acct_no1": {
+                    "operator": "=",
+                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
+                    "Column": "acct_no",
+                    "ignoreIf": "-3",
+                    "transformations": {
+                        "substring": [
+                            2,
+                            11
+                        ],
+                        "replace": [
+                            null,
+                            null
+                        ],
+                        "trim": true
+                    }
                 }
             }
-        },
-        {
-            "acct_no": {
-                "operator": ">",
-                "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
-                "Column": "acct_no",
-                "ignoreIf": "-3",
-                "transformations": {
-                    "cast": "int",
-                    "substring": [
-                        2,
-                        11
-                    ],
-                    "replace": [
-                        "/",
-                        ""
-                    ],
-                    "trim": true
-                }
-            }
-        }]
+        ]
     },
     "API_CUS_DepCustomer": {
         "TableName": "RPT_CUS_DepCustomer",
