@@ -21,11 +21,18 @@ class APIQueryBuilder:
 
     def update_condition(self, api_name, parameter_key, updates):
         all_apis = self._load_json()
+
         if api_name in all_apis and "conditions" in all_apis[api_name]:
-            if parameter_key in all_apis[api_name]["conditions"]:
-                all_apis[api_name]["conditions"][parameter_key].update(updates)
+            conditions = all_apis[api_name]["conditions"]
+
+            for condition in conditions:
+                if parameter_key in condition:
+                    print("c")
+                    condition[parameter_key].update(updates)
+                    break
             else:
-                all_apis[api_name]["conditions"][parameter_key] = updates
+                # If no match is found, you can add a new condition
+                all_apis[api_name]["conditions"].append({parameter_key: updates})
         self._save_json(all_apis)
 
     def update_api(self, api_name, updates):
