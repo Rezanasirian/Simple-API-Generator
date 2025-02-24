@@ -112,11 +112,11 @@
                     </div>
                     <div class="mb-3">
                         <label>
-                            <input type="checkbox" id="toggleEditor-{{ key }}"> Show SQL Editor
+                            <input type="checkbox" id="EditorCheck"> Show SQL Editor
                         </label>
                         <!-- Container for the editor, initially hidden -->
-                        <div id="editor-{{ key }}" style="height: 150px; width: 100%; display: none;"></div>
-                        <input type="hidden" name="sqlCode" id="sqlCode-{{ key }}">
+                        <div id="editor" style="height: 150px; width: 100%; display: none;"></div>
+                        <input type="hidden" name="sqlCode" id="sqlCode">
 
                         <script>
                             function addSubstringOption1(key) {
@@ -132,15 +132,8 @@
                                 `;
                                 container.insertAdjacentHTML('beforeend', html);
                             }
-    
-                            function removeSubstringOption1(key, index) {
-                                const element = document.getElementById(`substring-${key}-${index}`);
-                                if (element) element.remove();
-                            }
+                            //
 
-                            function toggleVisibility(id, show) {
-                                document.getElementById(id).style.display = show ? 'block' : 'none';
-                            }
                             document.addEventListener("DOMContentLoaded", function() {
                                 var editor = ace.edit("editor-{{ key }}", {
                                     theme: "ace/theme/monokai",

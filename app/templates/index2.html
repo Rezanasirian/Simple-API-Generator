@@ -4,6 +4,8 @@
     {% include 'api_properties_section.html' %}
     {% include 'edit_api_modal.html' %}
     {% include 'condition_table.html' %}
-    {% include 'add_condition_modal.html' %}
-    {% include 'edit_condition_modal.html' %}
+<!--    {% include 'add_condition_modal.html' %}-->
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ConditionModal">Add New Condition</button>
+
+    {% include 'condition_modal.html' %}
 {% endblock %}
