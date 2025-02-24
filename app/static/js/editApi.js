@@ -42,4 +42,16 @@ document.addEventListener("DOMContentLoaded",function (){
         }
         lastUpdateTableNameSelect.appendChild(option);
     });
+
+
+    const checkedBox = document.querySelectorAll("input[type='checkbox']")
+    checkedBox.forEach(function (checkbox){
+        checkbox.addEventListener("change",function (){
+            if(document.getElementById("div-"+checkbox.id))
+                toggleVisibility("div-"+checkbox.id,checkbox.checked)
+        })
+    })
+    function toggleVisibility(id, show) {
+        document.getElementById(id).style.display = show ? 'block' : 'none';
+    }
 })
