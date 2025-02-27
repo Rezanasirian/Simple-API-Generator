@@ -20,13 +20,22 @@
                             null,
                             null
                         ],
-                        "trim": true
+                        "trim": true,
+                        "sqlCommand": "cast as int"
                     }
                 }
-            },
+            }
+        ]
+    },
+        "API_LON_Loan1": {
+        "TableName": "Rpt_BOM_loan",
+        "OrderBy": "acct_no",
+        "OrderType": "Asc",
+        "LastUpdateTableName": "Rpt_BOM_loan",
+        "conditions": [
             {
-                "acct_no1": {
-                    "operator": "=",
+                "acct_no": {
+                    "operator": "<",
                     "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
                     "Column": "acct_no",
                     "ignoreIf": "-3",
@@ -39,7 +48,92 @@
                             null,
                             null
                         ],
-                        "trim": true
+                        "trim": true,
+                        "sqlCommand": "cast as int"
+                    }
+                }
+            }
+        ]
+    },
+        "API_LON_Loan2": {
+        "TableName": "Rpt_BOM_loan",
+        "OrderBy": "acct_no",
+        "OrderType": "Asc",
+        "LastUpdateTableName": "Rpt_BOM_loan",
+        "conditions": [
+            {
+                "acct_no": {
+                    "operator": "<",
+                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
+                    "Column": "acct_no",
+                    "ignoreIf": "-3",
+                    "transformations": {
+                        "substring": [
+                            2,
+                            11
+                        ],
+                        "replace": [
+                            null,
+                            null
+                        ],
+                        "trim": true,
+                        "sqlCommand": "cast as int"
+                    }
+                }
+            }
+        ]
+    },
+    "API_LON_Loan3": {
+        "TableName": "Rpt_BOM_loan",
+        "OrderBy": "acct_no",
+        "OrderType": "Asc",
+        "LastUpdateTableName": "Rpt_BOM_loan",
+        "conditions": [
+            {
+                "acct_no": {
+                    "operator": "<",
+                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
+                    "Column": "acct_no",
+                    "ignoreIf": "-3",
+                    "transformations": {
+                        "substring": [
+                            2,
+                            11
+                        ],
+                        "replace": [
+                            null,
+                            null
+                        ],
+                        "trim": true,
+                        "sqlCommand": "cast as int"
+                    }
+                }
+            }
+        ]
+    },
+        "API_LON_Loan4": {
+        "TableName": "Rpt_BOM_loan",
+        "OrderBy": "acct_no",
+        "OrderType": "Asc",
+        "LastUpdateTableName": "Rpt_BOM_loan",
+        "conditions": [
+            {
+                "acct_no": {
+                    "operator": "<",
+                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
+                    "Column": "acct_no",
+                    "ignoreIf": "-3",
+                    "transformations": {
+                        "substring": [
+                            2,
+                            11
+                        ],
+                        "replace": [
+                            null,
+                            null
+                        ],
+                        "trim": true,
+                        "sqlCommand": "cast as int"
                     }
                 }
             }
@@ -50,7 +144,7 @@
         "OrderBy": "cust_no",
         "OrderType": "asc",
         "LastUpdateTableName": "RPT_CUS_DepCustomer",
-        "conditions": {
+        "conditions": [{
             "BranchNo": {
                 "operator": "in",
                 "Name": "Branch Number",
@@ -59,237 +153,8 @@
                 "transformations": {
                     "cast": "varchar(20)"
                 }
-            },
-            "sonatibranchcode": {
-                "operator": "in",
-                "Name": "Sonati Branch Code",
-                "Column": "sonatibranchcode",
-                "ignoreIf": "All",
-                "transformations": {}
-            },
-            "ManagementBranch": {
-                "operator": "in",
-                "Name": "Management Branch",
-                "Column": "branch_id",
-                "ignoreIf": "All",
-                "transformations": {
-                    "custom": "select branch_id from hive.agridw.dim_branch bb where cast(bb.area as int) in"
-                }
-            },
-            "genderCode": {
-                "operator": "in",
-                "Name": "Gender Code",
-                "Column": "gender_code",
-                "ignoreIf": "All",
-                "transformations": {}
-            },
-            "customerType": {
-                "operator": "in",
-                "Name": "Customer Type",
-                "Column": "customertype_id",
-                "ignoreIf": "All",
-                "transformations": {}
-            },
-            "CustomerStatus": {
-                "operator": "in",
-                "Name": "Customer Status",
-                "Column": "customerstatcode",
-                "ignoreIf": "All",
-                "transformations": {}
-            },
-            "nationality": {
-                "operator": "in",
-                "Name": "Nationality",
-                "Column": "nationality_code",
-                "ignoreIf": "All",
-                "transformations": {
-                    "trim": true
-                }
-            },
-            "shahabCode": {
-                "operator": "=",
-                "Name": "Shahab Code",
-                "Column": "shahab_code",
-                "ignoreIf": "All",
-                "transformations": {}
-            },
-            "customerNo": {
-                "operator": "=",
-                "Name": "Customer Number",
-                "Column": "cust_no",
-                "ignoreIf": "All",
-                "transformations": {
-                    "custom": "Check length and substring"
-                }
-            },
-            "NationalId": {
-                "operator": "=",
-                "Name": "National ID",
-                "Column": "national_id",
-                "ignoreIf": "All",
-                "transformations": {}
-            },
-            "economicid": {
-                "operator": "=",
-                "Name": "Economic ID",
-                "Column": "economic_id",
-                "ignoreIf": "All",
-                "transformations": {}
-            },
-            "FromcntActiveAcount": {
-                "operator": ">=",
-                "Name": "From Count Active Account",
-                "Column": "cntactive",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "TocntActiveAcount": {
-                "operator": "<=",
-                "Name": "To Count Active Account",
-                "Column": "cntactive",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FromcntBlockAcount": {
-                "operator": ">=",
-                "Name": "From Count Block Account",
-                "Column": "cntblock",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "TocntBlockAcount": {
-                "operator": "<=",
-                "Name": "To Count Block Account",
-                "Column": "cntblock",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FromamntActiveAcount": {
-                "operator": ">=",
-                "Name": "From Amount Active Account",
-                "Column": "amntactive",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "ToamntActiveAcount": {
-                "operator": "<=",
-                "Name": "To Amount Active Account",
-                "Column": "amntactive",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FromamntBlockAcount": {
-                "operator": ">=",
-                "Name": "From Amount Block Account",
-                "Column": "amntblock",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "ToamntBlockAcount": {
-                "operator": "<=",
-                "Name": "To Amount Block Account",
-                "Column": "amntblock",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FromcntLowRateAccount": {
-                "operator": ">=",
-                "Name": "From Count Low Rate Account",
-                "Column": "cntarzan",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "TocntLowRateAccount": {
-                "operator": "<=",
-                "Name": "To Count Low Rate Account",
-                "Column": "cntarzan",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FromcnthighRateAccount": {
-                "operator": ">=",
-                "Name": "From Count High Rate Account",
-                "Column": "cntgeran",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "TocnthighRateAccount": {
-                "operator": "<=",
-                "Name": "To Count High Rate Account",
-                "Column": "cntgeran",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FromamntLowRateAccount": {
-                "operator": ">=",
-                "Name": "From Amount Low Rate Account",
-                "Column": "amntarzan",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "ToamntLowRateAccount": {
-                "operator": "<=",
-                "Name": "To Amount Low Rate Account",
-                "Column": "amntarzan",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FromamnthighRateAccount": {
-                "operator": ">=",
-                "Name": "From Amount High Rate Account",
-                "Column": "amntgeran",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "ToamnthighRateAccount": {
-                "operator": "<=",
-                "Name": "To Amount High Rate Account",
-                "Column": "amntgeran",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "FrommeanRateAccount": {
-                "operator": ">=",
-                "Name": "From Mean Rate Account",
-                "Column": "meanrate",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "TomeanRateAccount": {
-                "operator": "<=",
-                "Name": "To Mean Rate Account",
-                "Column": "meanrate",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "Fromamntchqreturn": {
-                "operator": ">=",
-                "Name": "From Amount Cheque Return",
-                "Column": "chqreturnamnt",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "Toamntchqreturn": {
-                "operator": "<=",
-                "Name": "To Amount Cheque Return",
-                "Column": "chqreturnamnt",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "Fromcntchqreturn": {
-                "operator": ">=",
-                "Name": "From Count Cheque Return",
-                "Column": "chqreturncnt",
-                "ignoreIf": "-3",
-                "transformations": {}
-            },
-            "Tocntchqreturn": {
-                "operator": "<=",
-                "Name": "To Count Cheque Return",
-                "Column": "chqreturncnt",
-                "ignoreIf": "-3",
-                "transformations": {}
             }
-        }
+
+        }]
     }
 }
