@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let condition = JSON.parse(button.getAttribute("data-condition"))
             let conditionValues = Object.values(condition)
             document.getElementById("ModalTitle").textContent = "Edit Condition: " + Object.keys(condition);
-            document.getElementById("Modal").action = '/api/apiEditCondition/'+Page_name
+            document.getElementById("Modal").action = '/api/apiCondition/'+Page_name
             document.getElementById("Parameter").value = Object.keys(condition) || '';
             document.getElementById("Name").value =conditionValues[0].Name || '';
             document.getElementById("Operator").innerHTML = '';
@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
             populateSelectValue('Column', columnsList, conditionValues[0].Column)
             populateSelectValue('IgnoreIf', ignoreIfOptions, conditionValues[0].ignoreIf)
             let transformations = conditionValues[0].transformations
+            let sqlCommand = transformations["sqlCommand"]
             let castItem = transformations["cast"]
             let replaceItem = transformations["replace"]
             let substringItem = transformations["substring"]
@@ -107,18 +108,40 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-
-
+                let editor = ace.edit("editor", {
+                    theme: "ace/theme/monokai",
+                    mode: "ace/mode/sql",
+                    autoScrollEditorIntoView: true,
+                    maxLines: 10,
+                    minLines: 5
+                });
+                editor.setOptions({
+                    enableBasicAutocompletion: true,
+                    enableSnippets: true,
+                    enableLiveAutocompletion: false
+                });
+                if (sqlCommand) {
+                    document.getElementById('EditorCheck').checked = true;
+                    document.getElementById('editor').style.display = 'block';
+                    editor.setValue(sqlCommand, 1); // Moves cursor to the end
+                    editor.resize();
+                }
+                document.getElementById('EditorCheck').addEventListener('change', function() {
+                    let editorContainer = document.getElementById('editor');
+                    if (this.checked) {
+                        editorContainer.style.display = 'block';
+                        editor.resize();
+                    } else {
+                        editorContainer.style.display = 'none';
+                    }
+                });
 
             // Show the modal
             let modal = new bootstrap.Modal(document.getElementById('ConditionModal'));
             modal.show();
         })
     })
-    // let dynamicSubstring = document.getElementById("dynamicSubstring")
-    // dynamicSubstring.addEventListener("click" ,function (){
-    //     addSubstringOption1(key)
-    // })
+
     function addSubstringOption(key) {
         const container = document.getElementById('dynamicSubstringContainer-' + key);
         const newIndex = container.children.length + 1;  // Unique index for the new entry
@@ -168,35 +191,10 @@ function removeSubstringOption1(key, index) {
     if (element) element.remove();
 }
 
-let editor = ace.edit("editor", {
-    theme: "ace/theme/monokai",
-    mode: "ace/mode/sql",
-    autoScrollEditorIntoView: true,
-    maxLines: 10,
-    minLines: 5
-});
-editor.setOptions({
-    enableBasicAutocompletion: true,
-    enableSnippets: true,
-    enableLiveAutocompletion: false
-});
-let sqlCommand = "{{ value.sqlCommand | default('', true) }}";
-if (sqlCommand) {
-    document.getElementById('EditorCheck').checked = true;
-    document.getElementById('editor').style.display = 'block';
-    editor.setValue(sqlCommand, 1); // Moves cursor to the end
-    editor.resize();
+if (select('.toggle-sidebar-btn')) {
+on('click', '.toggle-sidebar-btn', function(e) {
+  select('body').classList.toggle('toggle-sidebar')
+})
 }
-document.getElementById('EditorCheck').addEventListener('change', function() {
-    let editorContainer = document.getElementById('editor');
-    if (this.checked) {
-        editorContainer.style.display = 'block';
-        editor.resize();
-    } else {
-        editorContainer.style.display = 'none';
-    }
-});
-
-
 
 });

@@ -6,13 +6,13 @@ from SimpleApiGenerator.services.logger import setup_logging
 
 
 # Blueprint definition
-API_Edit_Condition_np = Blueprint('API_Edit_Condition', __name__)
+API_Condition_np = Blueprint('API_Condition', __name__)
 logging = setup_logging()
 
 
-@API_Edit_Condition_np.route("/apiEditCondition/<key>", methods=['GET', 'POST'])
+@API_Condition_np.route("/apiCondition/<key>", methods=['GET', 'POST'])
 # @login_required
-def apiEditCondition(key):
+def apiCondition(key):
     try:
         api = APIQueryBuilder('config/ApiDoc.json')
         condition_details = {

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>{% block title %}API Generator{% endblock %}</title>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+      <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+      <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+      <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+   </head>
+   <body class="p-4">
+      <header id="header" class="header fixed-top d-flex align-items-center">
+         <div class="d-flex align-items-center justify-content-between">
+            <a href="index.html" class="logo d-flex align-items-center">
+            <img src="assets/img/logo.png" alt="">
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+         </div>
+      </header>
+      <aside id="sidebar" class="sidebar">
+         <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+               <a class="nav-link collapsed" href="index.html">
+               <i class="bi bi-grid"></i>
+               <span>Dashboard</span>
+               </a>
+            </li>
+         </ul>
+      </aside>
+      <main id="main" class="main">
+   <div class="pagetitle">
+      <h1>Api List</h1>
+<!--      <nav>-->
+<!--         <ol class="breadcrumb">-->
+<!--            <li class="breadcrumb-item"><a href="index.html">Home</a></li>-->
+<!--            <li class="breadcrumb-item">Tables</li>-->
+<!--            <li class="breadcrumb-item active">Data</li>-->
+<!--         </ol>-->
+<!--      </nav>-->
+   </div>
+   <!-- End Page Title -->
+   <section class="section">
+      <div class="row">
+         <div class="col-lg-12">
+            <div class="card">
+               <div class="card-body">
+<!--                  <h5 class="card-title">API</h5>-->
+                  <!-- Table with stripped rows -->
+                  <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                     <div class="datatable-top">
+                        <div class="datatable-dropdown">
+                           <label>
+                              <select class="datatable-selector" name="per-page">
+                                 <option value="5">5</option>
+                                 <option value="10" selected="">10</option>
+                                 <option value="15">15</option>
+                                 <option value="-1">All</option>
+                              </select>
+                              entries per page
+                           </label>
+                        </div>
+                        <div class="datatable-search">
+                           <input class="datatable-input" placeholder="Search..." type="search" name="search" title="Search within table">
+                        </div>
+                     </div>
+                     <div class="datatable-container">
+                        <table class="table datatable datatable-table">
+                           <thead>
+                              <tr>
+                                 <th data-sortable="true" style=""><button class="datatable-sorter">
+                                      Name
+                                    </button>
+                                 </th>
+<!--                                 <th data-sortable="true" style=""><button class="datatable-sorter">Ext.</button></th>-->
+                                 <th data-sortable="true" style="width: 28.525296017222818%;"><button class="datatable-sorter">Table Name</button></th>
+                                 <th data-format="YYYY/DD/MM" data-sortable="true" data-type="date" style="width: 16.89989235737352%;"><button class="datatable-sorter">Last Update Date</button></th>
+                                 <th data-sortable="true" class="red" style="width: 18.51453175457481%;"><button class="datatable-sorter">Action</button></th>
+                              </tr>
+                           </thead>
+                           <tbody>
+
+
+                           </tbody>
+                        </table>
+                     </div>
+                     <div class="datatable-bottom">
+                        <div class="datatable-info">Showing 1 to 10 of 100 entries</div>
+                        <nav class="datatable-pagination">
+                           <ul class="datatable-pagination-list">
+                              <li class="datatable-pagination-list-item datatable-hidden datatable-disabled"><button data-page="1" class="datatable-pagination-list-item-link" aria-label="Page 1">‹</button></li>
+                              <li class="datatable-pagination-list-item datatable-active"><button data-page="1" class="datatable-pagination-list-item-link" aria-label="Page 1">1</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="2" class="datatable-pagination-list-item-link" aria-label="Page 2">2</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="3" class="datatable-pagination-list-item-link" aria-label="Page 3">3</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="4" class="datatable-pagination-list-item-link" aria-label="Page 4">4</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="5" class="datatable-pagination-list-item-link" aria-label="Page 5">5</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="6" class="datatable-pagination-list-item-link" aria-label="Page 6">6</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="7" class="datatable-pagination-list-item-link" aria-label="Page 7">7</button></li>
+                              <li class="datatable-pagination-list-item datatable-ellipsis datatable-disabled"><button class="datatable-pagination-list-item-link">…</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="10" class="datatable-pagination-list-item-link" aria-label="Page 10">10</button></li>
+                              <li class="datatable-pagination-list-item"><button data-page="2" class="datatable-pagination-list-item-link" aria-label="Page 2">›</button></li>
+                           </ul>
+                        </nav>
+                     </div>
+                  </div>
+                  <!-- End Table with stripped rows -->
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+</main>
+      <!--    {% include 'navbar.html' %}-->
+      <!--    {% block content %}{% endblock %}-->
+   </body>
+</html>
