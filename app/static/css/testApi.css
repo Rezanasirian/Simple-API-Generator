@@ -1,0 +1,133 @@
+.container {
+      /*max-width: 800px;*/
+      /*margin: 0 ;*/
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.input-group {
+  margin-bottom: 15px;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+input, select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #0056b3;
+}
+
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 996;
+    transition: all 0.3s;
+    /*padding: 20px;*/
+    /*padding-left: 0px;*/
+    padding-right: 20px;
+
+    padding-top: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #383F51;
+}
+
+.header {
+  transition: all 0.5s;
+  z-index: 997;
+  height: 60px;
+  box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
+  background-color: #fff;
+  padding-left: 20px;
+  /* Toggle Sidebar Button */
+  /* Search Bar */
+}
+.header .toggle-sidebar-btn {
+    font-size: 32px;
+    padding-left: 10px;
+    cursor: pointer;
+    color: #012970;
+}
+
+.sidebar-nav{
+/* Menu multi */
+    width: 250px;
+    height: 50px;
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+    background-color: red;
+    border-bottom-right-radius: 25px;
+    border-top-right-radius:25px;
+    pointer-events: visible;
+}
+#main {
+    margin-top: 60px;
+    transition: all 0.3s;
+}
+
+.pagetitle {
+    margin-bottom: 10px;
+}
+#sidebar {
+    /* Initially hidden sidebar */
+    transform: translateX(-300px); /* Adjust to the width of your sidebar */
+    transition: transform 0.3s ease;
+}
+
+#sidebar.show {
+    /* Sidebar shown */
+    transform: translateX(0);
+}
+
+.collapsible {
+  background-color: #f1f1f1;
+  color: #333;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 18px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+.active, .collapsible:hover {
+  background-color: #ddd;
+}
+.content {
+  padding: 10px 0;
+  display: none;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+.response {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  white-space: pre-wrap;
+}

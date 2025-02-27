@@ -145,3 +145,82 @@ body {
 .card-text {
     margin-bottom: 20px;
 }
+body{
+   padding: 25px;
+}
+
+h1 {
+ padding-bottom: 15px;
+}
+
+.alert {
+ margin-top: 25px;
+}
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 996;
+    transition: all 0.3s;
+    /*padding: 20px;*/
+    /*padding-left: 0px;*/
+    padding-right: 20px;
+
+    padding-top: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #383F51;
+}
+
+.header {
+  transition: all 0.5s;
+  z-index: 997;
+  height: 60px;
+  box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
+  background-color: #fff;
+  padding-left: 20px;
+  /* Toggle Sidebar Button */
+  /* Search Bar */
+}
+.header .toggle-sidebar-btn {
+    font-size: 32px;
+    padding-left: 10px;
+    cursor: pointer;
+    color: #012970;
+}
+
+.sidebar-nav{
+/* Menu multi */
+    width: 250px;
+    height: 50px;
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+    background-color: red;
+    border-bottom-right-radius: 25px;
+    border-top-right-radius:25px;
+    pointer-events: visible;
+}
+#main {
+    margin-top: 60px;
+    transition: all 0.3s;
+}
+
+.pagetitle {
+    margin-bottom: 10px;
+}
+#sidebar {
+    /* Initially hidden sidebar */
+    transform: translateX(-300px); /* Adjust to the width of your sidebar */
+    transition: transform 0.3s ease;
+}
+
+#sidebar.show {
+    /* Sidebar shown */
+    transform: translateX(0);
+}

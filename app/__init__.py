@@ -7,6 +7,9 @@ from app.api.routes.API_Edit import API_Edit_np
 from app.api.routes.API_Generator import create_api_blueprint
 from SimpleApiGenerator.app.api.routes.API_conditoin import API_Condition_np
 from SimpleApiGenerator.app.api.routes.API_config import api_config_bp
+from SimpleApiGenerator.app.api.routes.API_test_api import API_test_api_np
+from SimpleApiGenerator.app.api.routes.API_configPerApi import api_config_per_api_bp
+from SimpleApiGenerator.app.api.routes.testRout import testRout
 from services.APIQueryBuilder import APIQueryBuilder
 from auth import auth as auth_blueprint
 from admin import admin as admin_blueprint
@@ -33,8 +36,9 @@ def create_app():
     app.register_blueprint(API_Edit_np, url_prefix='/api')
     app.register_blueprint(API_Condition_np, url_prefix='/api')
     app.register_blueprint(api_config_bp, url_prefix='/api')
-
-
+    app.register_blueprint(API_test_api_np, url_prefix='/api')
+    app.register_blueprint(api_config_per_api_bp, url_prefix='/api')
+    app.register_blueprint(testRout, url_prefix='/api')
     # app.register_blueprint(auth_blueprint)
     # app.register_blueprint(admin_blueprint)
     # app.register_blueprint(main_blueprint)

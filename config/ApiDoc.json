@@ -11,118 +11,7 @@
                     "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
                     "Column": "acct_no",
                     "ignoreIf": "-3",
-                    "transformations": {
-                        "substring": [
-                            2,
-                            11
-                        ],
-                        "replace": [
-                            null,
-                            null
-                        ],
-                        "trim": true,
-                        "sqlCommand": "cast as int"
-                    }
-                }
-            }
-        ]
-    },
-        "API_LON_Loan1": {
-        "TableName": "Rpt_BOM_loan",
-        "OrderBy": "acct_no",
-        "OrderType": "Asc",
-        "LastUpdateTableName": "Rpt_BOM_loan",
-        "conditions": [
-            {
-                "acct_no": {
-                    "operator": "<",
-                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
-                    "Column": "acct_no",
-                    "ignoreIf": "-3",
-                    "transformations": {
-                        "substring": [
-                            2,
-                            11
-                        ],
-                        "replace": [
-                            null,
-                            null
-                        ],
-                        "trim": true,
-                        "sqlCommand": "cast as int"
-                    }
-                }
-            }
-        ]
-    },
-        "API_LON_Loan2": {
-        "TableName": "Rpt_BOM_loan",
-        "OrderBy": "acct_no",
-        "OrderType": "Asc",
-        "LastUpdateTableName": "Rpt_BOM_loan",
-        "conditions": [
-            {
-                "acct_no": {
-                    "operator": "<",
-                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
-                    "Column": "acct_no",
-                    "ignoreIf": "-3",
-                    "transformations": {
-                        "substring": [
-                            2,
-                            11
-                        ],
-                        "replace": [
-                            null,
-                            null
-                        ],
-                        "trim": true,
-                        "sqlCommand": "cast as int"
-                    }
-                }
-            }
-        ]
-    },
-    "API_LON_Loan3": {
-        "TableName": "Rpt_BOM_loan",
-        "OrderBy": "acct_no",
-        "OrderType": "Asc",
-        "LastUpdateTableName": "Rpt_BOM_loan",
-        "conditions": [
-            {
-                "acct_no": {
-                    "operator": "<",
-                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
-                    "Column": "acct_no",
-                    "ignoreIf": "-3",
-                    "transformations": {
-                        "substring": [
-                            2,
-                            11
-                        ],
-                        "replace": [
-                            null,
-                            null
-                        ],
-                        "trim": true,
-                        "sqlCommand": "cast as int"
-                    }
-                }
-            }
-        ]
-    },
-        "API_LON_Loan4": {
-        "TableName": "Rpt_BOM_loan",
-        "OrderBy": "acct_no",
-        "OrderType": "Asc",
-        "LastUpdateTableName": "Rpt_BOM_loan",
-        "conditions": [
-            {
-                "acct_no": {
-                    "operator": "<",
-                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
-                    "Column": "acct_no",
-                    "ignoreIf": "-3",
+                    "category": "Identification",
                     "transformations": {
                         "substring": [
                             2,
@@ -144,17 +33,52 @@
         "OrderBy": "cust_no",
         "OrderType": "asc",
         "LastUpdateTableName": "RPT_CUS_DepCustomer",
-        "conditions": [{
+        "conditions": [
+             {
             "BranchNo": {
                 "operator": "in",
                 "Name": "Branch Number",
                 "Column": "branch_id",
                 "ignoreIf": "All",
+                "category": "Filter",
                 "transformations": {
                     "cast": "varchar(20)"
                 }
             }
-
-        }]
+        },
+            {
+            "BranchNo1": {
+                "operator": "in",
+                "Name": "Branch Number",
+                "Column": "branch_id",
+                "ignoreIf": "All",
+                "category": "Filter",
+                "transformations": {
+                    "cast": "varchar(20)"
+                }
+            }
+        },
+        {
+        "acct_no": {
+            "operator": "<",
+            "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
+            "Column": "acct_no",
+            "ignoreIf": "-3",
+            "category": "Identification",
+            "transformations": {
+                "substring": [
+                    2,
+                    11
+                ],
+                "replace": [
+                    null,
+                    null
+                ],
+                "trim": true,
+                "sqlCommand": "cast as int"
+            }
+        }
+        }
+        ]
     }
 }

@@ -38,13 +38,13 @@ def edit_api():
                 }
                 api.add_api(api_name, api_details)
                 api_name_list = api.API_list()
-                return render_template("index.html", ApiName=api_name_list, TableList=table_list, ColName=col_name)
+                return render_template("apiList.html", ApiName=api_name_list, TableList=table_list, ColName=col_name)
             elif action == 'Search':
                 search_query = request.form.get('Search', '').lower()
                 filtered_apis = [name for name in api_name_list if search_query in name.lower()]
-                return render_template("index.html", ApiName=filtered_apis, TableList=table_list, ColName=col_name)
+                return render_template("apiList.html", ApiName=filtered_apis, TableList=table_list, ColName=col_name)
         
-        return render_template("index.html", ApiName=api_name_list, TableList=table_list, ColName=col_name,
+        return render_template("apiList.html", ApiName=api_name_list, TableList=table_list, ColName=col_name,
                                show_add_api=True, show_search=True, Page_name="API Generator")
     # except Exception as e:
     #     logging.error(f"Error in edit_api: {e}")
