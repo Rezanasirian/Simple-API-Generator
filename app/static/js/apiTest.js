@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded",async function (){
                 input.required = true;
 
                 const inputGroup = document.createElement("div");
-                inputGroup.classList.add("input-group");
 
                 const inputLabel = document.createElement("label");
                 inputLabel.textContent = label;

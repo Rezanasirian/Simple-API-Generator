@@ -9,6 +9,8 @@ logging = setup_logging()
 @testRout.route("/testRout", methods=['POST'])
 # @login_required
 def test_api():
+    params = request.get_json()
+    print(params)
     response = {'test_key': 1}
     return jsonify(response)
 

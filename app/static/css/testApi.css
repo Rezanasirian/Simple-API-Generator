@@ -1,17 +1,31 @@
-.container {
-      /*max-width: 800px;*/
-      /*margin: 0 ;*/
-      background: #fff;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+.card {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+.card-header {
+    background-color: #dc3545; /* Bootstrap danger color */
+    color: white;
+}
+
+.card-body {
+    background-color: white;
+    padding: 20px;
+    border-top: 1px solid #dc3545;
+}
+
+.card-text {
+    margin-bottom: 20px;
+}
+
 .input-group {
   margin-bottom: 15px;
 }
 label {
   display: block;
   margin-bottom: 5px;
+      direction: rtl;
+  text-align: right;
 }
 input, select {
   width: 100%;
@@ -20,6 +34,11 @@ input, select {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
+input[lang="fa"], select[lang="fa"] {
+  direction: rtl;
+  text-align: right;
+}
+
 button {
   padding: 10px 15px;
   font-size: 16px;
@@ -28,9 +47,12 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 button:hover {
   background-color: #0056b3;
+  transform: scale(1.01);
 }
 
 .sidebar {
@@ -70,19 +92,15 @@ button:hover {
     color: #012970;
 }
 
-.sidebar-nav{
-/* Menu multi */
+.sidebar-nav {
     width: 250px;
-    height: 50px;
-    /* Inside auto layout */
-    flex: none;
-    order: 2;
-    flex-grow: 0;
-    background-color: red;
-    border-bottom-right-radius: 25px;
-    border-top-right-radius:25px;
-    pointer-events: visible;
+    height: auto;
+    background-color: #383F51; /* Dark modern color */
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
 }
+
 #main {
     margin-top: 60px;
     transition: all 0.3s;
@@ -130,4 +148,7 @@ button:hover {
   background-color: #f1f1f1;
   border-radius: 5px;
   white-space: pre-wrap;
+}
+#submitForm{
+    margin-top: 10px;
 }

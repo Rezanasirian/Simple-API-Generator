@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
    <head>
-      <title>{% block title %}API Generator{% endblock %}</title>
+      <title>API Generator</title>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" dir="rtl" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/testApi.css') }}">
 
@@ -35,15 +35,34 @@
          </ul>
       </aside>
       <main id="main" class="main">
+         <div class="pagetitle">
+            <h1>Api Test</h1>
+            <nav>
+               <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="apiList.html">Api List</a></li>
+                  <li class="breadcrumb-item">Tables</li>
+               </ol>
+            </nav>
+         </div>
+         <section class="section" >
+            <div class="row" >
+               <div  class="col-lg-12">
+                  <div class="card">
+                     <div class="card-body">
+                        <form id="api-form" method="POST" action="/testRout">
 
-<div class="container">
-    <h2>Test API</h2>
-    <form id="api-form" method="POST" action="/testRout">
+                        </form>
+                     </div>
+                     <div class="card-footer" >
+                        <h5>response</h5>
+                        <div id="response" class="response"></div>
 
+                     </div>
+                  </div>
+               </div>
 
-    </form>
-    <div id="response" class="response"></div>
-  </div>
+            </div>
+         </section>
       </main>
    </body>
 </html>
