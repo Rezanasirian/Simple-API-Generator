@@ -1,8 +1,13 @@
 document.addEventListener("DOMContentLoaded", async function(){
+    let tableList = window.tableList
+    let colName = window.colName
     await fetchData();
     updateTable();
     setupPagination();
     setupEventListeners();
+    populateSelect('TableName', tableList);
+    populateSelect('OrderBy', colName);
+    populateSelect('LastUpdateTableName', colName);
 
         const sidebar = document.getElementById('sidebar');
         const toggleButton = document.querySelector('.toggle-sidebar-btn');
@@ -10,7 +15,24 @@ document.addEventListener("DOMContentLoaded", async function(){
         toggleButton.addEventListener('click', function () {
             sidebar.classList.toggle('show'); // Toggle the 'show' class to open/close the sidebar
         });
+
+        const addApiButton = document.querySelector(".btn-add-api"); // Select the button
+        const addApiModal = new bootstrap.Modal(document.getElementById("addApiModal")); // Get the modal
+
+        addApiButton.addEventListener("click", function() {
+            addApiModal.show(); // Show the modal when button is clicked
+        });
     });
+    function populateSelect(id, options) {
+        const selectElement = document.getElementById(id);
+        selectElement.innerHTML = '';
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option;
+            optionElement.textContent = option;
+            selectElement.appendChild(optionElement);
+        });
+    }
 
     let dataArray = [];
     let currentPage = 1;

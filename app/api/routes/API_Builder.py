@@ -14,8 +14,8 @@ def edit_api():
         #     flash('Access denied!', 'danger')
         #     return redirect(url_for('main.dashboard'))
         #
-        table_list = {'Rpt_BOM_chq', 'Rpt_BOM_BORM', 'Rpt_BOM_Riz', 'Rpt_BOM_loan', 'Rpt_BOM_Riz1'}
-        col_name = {'acct_no', 'customer_no', '1'}
+        table_list = ['Rpt_BOM_chq', 'Rpt_BOM_BORM', 'Rpt_BOM_Riz', 'Rpt_BOM_loan', 'Rpt_BOM_Riz1']
+        col_name = ['acct_no', 'customer_no', '1']
         api = APIQueryBuilder('config/ApiDoc.json')
 
         api_name_list = api.API_list()

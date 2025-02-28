@@ -224,3 +224,90 @@ h1 {
     /* Sidebar shown */
     transform: translateX(0);
 }
+/* Improve table appearance */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+}
+
+/* Hover effect for table rows */
+tr:hover {
+    background-color: #f1f1f1;
+}
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+
+/* Hover effect */
+.btn:hover {
+    opacity: 0.8;
+}
+
+.search-box {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+input[type="text"], select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Adjust spacing */
+    gap: 10px;
+}
+
+.btn-add-api {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #0c63e4;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-add-api:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.plus-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
