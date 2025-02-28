@@ -20,51 +20,95 @@ document.addEventListener("DOMContentLoaded",async function (){
             console.error('Error fetching data:', error);
         }
     }
-
     function generateFormFields() {
-      const form = document.getElementById('api-form');
-      form.innerHTML = '';
-        let conditionFrom = document.getElementById("api-form")
-        conditionCategory.forEach(category=>{
-            let collapseButton = document.createElement("button")
-            collapseButton.classList.add("collapsible")
-            collapseButton.type= "button"
-            collapseButton.textContent = category + " Parameters"
-            conditionFrom.appendChild(collapseButton)
-            let inputGroupDiv = document.createElement("div")
-            inputGroupDiv.classList.add("content")
-            inputGroupDiv.id = category
-            conditionFrom.appendChild(inputGroupDiv)
+        const form = document.getElementById('api-form');
+        form.innerHTML = '';
 
+        // Create collapsible sections for each category
+        conditionCategory.forEach(category => {
+            const collapseButton = document.createElement("button");
+            collapseButton.classList.add("collapsible");
+            collapseButton.type = "button";
+            collapseButton.textContent = `${category} Parameters`;
 
-        })
-        console.log(conditionArray)
-      conditionArray.forEach((condition) => {
-        Object.keys(condition).forEach((key) => {
-            console.log(condition[key]['category'])
-          const field = condition[key];
-          const label = field.Name || key;
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.name = key;
-          input.placeholder = label;
-          input.required = true;
+            const inputGroupDiv = document.createElement("div");
+            inputGroupDiv.classList.add("content");
+            inputGroupDiv.id = category;
 
-          const inputGroup = document.createElement('div');
-          inputGroup.classList.add('input-group');
-
-          const inputLabel = document.createElement('label');
-          inputLabel.textContent = label;
-
-          inputGroup.appendChild(inputLabel);
-          inputGroup.appendChild(input);
-          let categorySection = document.querySelector(`div#${condition[key]['category']}`);
-            console.log(categorySection)
-          categorySection.appendChild(inputGroup);
+            form.appendChild(collapseButton);
+            form.appendChild(inputGroupDiv);
         });
-      });
-    }
 
+        // Iterate through conditions and create input fields
+        conditionArray.forEach(condition => {
+            Object.keys(condition).forEach(key => {
+                const field = condition[key];
+                const label = field.Name || key;
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.name = key;
+                input.placeholder = label;
+                input.required = true;
+
+                const inputGroup = document.createElement("div");
+                inputGroup.classList.add("input-group");
+
+                const inputLabel = document.createElement("label");
+                inputLabel.textContent = label;
+
+                inputGroup.appendChild(inputLabel);
+                inputGroup.appendChild(input);
+
+                const categorySection = document.getElementById(field.category);
+                let categorySectionRows = categorySection.querySelectorAll("div.row");
+
+                // If no rows exist, create a new row with a column
+                if (categorySectionRows.length === 0) {
+                    const categorySectionRow = document.createElement("div");
+                    categorySectionRow.classList.add("row");
+
+                    const categorySectionCol = document.createElement("div");
+                    categorySectionCol.classList.add("col");
+                    categorySectionCol.appendChild(inputGroup);
+
+                    categorySectionRow.appendChild(categorySectionCol);
+                    categorySection.appendChild(categorySectionRow);
+                } else {
+                    // Get the last row
+                    const lastRow = categorySectionRows[categorySectionRows.length - 1];
+                    const categorySectionCols = lastRow.querySelectorAll("div.col");
+
+                    // If the last row has less than 4 columns, append to it
+                    if (categorySectionCols.length < 4) {
+                        const categorySectionCol = document.createElement("div");
+                        categorySectionCol.classList.add("col");
+                        categorySectionCol.appendChild(inputGroup);
+                        lastRow.appendChild(categorySectionCol);
+                    } else {
+                        // Create a new row and append input into a new column
+                        const newRow = document.createElement("div");
+                        newRow.classList.add("row");
+
+                        const newCol = document.createElement("div");
+                        newCol.classList.add("col");
+                        newCol.appendChild(inputGroup);
+
+                        newRow.appendChild(newCol);
+                        categorySection.appendChild(newRow);
+                    }
+                }
+            });
+        });
+
+        // Add submit button
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.id = "submitForm";
+        submitButton.textContent = "Submit";
+        form.appendChild(submitButton);
+    }
+    generateFormFields();
     function submitForm(event) {
       event.preventDefault();
 
@@ -94,7 +138,6 @@ document.addEventListener("DOMContentLoaded",async function (){
         submitForm(event)
     })
 
-    generateFormFields();
     document.querySelectorAll('.collapsible').forEach((button) => {
           button.addEventListener('click', function() {
             this.classList.toggle('active');

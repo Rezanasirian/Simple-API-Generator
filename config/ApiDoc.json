@@ -34,6 +34,42 @@
         "OrderType": "asc",
         "LastUpdateTableName": "RPT_CUS_DepCustomer",
         "conditions": [
+            {
+            "BranchNo": {
+                "operator": "in",
+                "Name": "Branch Number",
+                "Column": "branch_id",
+                "ignoreIf": "All",
+                "category": "Filter",
+                "transformations": {
+                    "cast": "varchar(20)"
+                }
+            }
+        },
+        {
+            "BranchNo": {
+                "operator": "in",
+                "Name": "Branch Number",
+                "Column": "branch_id",
+                "ignoreIf": "All",
+                "category": "Filter",
+                "transformations": {
+                    "cast": "varchar(20)"
+                }
+            }
+        },
+        {
+            "BranchNo": {
+                "operator": "in",
+                "Name": "Branch Number",
+                "Column": "branch_id",
+                "ignoreIf": "All",
+                "category": "Filter",
+                "transformations": {
+                    "cast": "varchar(20)"
+                }
+            }
+        },
              {
             "BranchNo": {
                 "operator": "in",

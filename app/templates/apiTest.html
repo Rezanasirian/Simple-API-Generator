@@ -38,50 +38,9 @@
 
 <div class="container">
     <h2>Test API</h2>
-    <form id="api-form">
-      <!-- Identification Parameters Section -->
-<!--      <button type="button" class="collapsible">Identification Parameters</button>-->
-      <div class="content">
-        <div class="input-group">
-          <label for="acct_no">Account Number</label>
-          <input type="text" name="acct_no" placeholder="Enter Account Number">
-        </div>
-        <div class="input-group">
-          <label for="customer_no">Customer Number</label>
-          <input type="text" name="customer_no" placeholder="Enter Customer Number">
-        </div>
-<!--         Add more fields as needed -->
-<!--      </div>-->
+    <form id="api-form" method="POST" action="/testRout">
 
-      <!-- Date Parameters Section -->
-<!--      <button type="button" class="collapsible">Date Parameters</button>-->
-<!--      <div class="content">-->
-<!--        <div class="input-group">-->
-<!--          <label for="start_date">Start Date</label>-->
-<!--          <input type="date" name="start_date">-->
-<!--        </div>-->
-<!--        <div class="input-group">-->
-<!--          <label for="end_date">End Date</label>-->
-<!--          <input type="date" name="end_date">-->
-<!--        </div>-->
-<!--        &lt;!&ndash; Add more date fields as needed &ndash;&gt;-->
-<!--      </div>-->
 
-<!--      &lt;!&ndash; Filter Parameters Section &ndash;&gt;-->
-<!--      <button type="button" class="collapsible">Filter Parameters</button>-->
-<!--      <div class="content">-->
-<!--        <div class="input-group">-->
-<!--          <label for="branch">Branch</label>-->
-<!--          <select name="branch">-->
-<!--            <option value="All">All</option>-->
-<!--            <option value="Branch1">Branch 1</option>-->
-<!--            <option value="Branch2">Branch 2</option>-->
-<!--          </select>-->
-<!--        </div>-->
-<!--        &lt;!&ndash; Add more filter fields as needed &ndash;&gt;-->
-<!--      </div>-->
-
-      <button type="submit" id = "submitForm">Submit</button>
     </form>
     <div id="response" class="response"></div>
   </div>
