@@ -12,33 +12,27 @@
                 </div>
                 <div class="mb-3">
                     <label for="TableName" class="form-label">Table Name</label>
-                    <select name="TableName" class="form-select">
-                        {% for Table in TableList %}
-                        <option value="{{ Table }}">{{ Table }}</option>
-                        {% endfor %}
+                    <select id="TableName" class="form-select">
+
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="OrderBy" class="form-label">Order By</label>
-                    <select name="OrderBy" class="form-select">
-                        {% for col in ColName %}
-                        <option value="{{ col }}">{{ col }}</option>
-                        {% endfor %}
+                    <select id="OrderBy" class="form-select">
+
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="OrderType" class="form-label">Order Type</label>
-                    <select name="OrderType" class="form-select">
+                    <select id="OrderType" class="form-select">
                         <option value="Desc">Desc</option>
                         <option value="Asc">Asc</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="LastUpdateTableName" class="form-label">Last Update Table Name</label>
-                    <select name="LastUpdateTableName" class="form-select">
-                        {% for Table in TableList %}
-                        <option value="{{ Table }}">{{ Table }}</option>
-                        {% endfor %}
+                    <select id="LastUpdateTableName"  name ="LastUpdateTableName" class="form-select">
+
                     </select>
                 </div>
                 <div class="modal-footer">
