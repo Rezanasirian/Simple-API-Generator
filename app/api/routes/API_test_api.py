@@ -9,7 +9,11 @@ logging = setup_logging()
 @API_test_api_np.route("/test_api/<key>", methods=['GET'])
 # @login_required
 def test_api(key):
-    # try:
-        return render_template("apiTest.html",key=key)
-    # except Exception:
+    try:
+        api = APIQueryBuilder('config/ApiDoc.json')
+        api_config = api.get_api_prop(key)
+        print(api_config)
+        return render_template("apiTest.html",key=key,api_config=api_config)
+    except Exception as e:
+        logging.error(f"Error on  load test page: {e}")
 
