@@ -1,25 +1,12 @@
 document.addEventListener("DOMContentLoaded",async function (){
-    apiName = window.apiName ||''
+    let apiName = window.apiName ||''
     console.log(apiName)
-    let conditionArray = [];
+    let api_config = window.api_config || []
+    let conditionArray = api_config.conditions || [];
     let currentPage = 1;
     let rowsPerPage = 10;
     let conditionCategory = ["Identification","Filter"]
-    await fetchApiData(apiName)
-    async function fetchApiData(apiName){
-        try {
-            const response = await fetch("http://127.0.0.1:5000/api/configPerApi/"+apiName)
-            if (!response.ok) {
-                throw new Error('Network response was not ok')
-            }
-            const apiConfig = await response.json();
-            conditionArray = apiConfig.conditions
 
-        } catch (error){
-
-            console.error('Error fetching data:', error);
-        }
-    }
     function generateFormFields() {
         const form = document.getElementById('api-form');
         form.innerHTML = '';
