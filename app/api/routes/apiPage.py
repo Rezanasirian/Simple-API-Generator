@@ -15,7 +15,7 @@ def apiList():
         api = APIQueryBuilder('config/ApiDoc.json')
         apilistname = api.API_list()
         return render_template("apiList.html",
-                               ApiName=apilistname,
+                               ApiList=apilistname,
                                 tableList=tableList,
                                 colName=colName)
     except Exception as e:
