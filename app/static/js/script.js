@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function(){
     let tableList = window.tableList
     let colName = window.colName
+    let ApiList = window.ApiList
     await fetchData();
     updateTable();
     setupPagination();
@@ -16,13 +17,49 @@ document.addEventListener("DOMContentLoaded", async function(){
             sidebar.classList.toggle('show'); // Toggle the 'show' class to open/close the sidebar
         });
 
-        const addApiButton = document.querySelector(".btn-add-api"); // Select the button
-        const addApiModal = new bootstrap.Modal(document.getElementById("addApiModal")); // Get the modal
+        const addApiButton = document.querySelector(".btn-add-api");
+        const apiForm = document.getElementById("addApiModal");
+        const addApiModal = new bootstrap.Modal(apiForm);
+
+        const apiInput = document.getElementById("APIName");
+        apiForm.addEventListener("submit", function (event) {
+                const apiName = apiInput.value.trim();
+
+                if ( ApiList.includes(apiName)) {
+                    event.preventDefault();
+                    showFloatingAlert("API Name should not be in the existing API list.", "danger");
+                }
+                if (!apiName.startsWith("api") ) {
+                    event.preventDefault();
+                    showFloatingAlert("API Name must start with 'API'", "danger");
+                }
+            });
+
 
         addApiButton.addEventListener("click", function() {
             addApiModal.show(); // Show the modal when button is clicked
         });
+
+
     });
+    function showFloatingAlert(message, type) {
+        const alertContainer = document.getElementById("alertContainer"); // Alert container
+
+        const alert = document.createElement("div");
+        alert.className = `alert alert-${type} alert-dismissible fade show shadow`;
+        alert.style.zIndex = 2000; // Make sure it's above other elements
+        alert.innerHTML = `
+            <strong>${type === "success" ? "Success!" : "Error!"}</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        alertContainer.appendChild(alert);
+
+        setTimeout(() => {
+            alert.classList.remove("show");
+            setTimeout(() => alert.remove(), 500);
+        }, 3000);
+    }
     function populateSelect(id, options) {
         const selectElement = document.getElementById(id);
         selectElement.innerHTML = '';

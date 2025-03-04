@@ -311,3 +311,6 @@ input[type="text"], select {
     font-size: 18px;
     font-weight: bold;
 }
+#alertContainer{
+    z-index: 2000;
+}
