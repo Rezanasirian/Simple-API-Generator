@@ -1,209 +1,317 @@
-document.addEventListener("DOMContentLoaded", async function(){
-    let tableList = window.tableList
-    let colName = window.colName
-    let ApiList = window.ApiList
-    await fetchData();
-    updateTable();
-    setupPagination();
-    setupEventListeners();
-    populateSelect('TableName', tableList);
-    populateSelect('OrderBy', colName);
-    populateSelect('LastUpdateTableName', colName);
+// Constants
+const CONFIG = {
+    API_URL: 'http://127.0.0.1:5000/api',
+    ROWS_PER_PAGE: 10,
+    ALERT_TIMEOUT: 3000,
+    API_NAME_PREFIX: 'api'
+};
 
-        const sidebar = document.getElementById('sidebar');
-        const toggleButton = document.querySelector('.toggle-sidebar-btn');
+// State management
+let state = {
+    dataArray: [],
+    currentPage: 1,
+    rowsPerPage: CONFIG.ROWS_PER_PAGE,
+    tableList: window.tableList || [],
+    colName: window.colName || [],
+    apiList: window.ApiList || [],
+    modal: null
+};
 
-        toggleButton.addEventListener('click', function () {
-            sidebar.classList.toggle('show'); // Toggle the 'show' class to open/close the sidebar
+// Utility functions
+function formatDate(date) {
+    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function createButton(className, text, onClick) {
+    const button = document.createElement('button');
+    button.className = className;
+    button.textContent = text;
+    if (onClick) button.addEventListener('click', onClick);
+    return button;
+}
+
+async function fetchWithTimeout(url, options = {}, timeout = 5000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    try {
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal
         });
+        clearTimeout(id);
 
-        const addApiButton = document.querySelector(".btn-add-api");
-        const apiForm = document.getElementById("addApiModal");
-        const addApiModal = new bootstrap.Modal(apiForm);
-
-        const apiInput = document.getElementById("APIName");
-        apiForm.addEventListener("submit", function (event) {
-                const apiName = apiInput.value.trim();
-
-                if ( ApiList.includes(apiName)) {
-                    event.preventDefault();
-                    showFloatingAlert("API Name should not be in the existing API list.", "danger");
-                }
-                if (!apiName.startsWith("api") ) {
-                    event.preventDefault();
-                    showFloatingAlert("API Name must start with 'API'", "danger");
-                }
-            });
-
-
-        addApiButton.addEventListener("click", function() {
-            addApiModal.show(); // Show the modal when button is clicked
-        });
-
-
-    });
-    function showFloatingAlert(message, type) {
-        const alertContainer = document.getElementById("alertContainer"); // Alert container
-
-        const alert = document.createElement("div");
-        alert.className = `alert alert-${type} alert-dismissible fade show shadow`;
-        alert.style.zIndex = 2000; // Make sure it's above other elements
-        alert.innerHTML = `
-            <strong>${type === "success" ? "Success!" : "Error!"}</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-
-        alertContainer.appendChild(alert);
-
-        setTimeout(() => {
-            alert.classList.remove("show");
-            setTimeout(() => alert.remove(), 500);
-        }, 3000);
-    }
-    function populateSelect(id, options) {
-        const selectElement = document.getElementById(id);
-        selectElement.innerHTML = '';
-        options.forEach(option => {
-            const optionElement = document.createElement('option');
-            optionElement.value = option;
-            optionElement.textContent = option;
-            selectElement.appendChild(optionElement);
-        });
-    }
-
-    let dataArray = [];
-    let currentPage = 1;
-    let rowsPerPage = 10;
-    async function fetchData(){
-        try {
-            const response = await fetch("http://127.0.0.1:5000/api/config")
-            if (!response.ok) throw new Error('Network response was not ok')
-            const apiConfig = await response.json();
-            const date = new Date(); // Fix: Define the date object here
-            dataArray = Object.keys(apiConfig).map(key => {
-                return {
-                    name: key,
-                    tableName: apiConfig[key].TableName,
-                    lastUpdate: `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`
-                }
-            })
-        } catch (error){
-            console.error('Error fetching data:', error);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        return await response.json();
+    } catch (error) {
+        clearTimeout(id);
+        throw error;
     }
+}
 
+// Alert functions
+function showAlert(message, type = 'success') {
+    const alertContainer = document.getElementById('alertContainer');
+    const alert = document.createElement('div');
 
+    alert.className = `alert alert-${type} alert-dismissible fade show shadow`;
+    alert.style.zIndex = 2000;
+    alert.innerHTML = `
+        <strong>${type === 'success' ? 'Success!' : 'Error!'}</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
 
+    alertContainer.appendChild(alert);
+
+    setTimeout(() => {
+        alert.classList.remove('show');
+        setTimeout(() => alert.remove(), 500);
+    }, CONFIG.ALERT_TIMEOUT);
+}
+
+// Table functions
 function updateTable() {
     const tbody = document.querySelector('.datatable-table tbody');
+    if (!tbody) return;
+
     tbody.innerHTML = '';
 
-    const start = (currentPage - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    const pageData = dataArray.slice(start, end);
+    const start = (state.currentPage - 1) * state.rowsPerPage;
+    const end = start + state.rowsPerPage;
+    const pageData = state.dataArray.slice(start, end);
 
     pageData.forEach(item => {
-        const row = document.createElement('tr');
-
-        const nameCell = document.createElement('td');
-        nameCell.textContent = item.name;
-        row.appendChild(nameCell);
-
-        const tableNameCell = document.createElement('td');
-        tableNameCell.textContent = item.tableName;
-        row.appendChild(tableNameCell);
-
-        const lastUpdateCell = document.createElement('td');
-        lastUpdateCell.textContent = item.lastUpdate;
-        row.appendChild(lastUpdateCell);
-
-        const actionCell = document.createElement('td');
-        const editButton = document.createElement('button');
-        editButton.className = 'btn btn-edit';
-        editButton.textContent = 'Edit';
-        editButton.addEventListener('click', function() {
-            window.location.href = '/api/edit_api/' + item.name;
-        });
-        actionCell.appendChild(editButton);
-
-
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'btn btn-delete';
-        deleteButton.textContent = 'Delete';
-        actionCell.appendChild(deleteButton);
-
-        const testButton = document.createElement('button');
-        testButton.className = 'btn btn-test';
-        testButton.textContent = 'Test';
-        testButton.addEventListener('click', function() {
-            window.location.href = '/api/test_api/' + item.name;
-        });
-        actionCell.appendChild(testButton);
-
-        row.appendChild(actionCell);
+        const row = createTableRow(item);
         tbody.appendChild(row);
     });
+
     updateTableInfo();
 }
 
-function setupPagination() {
-    const pagination = document.querySelector('.datatable-pagination-list');
-    pagination.innerHTML = '';
+function createTableRow(item) {
+    const row = document.createElement('tr');
 
-    const pageCount = Math.ceil(dataArray.length / rowsPerPage);
-    for (let i = 1; i <= pageCount; i++) {
-        const li = document.createElement('li');
-        li.className = 'datatable-pagination-list-item';
-        if (i === currentPage) li.classList.add('datatable-active');
+    // Add data cells
+    ['name', 'tableName', 'lastUpdate'].forEach(key => {
+        const cell = document.createElement('td');
+        cell.textContent = item[key];
+        row.appendChild(cell);
+    });
 
-        const button = document.createElement('button');
-        button.className = 'datatable-pagination-list-item-link';
-        button.textContent = i;
-        button.dataset.page = i;
-        li.appendChild(button);
+    // Add action buttons
+    const actionCell = document.createElement('td');
+    actionCell.appendChild(createButton('btn btn-edit', 'Edit',
+        () => window.location.href = `/api/edit_api/${item.name}`));
+    actionCell.appendChild(createButton('btn btn-delete', 'Delete'));
+    actionCell.appendChild(createButton('btn btn-test', 'Test',
+        () => window.location.href = `/api/test_api/${item.name}`));
 
-        pagination.appendChild(li);
-    }
+    row.appendChild(actionCell);
+    return row;
 }
 
 function updateTableInfo() {
     const info = document.querySelector('.datatable-info');
-    const start = (currentPage - 1) * rowsPerPage + 1;
-    const end = Math.min(currentPage * rowsPerPage, dataArray.length);
-    info.textContent = `Showing ${start} to ${end} of ${dataArray.length} entries`;
+    if (!info) return;
+
+    const start = (state.currentPage - 1) * state.rowsPerPage + 1;
+    const end = Math.min(state.currentPage * state.rowsPerPage, state.dataArray.length);
+    info.textContent = `Showing ${start} to ${end} of ${state.dataArray.length} entries`;
 }
 
-function setupEventListeners() {
-    document.querySelector('.datatable-pagination').addEventListener('click', (e) => {
+function setupPagination() {
+    const pagination = document.querySelector('.datatable-pagination-list');
+    if (!pagination) return;
+
+    pagination.innerHTML = '';
+
+    const pageCount = Math.ceil(state.dataArray.length / state.rowsPerPage);
+    for (let i = 1; i <= pageCount; i++) {
+        const li = document.createElement('li');
+        li.className = `datatable-pagination-list-item${i === state.currentPage ? ' datatable-active' : ''}`;
+
+        const button = createButton('datatable-pagination-list-item-link', String(i));
+        button.dataset.page = i;
+        li.appendChild(button);
+        pagination.appendChild(li);
+    }
+}
+
+// Modal functions
+function initializeModal() {
+    const modalElement = document.getElementById('addApiModal');
+    if (!modalElement) return;
+
+    // Initialize Bootstrap modal
+    state.modal = new bootstrap.Modal(modalElement, {
+        keyboard: true,
+        backdrop: true,
+        focus: true
+    });
+
+    // Setup modal triggers
+    const addApiButton = document.querySelector('.btn-add-api');
+    if (addApiButton) {
+        addApiButton.addEventListener('click', () => {
+            state.modal.show();
+        });
+    }
+
+    // Setup modal form validation
+    modalElement.addEventListener('submit', handleModalSubmit);
+
+    // Handle modal events
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        const form = modalElement.querySelector('form');
+        if (form) form.reset();
+    });
+}
+
+function handleModalSubmit(event) {
+    const apiInput = document.getElementById('APIName');
+    const apiName = apiInput?.value.trim();
+
+    if (!apiName) {
+        event.preventDefault();
+        showAlert('API Name is required', 'danger');
+        return;
+    }
+
+    if (state.apiList.includes(apiName)) {
+        event.preventDefault();
+        showAlert('API Name should not be in the existing API list', 'danger');
+        return;
+    }
+
+    if (!apiName.startsWith(CONFIG.API_NAME_PREFIX)) {
+        event.preventDefault();
+        showAlert('API Name must start with \'api\'', 'danger');
+        return;
+    }
+}
+
+// Event handler functions
+function setupPaginationEvents() {
+    const paginationElement = document.querySelector('.datatable-pagination');
+    if (!paginationElement) return;
+
+    paginationElement.addEventListener('click', (e) => {
         if (e.target.tagName === 'BUTTON') {
             const page = parseInt(e.target.dataset.page);
-            if (page && page !== currentPage) {
-                currentPage = page;
+            if (page && page !== state.currentPage) {
+                state.currentPage = page;
                 updateTable();
                 setupPagination();
             }
         }
     });
+}
 
-    document.querySelector('.datatable-selector').addEventListener('change', (e) => {
-        rowsPerPage = parseInt(e.target.value);
-        currentPage = 1;
+function setupRowsPerPageEvent() {
+    const selector = document.querySelector('.datatable-selector');
+    if (!selector) return;
+
+    selector.addEventListener('change', (e) => {
+        state.rowsPerPage = parseInt(e.target.value);
+        state.currentPage = 1;
         updateTable();
         setupPagination();
     });
+}
 
-    document.querySelector('.datatable-input').addEventListener('input', (e) => {
+function setupSearchEvent() {
+    const searchInput = document.querySelector('.datatable-input');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
-        const filteredData = dataArray.filter(item =>
+        state.dataArray = state.dataArray.filter(item =>
             item.name.toLowerCase().includes(searchTerm)
         );
-
-        currentPage = 1;
-        dataArray = filteredData;
+        state.currentPage = 1;
         updateTable();
         setupPagination();
     });
-
 }
+
+function setupSidebarToggle() {
+    const toggleButton = document.querySelector('.toggle-sidebar-btn');
+    const sidebar = document.getElementById('sidebar');
+
+    if (toggleButton && sidebar) {
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+    }
+}
+
+function setupAllEventHandlers() {
+    setupPaginationEvents();
+    setupRowsPerPageEvent();
+    setupSearchEvent();
+    setupSidebarToggle();
+}
+
+// Data functions
+async function fetchData() {
+    try {
+        const apiConfig = await fetchWithTimeout(`${CONFIG.API_URL}/config`);
+        const date = new Date();
+
+        state.dataArray = Object.entries(apiConfig).map(([key, value]) => ({
+            name: key,
+            tableName: value.TableName,
+            lastUpdate: formatDate(date)
+        }));
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        showAlert('Failed to fetch API configuration', 'danger');
+    }
+}
+
+function populateSelects() {
+    ['TableName', 'OrderBy', 'LastUpdateTableName'].forEach(id => {
+        const options = id === 'TableName' ? state.tableList : state.colName;
+        const select = document.getElementById(id);
+
+        if (select) {
+            select.innerHTML = '';
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                select.appendChild(optionElement);
+            });
+        }
+    });
+}
+
+// Initialize application
+async function initializeApp() {
+    try {
+        // Initialize Bootstrap components
+        initializeModal();
+
+        // Initialize data
+        await fetchData();
+        populateSelects();
+
+        // Initialize UI
+        updateTable();
+        setupPagination();
+
+        // Setup event handlers
+        setupAllEventHandlers();
+
+    } catch (error) {
+        console.error('Error initializing application:', error);
+        showAlert('Failed to initialize application', 'danger');
+    }
+}
+
+// Start the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApp);
 
 
