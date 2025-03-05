@@ -1,8 +1,24 @@
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --success-color: #4CAF50;
+    --danger-color: #f72585;
+    --warning-color: #ffd60a;
+    --info-color: #00b4d8;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
 /* General body styling */
 body {
-    background-color: #f4f4f4;
-    color: #333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: var(--dark-color);
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    padding-top: 80px;
 }
 
 /* Navbar styling for better alignment and padding */
@@ -313,4 +329,303 @@ input[type="text"], select {
 }
 #alertContainer{
     z-index: 2000;
+}
+
+/* Header styling */
+.header {
+    background-color: white;
+    box-shadow: var(--box-shadow);
+    height: 70px;
+    padding: 0 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+}
+
+.header .toggle-sidebar-btn {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.header .toggle-sidebar-btn:hover {
+    color: var(--secondary-color);
+    transform: scale(1.1);
+}
+
+/* Sidebar styling */
+.sidebar {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    width: 280px;
+    padding: 1.5rem;
+    height: calc(100vh - 70px);
+    position: fixed;
+    top: 70px;
+    left: -280px;
+    transition: var(--transition);
+    z-index: 1020;
+    overflow-y: auto;
+    box-shadow: var(--box-shadow);
+}
+
+.sidebar.show {
+    left: 0;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-nav .nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.8rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Main content area */
+#main {
+    margin-left: 0;
+    padding: 2rem;
+    transition: var(--transition);
+}
+
+.sidebar.show + #main {
+    margin-left: 280px;
+}
+
+/* Card styling */
+.card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: none;
+    margin-bottom: 2rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Table styling */
+.datatable-container {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.datatable-table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.datatable-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+    border: none;
+}
+
+.datatable-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.datatable-table tbody tr:hover {
+    background-color: rgba(67, 97, 238, 0.05);
+}
+
+/* Button styling */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-add-api {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+}
+
+.btn-add-api:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+}
+
+.btn-edit {
+    background-color: var(--info-color);
+    color: white;
+    margin-right: 0.5rem;
+}
+
+.btn-delete {
+    background-color: var(--danger-color);
+    color: white;
+    margin-right: 0.5rem;
+}
+
+.btn-test {
+    background-color: var(--success-color);
+    color: white;
+}
+
+/* Form controls */
+.form-control, .form-select {
+    border-radius: var(--border-radius);
+    padding: 0.625rem 1rem;
+    border: 1px solid #dee2e6;
+    transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Alert styling */
+.alert {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 1rem;
+}
+
+/* Pagination styling */
+.datatable-pagination-list {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 1rem 0 0;
+    list-style: none;
+}
+
+.datatable-pagination-list-item button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 0.75rem;
+    border-radius: var(--border-radius);
+    background: white;
+    border: 1px solid #dee2e6;
+    color: var(--dark-color);
+    transition: var(--transition);
+}
+
+.datatable-pagination-list-item.datatable-active button {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Search and entries per page styling */
+.datatable-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.datatable-dropdown select {
+    margin-right: 0.5rem;
+}
+
+.datatable-search input {
+    min-width: 250px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .sidebar.show + #main {
+        margin-left: 0;
+    }
+
+    .datatable-top {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .datatable-search input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px;
+    }
+
+    .header {
+        height: 60px;
+        padding: 0 1rem;
+    }
+
+    #main {
+        padding: 1rem;
+    }
+
+    .btn-add-api {
+        padding: 0.5rem 1rem;
+    }
+
+    .datatable-table td, .datatable-table th {
+        padding: 0.75rem;
+    }
 }
