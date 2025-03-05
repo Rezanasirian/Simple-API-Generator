@@ -1,149 +1,330 @@
-document.addEventListener("DOMContentLoaded",async function (){
-    let apiName = window.apiName ||''
-    console.log(apiName)
-    let api_config = window.api_config || []
-    let conditionArray = api_config.conditions || [];
-    let currentPage = 1;
-    let rowsPerPage = 10;
-    let conditionCategory = ["Identification","Filter"]
+// Constants
+const API_ENDPOINT = 'http://127.0.0.1:5000/api/testRout';
+const CONDITION_CATEGORIES = ['Identification', 'Filter'];
+const MAX_COLUMNS_PER_ROW = 4;
 
-    function generateFormFields() {
-        const form = document.getElementById('api-form');
-        form.innerHTML = '';
+// State management
+let state = {
+    apiName: '',
+    apiConfig: {},
+    conditionArray: [],
+    form: null,
+    response: null,
+    sidebar: null,
+    toggleButton: null,
+    apiNameBadge: null
+};
 
-        // Create collapsible sections for each category
-        conditionCategory.forEach(category => {
-            const collapseButton = document.createElement("button");
-            collapseButton.classList.add("collapsible");
-            collapseButton.type = "button";
-            collapseButton.textContent = `${category} Parameters`;
+// Initialize the application
+function initializeApp() {
+    // Initialize state
+    state.apiName = window.apiName || '';
+    state.apiConfig = window.api_config || {};
+    state.conditionArray = initializeConditionArray(state.apiConfig.conditions);
+    
+    // Initialize DOM elements
+    state.form = document.getElementById('api-form');
+    state.response = document.getElementById('response');
+    state.sidebar = document.getElementById('sidebar');
+    state.toggleButton = document.querySelector('.toggle-sidebar-btn');
+    state.apiNameBadge = document.getElementById('apiNameBadge');
 
-            const inputGroupDiv = document.createElement("div");
-            inputGroupDiv.classList.add("content");
-            inputGroupDiv.id = category;
-
-            form.appendChild(collapseButton);
-            form.appendChild(inputGroupDiv);
-        });
-
-        // Iterate through conditions and create input fields
-        conditionArray.forEach(condition => {
-            Object.keys(condition).forEach(key => {
-                const field = condition[key];
-                const label = field.Name || key;
-
-                const input = document.createElement("input");
-                input.type = "text";
-                input.name = key;
-                input.placeholder = label;
-                input.required = true;
-
-                const inputGroup = document.createElement("div");
-
-                const inputLabel = document.createElement("label");
-                inputLabel.textContent = label;
-
-                inputGroup.appendChild(inputLabel);
-                inputGroup.appendChild(input);
-
-                const categorySection = document.getElementById(field.category);
-                let categorySectionRows = categorySection.querySelectorAll("div.row");
-
-                // If no rows exist, create a new row with a column
-                if (categorySectionRows.length === 0) {
-                    const categorySectionRow = document.createElement("div");
-                    categorySectionRow.classList.add("row");
-
-                    const categorySectionCol = document.createElement("div");
-                    categorySectionCol.classList.add("col");
-                    categorySectionCol.appendChild(inputGroup);
-
-                    categorySectionRow.appendChild(categorySectionCol);
-                    categorySection.appendChild(categorySectionRow);
-                } else {
-                    // Get the last row
-                    const lastRow = categorySectionRows[categorySectionRows.length - 1];
-                    const categorySectionCols = lastRow.querySelectorAll("div.col");
-
-                    // If the last row has less than 4 columns, append to it
-                    if (categorySectionCols.length < 4) {
-                        const categorySectionCol = document.createElement("div");
-                        categorySectionCol.classList.add("col");
-                        categorySectionCol.appendChild(inputGroup);
-                        lastRow.appendChild(categorySectionCol);
-                    } else {
-                        // Create a new row and append input into a new column
-                        const newRow = document.createElement("div");
-                        newRow.classList.add("row");
-
-                        const newCol = document.createElement("div");
-                        newCol.classList.add("col");
-                        newCol.appendChild(inputGroup);
-
-                        newRow.appendChild(newCol);
-                        categorySection.appendChild(newRow);
-                    }
-                }
-            });
-        });
-
-        // Add submit button
-        const submitButton = document.createElement("button");
-        submitButton.type = "submit";
-        submitButton.id = "submitForm";
-        submitButton.textContent = "Submit";
-        form.appendChild(submitButton);
+    if (!state.form) {
+        console.error('Form element not found');
+        return;
     }
+
+    // Initialize UI
     generateFormFields();
-    function submitForm(event) {
-      event.preventDefault();
+    setupEventListeners();
+    updateAPINameBadge();
+}
 
-      const formData = new FormData(document.getElementById('api-form'));
-      const params = {};
-
-      formData.forEach((value, key) => {
-        params[key] = value;
-      });
-
-      fetch('http://127.0.0.1:5000/api/testRout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params)
-      })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('response').textContent = JSON.stringify(data, null, 2);
-      })
-      .catch(error => {
-        document.getElementById('response').textContent = `Error: ${error.message}`;
-      });
+function initializeConditionArray(conditions) {
+    if (!Array.isArray(conditions)) {
+        if (typeof conditions === 'object' && conditions !== null) {
+            return [conditions];
+        }
+        return [];
     }
-    document.getElementById("submitForm").addEventListener('click',function (){
-        submitForm(event)
-    })
+    return conditions;
+}
 
-    document.querySelectorAll('.collapsible').forEach((button) => {
-          button.addEventListener('click', function() {
-            this.classList.toggle('active');
-            const content = this.nextElementSibling;
-            console.log("s")
-            if (content.style.display === "block") {
-              content.style.display = "none";
-            } else {
-              content.style.display = "block";
-            }
-          });
+function updateAPINameBadge() {
+    if (state.apiNameBadge && state.apiName) {
+        state.apiNameBadge.textContent = state.apiName;
+    }
+}
+
+function setupEventListeners() {
+    // Form submission
+    const submitButton = document.getElementById('submitForm');
+    if (submitButton) {
+        submitButton.addEventListener('click', handleFormSubmit);
+    }
+
+    // Collapsible sections
+    document.querySelectorAll('.collapsible').forEach(button => {
+        button.addEventListener('click', () => toggleCollapsible(button));
     });
 
+    // Sidebar toggle
+    if (state.toggleButton) {
+        state.toggleButton.addEventListener('click', toggleSidebar);
+    }
 
-    const sidebar = document.getElementById('sidebar');
-    const toggleButton = document.querySelector('.toggle-sidebar-btn');
+    // Response actions
+    const copyButton = document.getElementById('copyResponse');
+    const clearButton = document.getElementById('clearResponse');
+    
+    if (copyButton) {
+        copyButton.addEventListener('click', copyResponse);
+    }
+    if (clearButton) {
+        clearButton.addEventListener('click', clearResponse);
+    }
+}
 
-    toggleButton.addEventListener('click', function () {
-        sidebar.classList.toggle('show'); // Toggle the 'show' class to open/close the sidebar
+function generateFormFields() {
+    if (!state.form) return;
+    state.form.innerHTML = '';
+
+    // Create category sections
+    CONDITION_CATEGORIES.forEach(category => {
+        const section = createCategorySection(category);
+        state.form.appendChild(section);
+    });
+
+    // Generate input fields for each condition
+    if (Array.isArray(state.conditionArray) && state.conditionArray.length > 0) {
+        state.conditionArray.forEach(condition => {
+            if (condition && typeof condition === 'object') {
+                createConditionFields(condition);
+            }
+        });
+    } else {
+        // Show a message when no conditions are available
+        const noConditionsMessage = document.createElement('div');
+        noConditionsMessage.className = 'alert alert-info';
+        noConditionsMessage.innerHTML = '<i class="bi bi-info-circle me-2"></i>No parameters available for this API.';
+        state.form.appendChild(noConditionsMessage);
+    }
+
+    // Add submit button
+    const submitButton = createSubmitButton();
+    state.form.appendChild(submitButton);
+}
+
+function createCategorySection(category) {
+    const container = document.createElement('div');
+    container.className = 'category-section mb-4';
+
+    const button = document.createElement('button');
+    button.className = 'collapsible d-flex align-items-center justify-content-between w-100 p-3 mb-2';
+    button.type = 'button';
+    
+    const titleSpan = document.createElement('span');
+    titleSpan.innerHTML = `<i class="bi bi-${category === 'Identification' ? 'fingerprint' : 'funnel'} me-2"></i>${category} Parameters`;
+    
+    const icon = document.createElement('i');
+    icon.className = 'bi bi-chevron-down transition-transform';
+    
+    button.appendChild(titleSpan);
+    button.appendChild(icon);
+
+    const content = document.createElement('div');
+    content.className = 'content';
+    content.id = category;
+
+    container.appendChild(button);
+    container.appendChild(content);
+
+    return container;
+}
+
+function createConditionFields(condition) {
+    if (!condition || typeof condition !== 'object') return;
+
+    Object.entries(condition).forEach(([key, field]) => {
+        if (field && typeof field === 'object' && field.category) {
+            const inputGroup = createInputGroup(key, field);
+            const categorySection = document.getElementById(field.category);
+            
+            if (categorySection) {
+                addInputToGrid(categorySection, inputGroup);
+            }
+        }
+    });
+}
+
+function createInputGroup(key, field) {
+    if (!field || typeof field !== 'object') return null;
+
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'input-group mb-3';
+
+    const label = document.createElement('label');
+    label.className = 'form-label';
+    label.textContent = field.Name || key;
+
+    const input = document.createElement('input');
+    input.className = 'form-control';
+    input.type = 'text';
+    input.name = key;
+    input.placeholder = `Enter ${field.Name || key}...`;
+    input.required = true;
+    
+    if (field.lang === 'fa') {
+        input.dir = 'rtl';
+        input.lang = 'fa';
+    }
+
+    inputGroup.appendChild(label);
+    inputGroup.appendChild(input);
+
+    return inputGroup;
+}
+
+function addInputToGrid(section, inputGroup) {
+    if (!section || !inputGroup) return;
+
+    let row = section.querySelector('.row:last-child');
+    const columns = row?.querySelectorAll('.col') || [];
+
+    if (!row || columns.length >= MAX_COLUMNS_PER_ROW) {
+        row = document.createElement('div');
+        row.className = 'row g-3';
+        section.appendChild(row);
+    }
+
+    const col = document.createElement('div');
+    col.className = 'col-md-3';
+    col.appendChild(inputGroup);
+    row.appendChild(col);
+}
+
+function createSubmitButton() {
+    const button = document.createElement('button');
+    button.type = 'submit';
+    button.id = 'submitForm';
+    button.className = 'btn btn-primary d-flex align-items-center';
+    button.innerHTML = '<i class="bi bi-lightning-charge me-2"></i>Test API';
+    return button;
+}
+
+async function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    try {
+        const formData = new FormData(state.form);
+        const params = Object.fromEntries(formData.entries());
+
+        setResponseLoading(true);
+        
+        const response = await fetch(API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(params)
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-})
+        const data = await response.json();
+        displayResponse(data);
+    } catch (error) {
+        displayError(error);
+    } finally {
+        setResponseLoading(false);
+    }
+}
+
+function setResponseLoading(isLoading) {
+    if (!state.response) return;
+
+    const responseSection = document.querySelector('.response-section');
+    if (isLoading) {
+        responseSection?.classList.add('loading');
+        state.response.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+    } else {
+        responseSection?.classList.remove('loading');
+    }
+}
+
+function displayResponse(data) {
+    if (!state.response) return;
+    state.response.textContent = JSON.stringify(data, null, 2);
+}
+
+function displayError(error) {
+    if (!state.response) return;
+    state.response.innerHTML = `<div class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Error: ${error.message}</div>`;
+}
+
+function toggleCollapsible(button) {
+    if (!button) return;
+
+    button.classList.toggle('active');
+    const content = button.nextElementSibling;
+    const icon = button.querySelector('.bi-chevron-down');
+    
+    if (!content || !icon) return;
+
+    if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
+
+function toggleSidebar() {
+    state.sidebar?.classList.toggle('show');
+}
+
+async function copyResponse() {
+    if (!state.response?.textContent) return;
+
+    try {
+        await navigator.clipboard.writeText(state.response.textContent);
+        showToast('Response copied to clipboard!');
+    } catch (err) {
+        showToast('Failed to copy response', 'danger');
+    }
+}
+
+function clearResponse() {
+    if (state.response) {
+        state.response.textContent = '';
+    }
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    toast.addEventListener('hidden.bs.toast', () => toast.remove());
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApp);
