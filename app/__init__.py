@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from app.models import db, User
 from SimpleApiGenerator.app.api.routes.addApi import API_addApi_np
-# from app.api.routes.API_Edit import API_Edit_np
+from app.api.routes.API_Edit import API_Edit_np
 from app.api.routes.API_Generator import create_api_blueprint
 from SimpleApiGenerator.app.api.routes.apiPage import API_ApiList
 from SimpleApiGenerator.app.api.routes.API_conditoin import API_Condition_np
@@ -34,7 +34,7 @@ def create_app():
     #
     app.register_blueprint(API_ApiList,url_prefix='/api')
     app.register_blueprint(API_addApi_np, url_prefix='/api')
-    # app.register_blueprint(API_Edit_np, url_prefix='/api')
+    app.register_blueprint(API_Edit_np, url_prefix='/api')
     app.register_blueprint(API_Condition_np, url_prefix='/api')
     app.register_blueprint(api_config_bp, url_prefix='/api')
     app.register_blueprint(API_test_api_np, url_prefix='/api')

@@ -225,11 +225,22 @@ function setupSearchEvent() {
     const searchInput = document.querySelector('.datatable-input');
     if (!searchInput) return;
 
+    // Store the original data array
+    const originalData = [...state.dataArray];
+
     searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        state.dataArray = state.dataArray.filter(item =>
-            item.name.toLowerCase().includes(searchTerm)
-        );
+        const searchTerm = e.target.value.toLowerCase().trim();
+
+        if (searchTerm === '') {
+            // If search input is empty, restore original data
+            state.dataArray = [...originalData];
+        } else {
+            // Filter data based on search term
+            state.dataArray = originalData.filter(item =>
+                item.name.toLowerCase().includes(searchTerm)
+            );
+        }
+
         state.currentPage = 1;
         updateTable();
         setupPagination();

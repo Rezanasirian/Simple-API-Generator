@@ -7,10 +7,110 @@
         "conditions": [
             {
                 "acct_no": {
-                    "operator": "<",
+                    "Operator": "=",
+                    "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
+                    "Column": "customer_no",
+                    "IgnoreIf": "-3",
+                    "category": "Identification",
+                    "transformations": {
+                        "substring": [
+                            2,
+                            11
+                        ],
+                        "replace": [
+                            "",
+                            ""
+                        ],
+                        "trim": true,
+                        "sqlCommand": "cast as int"
+                    }
+                }
+            },
+            {
+                "re": {
+                    "action": "update_condition",
+                    "Parameter": "re",
+                    "Name": "re",
+                    "Column": "acct_no",
+                    "Operator": "=",
+                    "IgnoreIf": "-3",
+                    "transformations": {}
+                }
+            }
+        ]
+    },
+    "API_CUS_DepCustomer": {
+        "TableName": "RPT_CUS_DepCustomer",
+        "OrderBy": "cust_no",
+        "OrderType": "asc",
+        "LastUpdateTableName": "RPT_CUS_DepCustomer",
+        "conditions": [
+            {
+                "BranchNo": {
+                    "Operator": "in",
+                    "Name": "Branch Number",
+                    "Column": "branch_id",
+                    "IgnoreIf": "All",
+                    "category": "Filter",
+                    "transformations": {
+                        "cast": "varchar(20)"
+                    }
+                }
+            },
+            {
+                "BranchNo": {
+                    "Operator": "in",
+                    "Name": "Branch Number",
+                    "Column": "branch_id",
+                    "IgnoreIf": "All",
+                    "category": "Filter",
+                    "transformations": {
+                        "cast": "varchar(20)"
+                    }
+                }
+            },
+            {
+                "BranchNo": {
+                    "Operator": "in",
+                    "Name": "Branch Number",
+                    "Column": "branch_id",
+                    "IgnoreIf": "All",
+                    "category": "Filter",
+                    "transformations": {
+                        "cast": "varchar(20)"
+                    }
+                }
+            },
+            {
+                "BranchNo": {
+                    "Operator": "in",
+                    "Name": "Branch Number",
+                    "Column": "branch_id",
+                    "IgnoreIf": "All",
+                    "category": "Filter",
+                    "transformations": {
+                        "cast": "varchar(20)"
+                    }
+                }
+            },
+            {
+                "BranchNo1": {
+                    "Operator": "in",
+                    "Name": "Branch Number",
+                    "Column": "branch_id",
+                    "IgnoreIf": "All",
+                    "category": "Filter",
+                    "transformations": {
+                        "cast": "varchar(20)"
+                    }
+                }
+            },
+            {
+                "acct_no": {
+                    "Operator": "<",
                     "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
                     "Column": "acct_no",
-                    "ignoreIf": "-3",
+                    "IgnoreIf": "-3",
                     "category": "Identification",
                     "transformations": {
                         "substring": [
@@ -26,95 +126,6 @@
                     }
                 }
             }
-        ]
-    },
-    "API_CUS_DepCustomer": {
-        "TableName": "RPT_CUS_DepCustomer",
-        "OrderBy": "cust_no",
-        "OrderType": "asc",
-        "LastUpdateTableName": "RPT_CUS_DepCustomer",
-        "conditions": [
-            {
-            "BranchNo": {
-                "operator": "in",
-                "Name": "Branch Number",
-                "Column": "branch_id",
-                "ignoreIf": "All",
-                "category": "Filter",
-                "transformations": {
-                    "cast": "varchar(20)"
-                }
-            }
-        },
-        {
-            "BranchNo": {
-                "operator": "in",
-                "Name": "Branch Number",
-                "Column": "branch_id",
-                "ignoreIf": "All",
-                "category": "Filter",
-                "transformations": {
-                    "cast": "varchar(20)"
-                }
-            }
-        },
-        {
-            "BranchNo": {
-                "operator": "in",
-                "Name": "Branch Number",
-                "Column": "branch_id",
-                "ignoreIf": "All",
-                "category": "Filter",
-                "transformations": {
-                    "cast": "varchar(20)"
-                }
-            }
-        },
-             {
-            "BranchNo": {
-                "operator": "in",
-                "Name": "Branch Number",
-                "Column": "branch_id",
-                "ignoreIf": "All",
-                "category": "Filter",
-                "transformations": {
-                    "cast": "varchar(20)"
-                }
-            }
-        },
-            {
-            "BranchNo1": {
-                "operator": "in",
-                "Name": "Branch Number",
-                "Column": "branch_id",
-                "ignoreIf": "All",
-                "category": "Filter",
-                "transformations": {
-                    "cast": "varchar(20)"
-                }
-            }
-        },
-        {
-        "acct_no": {
-            "operator": "<",
-            "Name": "\u0634\u0645\u0627\u0631\u0647 \u062d\u0633\u0627\u0628",
-            "Column": "acct_no",
-            "ignoreIf": "-3",
-            "category": "Identification",
-            "transformations": {
-                "substring": [
-                    2,
-                    11
-                ],
-                "replace": [
-                    null,
-                    null
-                ],
-                "trim": true,
-                "sqlCommand": "cast as int"
-            }
-        }
-        }
         ]
     }
 }
