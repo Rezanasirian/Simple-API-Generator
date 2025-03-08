@@ -1,62 +1,111 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask import Blueprint, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from services.APIQueryBuilder import APIQueryBuilder
 from services.logger import setup_logging
+from typing import Dict, Any, List, Set
+import json
 
 # Constants
-TABLE_LIST = {'Rpt_BOM_chq', 'Rpt_BOM_BORM', 'Rpt_BOM_Riz', 'Rpt_BOM_loan', 'Rpt_BOM_Riz1'}
-COLUMN_SET = ['acct_no', 'customer_no']
-CAST_TYPES = {'int', 'varchar(20)'}
-IGNORE_IF_OPTIONS = {'All', '-3'}
-OPERATORS = {'=', '<=', '>=', 'in', '<', '>'}
-CAST_OPTIONS = {'int', 'varchar'}
+TABLE_LIST: Set[str] = {'Rpt_BOM_chq', 'Rpt_BOM_BORM', 'Rpt_BOM_Riz', 'Rpt_BOM_loan', 'Rpt_BOM_Riz1'}
+COLUMN_SET: List[str] = ['acct_no', 'customer_no']
+CAST_TYPES: Set[str] = {'int', 'varchar(20)'}
+IGNORE_IF_OPTIONS: Set[str] = {'All', '-3'}
+OPERATORS: Set[str] = {'=', '<=', '>=', 'in', '<', '>'}
+CAST_OPTIONS: Set[str] = {'int', 'varchar'}
 
 # Blueprint definition
 API_Edit_np = Blueprint('API_Edit', __name__)
+API_apiCondition_np = Blueprint('API_Edit', __name__)
 logging = setup_logging()
 
+
 @API_Edit_np.route("/edit_api/<key>", methods=['GET', 'POST'])
-# @login_required
-def edit_api(key):
-    # try:
-        # if current_user.role != 'admin' and current_user.role != 'user':
+def edit_api(key: str) -> Any:
+    """
+    Handle API editing functionality.
+
+    Args:
+        key: The API key/name to edit
+
+    Returns:
+        Rendered template or JSON response
+    """
+    try:
+        # Check user permissions
+        # if current_user.role not in ['admin', 'user']:
         #     flash('Access denied!', 'danger')
         #     return redirect(url_for('main.dashboard'))
 
         api = APIQueryBuilder('config/ApiDoc.json')
         api_prop = api.get_api_prop(key)
 
-        if request.method == "POST":
-            handle_post_request(key, request, api, api_prop)
-            api_prop = api.get_api_prop(key)
+        return render_template(
+            "index2.html",
+            tableList=list(TABLE_LIST),
+            colName=COLUMN_SET,
+            api_prop=api_prop,
+            API_Name=key,
+            TableName=api_prop['TableName'],
+            Operator=OPERATORS,
+            Column=COLUMN_SET,
+            Cast=CAST_TYPES,
+            IgnoreIf=IGNORE_IF_OPTIONS,
+            OrderBy=api_prop['OrderBy'],
+            OrderType=api_prop['OrderType'],
+            LastUpdateTableName=api_prop['LastUpdateTableName'],
+            castOptions=CAST_OPTIONS,
+            conditions=api_prop.get('conditions', {}),
+            back_to_list=True,
+            Page_name=key
+        )
 
-        return render_template("index2.html", tableList=list(TABLE_LIST),
-                               colName=COLUMN_SET,
-                               api_prop=api_prop,
-                               API_Name=key,
-                               TableName=api_prop['TableName'],
-                               Operator=OPERATORS, Column=COLUMN_SET, Cast=CAST_TYPES, IgnoreIf=IGNORE_IF_OPTIONS,
-                               OrderBy=api_prop['OrderBy'], OrderType=api_prop['OrderType'],
-                               LastUpdateTableName=api_prop['LastUpdateTableName'],
-                               castOptions=CAST_OPTIONS,
-                               conditions=api_prop.get('conditions', {}),
-                               back_to_list=True, Page_name=key)
-    # except Exception as e:
-    #     logging.error(f"Error in edit_api {key}: {e}")
-    #     return render_template("error.html", error=str(e))
-
-def handle_post_request(key, request, api, api_prop):
-    try:
-        action = request.form.get('submit')
-        if action == 'Save API Properties':
-            save_api_properties(key, request, api, api_prop)
-        # elif action in ['Add Condition', 'edit condition']:
-        #     manage_conditions(key, request, api, api_prop)
     except Exception as e:
-        logging.error(f"Error in handle_post_request {key}: {e}")
-        raise
+        logging.error(f"Error in edit_api {key}: {str(e)}")
+        flash(f"An error occurred: {str(e)}", 'danger')
+        return redirect(url_for('main.dashboard'))
 
-def save_api_properties(key, request, api, api_prop):
+
+def update_api_properties(key: str, data: Dict, api: APIQueryBuilder, api_prop: Dict) -> jsonify:
+    """
+    Update API properties from JSON data.
+
+    Args:
+        key: The API key/name
+        data: The JSON data containing new properties
+        api: The APIQueryBuilder instance
+        api_prop: The current API properties
+
+    Returns:
+        JSON response
+    """
+    try:
+        api_details = {
+            "TableName": data.get("tableName"),
+            "OrderBy": data.get("orderBy"),
+            "OrderType": data.get("orderType"),
+            "LastUpdateTableName": data.get("lastUpdateTable"),
+            "description": data.get("description"),
+            "conditions": api_prop.get('conditions', {})
+        }
+
+        api.update_api(key, api_details)
+        return jsonify({'message': 'API properties updated successfully'})
+
+    except Exception as e:
+        logging.error(f"Error in update_api_properties {key}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+def save_api_properties(key: str, request: request, api: APIQueryBuilder, api_prop: Dict) -> None:
+    """
+    Save API properties from form data.
+
+    Args:
+        key: The API key/name
+        request: The Flask request object
+        api: The APIQueryBuilder instance
+        api_prop: The current API properties
+    """
     try:
         api_details = {
             "TableName": request.form.get("TableName"),
@@ -67,69 +116,6 @@ def save_api_properties(key, request, api, api_prop):
         }
         api.update_api(key, api_details)
     except Exception as e:
-        logging.error(f"Error in save_api_properties {key}: {e}")
+        logging.error(f"Error in save_api_properties {key}: {str(e)}")
         raise
 
-# def manage_conditions(key, request, api, api_prop):
-#     try:
-#         get_parameter = request.form.get("Parameter")
-#         condition_details = construct_condition_details(request)
-#         api.update_condition(key, get_parameter, )
-#     except Exception as e:
-#         logging.error(f"Error in manage_conditions {key}: {e}")
-#         raise
-
-# def construct_condition_details(request):
-    # try:
-    #     condition_details = {
-    #         "operator": request.form.get("Operator"),
-    #         "Name": request.form.get("Name"),
-    #         "Column": request.form.get("Column"),
-    #         "ignoreIf": request.form.get("IgnoreIf"),
-    #         "transformations": {}
-    #     }
-    #
-    #     if request.form.get("castCheck"):
-    #         condition_details["transformations"]["cast"] = request.form.get("castOptions")
-    #
-    #     # Handling dynamic substrings
-    #     dynamicsubstring = []
-    #     index = 1
-    #     while True:
-    #         dynamic_length = request.form.get(f"dynamicSubstringLength-{index}")
-    #         if not dynamic_length:
-    #             break
-    #         start_index = request.form.get(f"substringStartDynamic-{index}")
-    #         length = request.form.get(f"substringLengthDynamic-{index}")
-    #         if start_index and length:
-    #             dynamicsubstring.append({
-    #                 "valuelength": dynamic_length,
-    #                 "start": int(start_index),
-    #                 "length": int(length)
-    #             })
-    #         index += 1
-    #     if dynamicsubstring:
-    #         condition_details["transformations"]["dynamicsubstring"] = dynamicsubstring
-    #
-    #     if request.form.get("substringCheck"):
-    #         condition_details["transformations"]["substring"] = [
-    #             int(request.form.get("substringStart")),
-    #             int(request.form.get("substringLength"))
-    #         ]
-    #
-    #     if request.form.get("replaceCheck"):
-    #         condition_details["transformations"]["replace"] = [
-    #             request.form.get("replaceOld"),
-    #             request.form.get("replaceNew")
-    #         ]
-    #
-    #     if request.form.get("trimCheck"):
-    #         condition_details["transformations"]["trim"] = True
-    #
-    #     if request.form.get("sqlCode"):
-    #         condition_details["sqlCommand"] = request.form.get("sqlCode")
-
-    #     return condition_details
-    # except Exception as e:
-    #     logging.error(f"Error in construct_condition_details: {e}")
-    #     raise
