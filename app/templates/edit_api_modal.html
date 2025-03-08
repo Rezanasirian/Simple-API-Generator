@@ -1,37 +1,57 @@
-<div class="modal fade" id="EditApi" tabindex="-1" aria-labelledby="EditApiLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Edit API Modal -->
+<div class="modal fade" id="EditApi" tabindex="-1" aria-labelledby="editApiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ url_for('API_Edit.edit_api', key=API_Name) }}" method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="EditApiLabel">Edit API Properties</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="TableName" class="form-label">Table Name</label>
-                        <select class="form-control" id="TableName" name="TableName"></select>
+            <div class="modal-header">
+                <h5 class="modal-title" id="editApiModalLabel">Edit API Properties</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editApiForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tableName" class="form-label">Table Name</label>
+                            <select class="form-select" id="tableName" name="tableName" required>
+                                <option value="">Select Table</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="orderBy" class="form-label">Order By</label>
+                            <select class="form-select" id="orderBy" name="orderBy" required>
+                                <option value="">Select Column</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="OrderBy" class="form-label">Order By</label>
-                        <select class="form-control" id="OrderBy" name="OrderBy"></select>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="orderType" class="form-label">Order Type</label>
+                            <select class="form-select" id="orderType" name="orderType" required>
+                                <option value="">Select Order Type</option>
+                                <option value="ASC">Ascending</option>
+                                <option value="DESC">Descending</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastUpdateTable" class="form-label">Last Update Table</label>
+                            <select class="form-select" id="lastUpdateTable" name="lastUpdateTable" required>
+                                <option value="">Select Table</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="OrderType" class="form-label">Order Type</label>
-                        <select class="form-control" id="OrderType" name="OrderType">
-                            <option value="Asc">Ascending</option>
-                            <option value="Desc">Descending</option>
-                        </select>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter API description"></textarea>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="LastUpdateTableName" class="form-label">Last Update Table Name</label>
-                        <select class="form-control" id="LastUpdateTableName" name="LastUpdateTableName"></select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" name="submit" value="Save API Properties">
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveApiProperties">Save Changes</button>
+            </div>
         </div>
     </div>
 </div>
