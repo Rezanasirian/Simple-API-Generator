@@ -1,19 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
-    let conditionList = window.apiProp["conditions"] || [];
-    console.log(conditionList)
+    let conditionList = window.apiProp["Conditions"] || [];
     let Page_name = window.Page_name;
     let conditionTable = document.querySelector("tbody"); // Targets the first tbody element
     let conditionTableHead = document.querySelector("thead")
     const operators = ['=', '!=', '>', '<', '>=', '<='];
     const columnsList = window.colName
-    console.log(columnsList)
     const ignoreIfOptions = ['-3', 'All'];
     const castOptions = ['int','varchar']
 
-    // // Constants
-    // const OPERATORS = ['=', '!=', '>', '<', '>=', '<=', 'LIKE', 'IN'];
-    // const IGNORE_IF_OPTIONS = ['NULL', 'EMPTY', 'BOTH'];
-    // const CAST_OPTIONS = ['INTEGER', 'FLOAT', 'DATE', 'DATETIME'];
 
     // State management
     let editor = null;
@@ -214,8 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize the table
     function initializeTable() {
-        const conditions = window.apiProp?.conditions || [];
-        console.log(conditions);
+        const conditions = window.apiProp?.Conditions || [];
         conditionTable.innerHTML = ''; // Clear existing rows
 
         conditions.forEach((conditionObj, index) => {
@@ -285,7 +278,6 @@ document.addEventListener("DOMContentLoaded", function () {
             maxLines: 10,
             minLines: 5
         });
-        console.log("a")
         // Setup transformation toggles
         setupTransformationToggles();
     }
@@ -440,9 +432,13 @@ document.addEventListener("DOMContentLoaded", function () {
         // Close the modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('ConditionModal'));
         modal.hide();
+        showAlert('API condition updated successfully');
+
         // Reload the page to show the new condition
-        window.location.reload();
-    })
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);    })
+
     .catch(error => {
         console.error('Error:', error);
         alert('Error saving condition: ' + error.message);
@@ -497,7 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (editBtn) {
             const id = parseInt(editBtn.dataset.id);
-            const conditions = window.apiProp.conditions;
+            const conditions = window.apiProp.Conditions;
             const conditionObj = conditions[id];
             const [parameter, condition] = Object.entries(conditionObj)[0];
             handleEditCondition(id, parameter, condition);
@@ -505,7 +501,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (deleteBtn) {
              const id = parseInt(deleteBtn.dataset.id);
-            const conditions = window.apiProp.conditions;
+            const conditions = window.apiProp.Conditions;
             const conditionObj = conditions[id];
             const [parameter, condition] = Object.entries(conditionObj)[0];
             handleDeleteCondition(parameter);
