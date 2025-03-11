@@ -384,3 +384,6 @@ body {
 .card, .alert {
     animation: fadeIn 0.3s ease-out;
 }
+#alertContainer{
+    z-index: 2000;
+}
