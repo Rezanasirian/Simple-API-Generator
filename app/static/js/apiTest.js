@@ -1,5 +1,5 @@
 // Constants
-const API_ENDPOINT = 'http://127.0.0.1:5000/api/testRout';
+const API_ENDPOINT = '/test_route';
 const CONDITION_CATEGORIES = ['Identification', 'Filter'];
 const MAX_COLUMNS_PER_ROW = 4;
 
@@ -20,8 +20,8 @@ function initializeApp() {
     // Initialize state
     state.apiName = window.apiName || '';
     state.apiConfig = window.api_config || {};
-    state.conditionArray = initializeConditionArray(state.apiConfig.conditions);
-    
+    state.conditionArray = initializeConditionArray(state.apiConfig.Conditions);
+
     // Initialize DOM elements
     state.form = document.getElementById('api-form');
     state.response = document.getElementById('response');
@@ -41,13 +41,19 @@ function initializeApp() {
 }
 
 function initializeConditionArray(conditions) {
-    if (!Array.isArray(conditions)) {
-        if (typeof conditions === 'object' && conditions !== null) {
-            return [conditions];
-        }
-        return [];
+    if (!conditions) return [];
+
+    // Handle conditions array from API config
+    if (Array.isArray(conditions)) {
+        return conditions;
     }
-    return conditions;
+
+    // Convert object to array if needed
+    if (typeof conditions === 'object' && conditions !== null) {
+        return [conditions];
+    }
+
+    return [];
 }
 
 function updateAPINameBadge() {
@@ -76,7 +82,7 @@ function setupEventListeners() {
     // Response actions
     const copyButton = document.getElementById('copyResponse');
     const clearButton = document.getElementById('clearResponse');
-    
+
     if (copyButton) {
         copyButton.addEventListener('click', copyResponse);
     }
@@ -122,13 +128,13 @@ function createCategorySection(category) {
     const button = document.createElement('button');
     button.className = 'collapsible d-flex align-items-center justify-content-between w-100 p-3 mb-2';
     button.type = 'button';
-    
+
     const titleSpan = document.createElement('span');
     titleSpan.innerHTML = `<i class="bi bi-${category === 'Identification' ? 'fingerprint' : 'funnel'} me-2"></i>${category} Parameters`;
-    
+
     const icon = document.createElement('i');
     icon.className = 'bi bi-chevron-down transition-transform';
-    
+
     button.appendChild(titleSpan);
     button.appendChild(icon);
 
@@ -149,7 +155,7 @@ function createConditionFields(condition) {
         if (field && typeof field === 'object' && field.category) {
             const inputGroup = createInputGroup(key, field);
             const categorySection = document.getElementById(field.category);
-            
+
             if (categorySection) {
                 addInputToGrid(categorySection, inputGroup);
             }
@@ -173,7 +179,7 @@ function createInputGroup(key, field) {
     input.name = key;
     input.placeholder = `Enter ${field.Name || key}...`;
     input.required = true;
-    
+
     if (field.lang === 'fa') {
         input.dir = 'rtl';
         input.lang = 'fa';
@@ -214,14 +220,17 @@ function createSubmitButton() {
 
 async function handleFormSubmit(event) {
     event.preventDefault();
-    
+
     try {
         const formData = new FormData(state.form);
         const params = Object.fromEntries(formData.entries());
 
+        // Add API name to parameters
+        params.apiName = state.apiName;
+
         setResponseLoading(true);
-        
-        const response = await fetch(API_ENDPOINT, {
+
+        const response = await fetch('/api/test_route', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -230,7 +239,8 @@ async function handleFormSubmit(event) {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'API request failed');
         }
 
         const data = await response.json();
@@ -256,7 +266,29 @@ function setResponseLoading(isLoading) {
 
 function displayResponse(data) {
     if (!state.response) return;
-    state.response.textContent = JSON.stringify(data, null, 2);
+
+    // Create a formatted response with sections
+    const formattedResponse = {
+        status: data.success ? 'Success' : 'Error',
+        database: data.database,
+        rowCount: data.RowCount,
+        lastUpdate: data.LastUpdateDate,
+        parameters: data.parameters,
+        query: data.query,
+        pagination: data.pagination,
+        results: data.Data
+    };
+
+    // Display formatted JSON with syntax highlighting
+    state.response.innerHTML = `
+        <div class="response-header mb-3">
+            <span class="badge ${data.success ? 'bg-success' : 'bg-danger'}">
+                ${formattedResponse.status}
+            </span>
+            <span class="ms-2">Row Count: ${formattedResponse.rowCount}</span>
+        </div>
+        <pre class="json-response">${JSON.stringify(formattedResponse, null, 2)}</pre>
+    `;
 }
 
 function displayError(error) {
