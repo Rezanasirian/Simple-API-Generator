@@ -29,7 +29,7 @@ def addApi():
             "OrderBy": order_by,
             "OrderType": order_type,
             "LastUpdateTableName": last_update_table_name,
-            "conditions": {}
+            "Conditions": {}
         }
 
         api.add_api(api_name, api_details)

@@ -1,9 +1,9 @@
 import json
 from typing import Dict, List, Optional, Any
 from pathlib import Path
-from services.logger import setup_logging
+from SimpleApiGenerator.services.logger import setup_logging
 
-logger = setup_logging()
+logger = setup_logging(__name__)
 
 
 class APIQueryBuilder:
@@ -71,10 +71,10 @@ class APIQueryBuilder:
             logger.error(f"API not found: {api_name}")
             raise KeyError(f"API not found: {api_name}")
 
-        if "conditions" not in all_apis[api_name]:
-            all_apis[api_name]["conditions"] = []
+        if "Conditions" not in all_apis[api_name]:
+            all_apis[api_name]["Conditions"] = []
 
-        conditions = all_apis[api_name]["conditions"]
+        conditions = all_apis[api_name]["Conditions"]
         condition_updated = False
 
         # Iterate over conditions
@@ -88,7 +88,7 @@ class APIQueryBuilder:
 
         # If no existing condition is found, add a new one
         if not condition_updated:
-            all_apis[api_name]["conditions"].append({parameter_key: updates})
+            all_apis[api_name]["Conditions"].append({parameter_key: updates})
 
         self._save_json(all_apis)
         logger.info(f"Updated condition for API {api_name}, parameter {parameter_key}")
@@ -113,7 +113,7 @@ class APIQueryBuilder:
             logger.error(f"API not found: {api_name}")
             raise KeyError(f"API not found: {api_name}")
 
-        conditions = all_apis[api_name]["conditions"]
+        conditions = all_apis[api_name]["Conditions"]
         for condition in conditions:
             if isinstance(condition, dict):
                 for key in condition.keys():
@@ -167,7 +167,7 @@ class APIQueryBuilder:
         base_query = f"SELECT * FROM HIVE.AGRIDW.{table_name}"
         condition_parts = []
 
-        for param, cond in api_config.get('conditions', {}).items():
+        for param, cond in api_config.get('Conditions', {}).items():
             if 'ignoreIf' not in cond or param != cond['ignoreIf']:
                 sql_part = self._build_condition_sql(param, cond)
                 condition_parts.append(sql_part)
