@@ -2,7 +2,7 @@ from functools import wraps
 from flask import request, g
 import time
 from flask_login import current_user
-from app.services.metrics_tracker import MetricsTracker
+from migrations.metrics_tracker import MetricsTracker
 from app.services.logger import setup_logging
 
 logger = setup_logging(__name__)

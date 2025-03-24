@@ -10,17 +10,13 @@ logger = setup_logging()
 class UserManager:
     """Service for managing users"""
     
-    def __init__(self, users_file="config/users.json"):
-        self.users_file = users_file
-        # No need to load users from JSON as we're using the database now
-    
+
     def _create_default_admin(self):
         """Create a default admin user in the database"""
         try:
             # Check if admin user already exists
             admin = User.query.filter_by(username="admin").first()
             if not admin:
-                # Create a new admin user
                 admin = User(
                     username="admin",
                     password=generate_password_hash("admin123"),  # This should be changed in production
@@ -44,11 +40,9 @@ class UserManager:
     def create_user(self, username, email=None, password=None, role="user"):
         """Create a new user"""
         try:
-            # Check if username already exists
             if self.get_user_by_username(username):
                 raise ValueError(f"Username '{username}' already exists")
             
-            # Create the user in the database
             hashed_password = generate_password_hash(password)
             user = User(
                 username=username,

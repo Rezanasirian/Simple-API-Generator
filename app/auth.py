@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-from app.models import db, User, ApiKey
+from app.models import db, ApiKey
 from app.forms import RegistrationForm, LoginForm
 from app.services.user_manager import UserManager
 from app.services.logger import setup_logging
@@ -34,7 +33,7 @@ def register():
         except ValueError as e:
             logger.error(f"Registration error: {str(e)}")
             flash(str(e), 'danger')
-    return render_template('register.html', form=form, active_page='register')
+    return render_template('auth/register.html', form=form, active_page='register')
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -191,7 +190,7 @@ def admin_dashboard():
     
     try:
         # Import metrics tracker
-        from app.services.metrics_tracker import MetricsTracker
+        from migrations.metrics_tracker import MetricsTracker
         
         # Get metrics from database
         daily_metrics = MetricsTracker.get_daily_metrics(days)
@@ -333,7 +332,7 @@ def api_metrics(api_id):
     
     try:
         # Import metrics tracker
-        from app.services.metrics_tracker import MetricsTracker
+        from migrations.metrics_tracker import MetricsTracker
         
         # Get metrics specific to this API
         daily_metrics = MetricsTracker.get_daily_metrics(days, api_id)

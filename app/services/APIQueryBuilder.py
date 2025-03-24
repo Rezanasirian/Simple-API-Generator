@@ -79,9 +79,9 @@ class APIQueryBuilder:
 
         # Iterate over conditions
         for condition in conditions:
-            if isinstance(condition, dict):  # Ensure condition is a dictionary
-                for key in condition.keys():  # Extract the parameter key (e.g., "acct_no")
-                    if key == parameter_key:  # Match the parameter key
+            if isinstance(condition, dict):
+                for key in condition.keys():
+                    if key == parameter_key:
                         condition[key] = self.deep_update(condition[key], updates)
                         condition_updated = True
                         break

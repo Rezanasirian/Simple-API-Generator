@@ -1,5 +1,4 @@
-from flask import Flask, g, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, g, request
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from app.models import db, User
@@ -13,7 +12,7 @@ from app.auth import auth as auth_blueprint
 from app.admin import admin as admin_blueprint
 # from app.main import main as main_blueprint
 from app.services.user_manager import UserManager
-from app.services.metrics_tracker import MetricsTracker
+from migrations.metrics_tracker import MetricsTracker
 from app.services.logger import setup_logging
 import time
 import os
@@ -92,7 +91,7 @@ def create_app(config=None):
         app.register_blueprint(bp, url_prefix='/api')
 
     # Create main blueprint for index page
-    from flask import Blueprint, render_template, redirect, url_for
+    from flask import Blueprint, redirect, url_for
     main = Blueprint('main', __name__)
     
     @main.route('/')
