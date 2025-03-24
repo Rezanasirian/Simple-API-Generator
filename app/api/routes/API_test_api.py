@@ -1,12 +1,13 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from services.APIQueryBuilder import APIQueryBuilder
-from services.database import query_executor, DatabaseConnectionError
-from SimpleApiGenerator.utils.construct_query import query_constructor
-from utils.update_query import update_query
-from services.logger import setup_logging
+from app.services.APIQueryBuilder import APIQueryBuilder
+from app.services.database import query_executor, DatabaseConnectionError
+from app.utils.construct_query import query_constructor
+from app.utils.update_query import update_query
+from app.services.logger import setup_logging
 from typing import Dict, Any, List, Union, Optional
 from functools import wraps
+from app.middleware.metrics import track_api_calls
 
 API_test_api_np = Blueprint('API_test_api', __name__)
 logging = setup_logging()
@@ -33,6 +34,7 @@ def handle_api_errors(f):
 
 
 @API_test_api_np.route("/test_api/<key>", methods=['GET'])
+@track_api_calls(api_id='test_api_page')
 def test_api(key: str):
     """Render the API test page."""
     try:
@@ -46,7 +48,8 @@ def test_api(key: str):
 
 
 @API_test_api_np.route("/test_route", methods=['POST'])
-# @handle_api_errors
+@handle_api_errors
+@track_api_calls(api_id='test_route')
 def test_route():
     """Execute API test with provided parameters."""
     try:
@@ -168,4 +171,23 @@ def get_row_count(
     #         count_query += ' ' + query[query.find('WHERE'):]
     #     results = query_executor.execute_query(count_query)
     #     return results[0][0] if results else 0
+
+
+@API_test_api_np.route('/apiTest')
+def apiTest():
+    try:
+        # Get API key from request
+        key = request.args.get('key', '')
+        
+        # Get API configuration
+        api = APIQueryBuilder('config/ApiDoc.json')
+        api_config = {}
+        
+        if key:
+            api_config = api.get_api_prop(key)
+        
+        return render_template("api/apiTest.html", key=key, api_config=api_config, active_page='api_test')
+    except Exception as e:
+        logging.error(f"Error in apiTest route: {e}")
+        return render_template("shared/error.html", error=str(e))
 

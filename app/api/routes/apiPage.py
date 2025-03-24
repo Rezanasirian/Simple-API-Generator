@@ -14,6 +14,7 @@ API_ApiList = Blueprint('API_ApiList', __name__)
 logger = setup_logging()
 
 @API_ApiList.route('/apiList')
+@login_required
 def apiList():
     """
     Render the API list page with all available APIs.
@@ -26,11 +27,9 @@ def apiList():
         # Add cache-control headers to prevent duplicate requests
         response = None
         
-        logger.info(f"Starting apiList route handler - Request ID: {request_id}")
         api = APIQueryBuilder('config/ApiDoc.json')
         api_list = api.API_list()
-        logger.info(f"Found {len(api_list)} APIs: {api_list}")
-        
+
         api_configs = {}
         
         for api_name in api_list:
@@ -71,9 +70,9 @@ def apiList():
             
             logger.info(f"API {api_name} config: {list(api_configs[api_name].keys())}")
         
-        # Debug print of actual data
-        logger.info(f"API List Data Type: {type(api_list)}")
-        logger.info(f"API Configs Data Type: {type(api_configs)}")
+        # # Debug print of actual data
+        # logger.info(f"API List Data Type: {type(api_list)}")
+        # logger.info(f"API Configs Data Type: {type(api_configs)}")
         
         # Ensure we have valid data
         if not api_list:
@@ -99,66 +98,6 @@ def apiList():
         logger.error(f"Error in apiList route: {e}", exc_info=True)
         return render_template("shared/error.html", error=str(e))
 
-
-@API_ApiList.route('/debug/apilist')
-def debug_apilist():
-    """
-    Debug route to test the apiList template directly with sample data.
-    """
-    try:
-        logger.info("Starting debug apiList route handler")
-        
-        # Example data
-        api_list = ["API_CUS_DepCustomer", "API_LON_Loan", "API_USR_Profile"]
-        api_configs = {
-            "API_CUS_DepCustomer": {
-                "name": "Customer API",
-                "displayName": "Customer Data API",
-                "description": "API for accessing customer data",
-                "version": "1.0.0",
-                "database": {
-                    "type": "mysql",
-                    "name": "customer_db",
-                    "table": "customers"
-                },
-                "LastUpdateTableName": "customer_updates"
-            },
-            "API_LON_Loan": {
-                "name": "Loan API",
-                "displayName": "Loan Management API",
-                "description": "API for loan processing and management",
-                "version": "2.1.0",
-                "database": {
-                    "type": "mongodb",
-                    "name": "loans_db",
-                    "table": "loans"
-                },
-                "LastUpdateTableName": "loan_updates"
-            },
-            "API_USR_Profile": {
-                "name": "User Profile API",
-                "displayName": "User Profiles API",
-                "description": "API for managing user profiles",
-                "version": "1.5.0",
-                "database": {
-                    "type": "postgresql",
-                    "name": "users_db",
-                    "table": "profiles"
-                },
-                "LastUpdateTableName": "profile_updates"
-            }
-        }
-        
-        logger.info("Rendering template with sample data")
-        return render_template("api/apiList.html",
-                              api_list=api_list,
-                              api_configs=api_configs,
-                              active_page='api_list')
-    except Exception as e:
-        logger.error(f"Error in debug apiList route: {e}", exc_info=True)
-        return render_template("shared/error.html", error=str(e))
-
-
 @API_ApiList.route('/api_details', methods=['GET'])
 def get_api_details():
     """
@@ -169,15 +108,13 @@ def get_api_details():
     """
     try:
         request_id = id(request)
-        logger.info(f"Starting get_api_details route handler - Request ID: {request_id}")
-        
+
         # Create response with cache headers
         from flask import make_response
         
         api = APIQueryBuilder('config/ApiDoc.json')
         api_configs = api._load_json()
-        logger.info(f"Loaded {len(api_configs)} API configurations")
-        
+
         # Format API details for frontend
         formatted_apis = []
         for api_id, config in api_configs.items():
@@ -498,38 +435,3 @@ def debug_page():
         logger.error(f"Error in debug_page route: {e}", exc_info=True)
         return render_template("shared/error.html", error=str(e))
 
-
-# @API_ApiList.route('/simple_list')
-# def simple_api_list():
-#     """
-#     Simplified API list page with direct template rendering.
-#     """
-#     try:
-#         logger.info("Starting simple_api_list route handler")
-#         api = APIQueryBuilder('config/ApiDoc.json')
-#         api_list = api.API_list()
-#         logger.info(f"Found {len(api_list)} APIs: {api_list}")
-        
-#         api_configs = {}
-#         for api_name in api_list:
-#             api_configs[api_name] = api.get_api_prop(api_name)
-            
-#         # Try to register custom template filter if not already registered
-#         try:
-#             from flask import current_app
-            
-#             @current_app.template_filter('pprint')
-#             def pprint_filter(value):
-#                 import pprint
-#                 return pprint.pformat(value)
-                
-#         except Exception as e:
-#             logger.warning(f"Could not register pprint filter: {e}")
-            
-#         return render_template("api/simple_list.html",
-#                               api_list=api_list,
-#                               api_configs=api_configs,
-#                               active_page='api_list')
-#     except Exception as e:
-#         logger.error(f"Error in simple_api_list route: {e}", exc_info=True)
-#         return render_template("shared/error.html", error=str(e))
