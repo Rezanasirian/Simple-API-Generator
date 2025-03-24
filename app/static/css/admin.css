@@ -1,0 +1,77 @@
+/* Admin Dashboard Styles */
+
+/* Database Settings */
+.db-type-card {
+    cursor: pointer;
+    transition: all 0.3s;
+    height: 100%;
+}
+.db-type-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+.db-type-card.active {
+    border-color: var(--primary-color);
+    background-color: rgba(var(--primary-rgb), 0.05);
+}
+.db-type-card .card-img-top {
+    height: 80px;
+    object-fit: contain;
+    padding: 1rem;
+}
+.connection-test-result {
+    transition: all 0.3s;
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 0;
+}
+.connection-test-result.show {
+    max-height: 200px;
+    margin-top: 1rem;
+}
+
+/* Admin Dashboard Cards */
+.dashboard-card {
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.card-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-color);
+}
+
+/* Metrics Dashboard */
+.metrics-card {
+    height: 100%;
+    border: none;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+.metrics-card .card-body {
+    padding: 1.5rem;
+}
+.metrics-card .card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-color);
+    margin-bottom: 1rem;
+}
+.metrics-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+.metrics-label {
+    font-size: 0.85rem;
+    color: var(--gray-color);
+}
+.chart-container {
+    position: relative;
+    height: 300px;
+} 

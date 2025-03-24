@@ -1,0 +1,150 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "api_list" %}
+
+{% block title %}API Generator - API List{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Direct page header implementation -->
+<div class="pagetitle mb-4">
+    <div class="header-container">
+        <div>
+            <h1 class="mb-0">API List</h1>
+            <nav class="mt-2">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item active">API List</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex">
+            <a href="{{ url_for('api_docs.swagger_ui') }}" class="btn btn-outline-primary me-2">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>View Documentation</span>
+            </a>
+            <button type="button" class="btn-add-api" data-bs-toggle="modal" data-bs-target="#addApiModal">
+                <i class="bi bi-plus-lg"></i>
+                <span>Add New API</span>
+            </button>
+            <a href="{{ url_for('API_ApiList.debug_page') }}" class="btn btn-outline-secondary ms-2">
+                <i class="bi bi-bug"></i>
+                <span>Debug</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                        <div class="datatable-top">
+                            <div class="datatable-dropdown">
+                                <label class="d-flex align-items-center">
+                                    Show
+                                    <select class="form-select mx-2 datatable-selector">
+                                        <option value="5">5</option>
+                                        <option value="10" selected>10</option>
+                                        <option value="15">15</option>
+                                        <option value="-1">All</option>
+                                    </select>
+                                    entries
+                                </label>
+                            </div>
+                            <div class="datatable-search">
+                                <input type="search" class="form-control datatable-input" placeholder="Search APIs...">
+                            </div>
+                        </div>
+
+                        <div class="datatable-container">
+                            <table class="table datatable-table">
+                                <thead>
+                                    <tr>
+                                        <th data-sortable="true">API Name</th>
+                                        <th data-sortable="true">Display Name</th>
+                                        <th data-sortable="true">Version</th>
+                                        <th data-sortable="true">Database Type</th>
+                                        <th data-sortable="true">Table/Collection</th>
+                                        <th data-sortable="true">Description</th>
+                                        <th data-sortable="false">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="apiTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="datatable-bottom">
+                            <div class="datatable-info"></div>
+                            <nav class="datatable-pagination">
+                                <ul class="datatable-pagination-list"></ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Alert Container -->
+<div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+
+<!-- Include Modals -->
+{% include 'modals/add_api_modal.html' %}
+{% include 'modals/edit_api_modal.html' %}
+{% endblock %}
+
+{% block scripts %}
+<!-- Data container for API data -->
+<div id="apiDataContainer" 
+     data-api-list='{{ api_list | default([]) | tojson | safe }}'
+     data-api-configs='{{ api_configs | default({}) | tojson | safe }}'
+     style="display:none;">
+</div>
+
+<!-- Database configuration data -->
+<div id="dbConfigData"
+     data-db-config='{{ db_config | default({}) | tojson | safe }}'
+     data-db-types='{{ db_types | default({}) | tojson | safe }}'
+     style="display:none;">
+</div>
+
+<script>
+    // Use a self-executing function to isolate variables
+    (function() {
+        // Check if already initialized to prevent double loading
+        if (window.apiDataInitialized) {
+            console.log('API data already initialized, skipping initialization');
+            return;
+        }
+        
+        // Mark as initialized
+        window.apiDataInitialized = true;
+        
+        // Get API data from data attributes
+        const dataContainer = document.getElementById('apiDataContainer');
+        if (!dataContainer) {
+            console.warn('API data container not found');
+            return;
+        }
+        
+        try {
+            window.apiList = JSON.parse(dataContainer.getAttribute('data-api-list') || '[]');
+            window.apiConfigs = JSON.parse(dataContainer.getAttribute('data-api-configs') || '{}');
+            
+            // For debugging
+            console.log('API List from server:', window.apiList);
+            console.log('API Configs from server:', window.apiConfigs);
+        } catch (error) {
+            console.error('Error parsing API data:', error);
+        }
+    })();
+</script>
+<script src="{{ url_for('static', filename='js/apiList.js') }}"></script>
+{% endblock %}

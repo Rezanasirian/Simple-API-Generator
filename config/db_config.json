@@ -1,0 +1,11 @@
+{
+    "db_type": "mongodb",
+    "mongo_uri": "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.8",
+    "host": "localhost",
+    "port": "1433",
+    "db_name": "app",
+    "user": "root",
+    "password": "",
+    "mongo_auth_source": "admin",
+    "mongo_auth_mechanism": "SCRAM-SHA-256"
+}

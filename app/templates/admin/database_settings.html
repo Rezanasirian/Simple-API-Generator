@@ -1,0 +1,481 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "database_settings" %}
+
+{% block title %}Database Settings - API Generator{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle mb-4">
+    <div class="header-container">
+        <div>
+            <h1>Database Settings</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.admin_dashboard') }}">Admin</a></li>
+                    <li class="breadcrumb-item active">Database Settings</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-connection" 
+                                    type="button" role="tab" aria-selected="true">
+                                <i class="bi bi-server me-1"></i> Connection Settings
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-migration" 
+                                    type="button" role="tab" aria-selected="false">
+                                <i class="bi bi-arrow-left-right me-1"></i> Migration
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-backup" 
+                                    type="button" role="tab" aria-selected="false">
+                                <i class="bi bi-cloud-download me-1"></i> Backup & Restore
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content pt-4">
+                        <div class="tab-pane fade show active" id="tab-connection" role="tabpanel">
+                            <h5 class="card-title">Database Connection Settings</h5>
+                            <p class="text-muted">Configure your database connection. Changes will require a restart of the application.</p>
+
+                            <form id="db-settings-form" action="{{ url_for('admin.save_database_settings') }}" method="POST">
+                                <!-- Database Type Selection -->
+                                <div class="mb-4">
+                                    <label class="form-label">Select Database Type</label>
+                                    <div class="row row-cols-1 row-cols-md-3 g-4 mb-3">
+                                        {% for db_key, db_info in db_types.items() %}
+                                        <div class="col">
+                                            <div class="card db-type-card h-100 {% if db_key == config.db_type %}active{% endif %}" data-db-type="{{ db_key }}">
+                                                <div class="card-body">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input db-type-radio" type="radio" name="db_type" 
+                                                               id="db-type-{{ db_key }}" value="{{ db_key }}" 
+                                                               {% if db_key == config.db_type %}checked{% endif %}>
+                                                        <label class="form-check-label" for="db-type-{{ db_key }}">
+                                                            <h5 class="card-title">{{ db_info.name }}</h5>
+                                                        </label>
+                                                    </div>
+                                                    <p class="card-text small">{{ db_info.description }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                
+                                <!-- SQLite Settings -->
+                                <div class="card mb-4 db-settings-section" id="sqlite-settings" 
+                                     style="{% if config.db_type != 'sqlite' %}display: none;{% endif %}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">SQLite Configuration</h5>
+                                        <div class="mb-3">
+                                            <label for="sqlite_path" class="form-label">Database File Path</label>
+                                            <input type="text" class="form-control" id="sqlite_path" name="sqlite_path" 
+                                                   value="{{ config.sqlite_path }}" required>
+                                            <div class="form-text">Relative to application root or absolute path</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- SQL Database Settings (MySQL, PostgreSQL, etc.) -->
+                                <div class="card mb-4 db-settings-section" id="sql-settings" 
+                                     style="{% if config.db_type not in ['mysql', 'postgresql', 'mssql', 'oracle'] %}display: none;{% endif %}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">SQL Database Configuration</h5>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="host" class="form-label">Host</label>
+                                                <input type="text" class="form-control" id="host" name="host" 
+                                                       value="{{ config.host }}" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="port" class="form-label">Port</label>
+                                                <input type="number" class="form-control" id="port" name="port" 
+                                                       value="{{ config.port }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="db_name" class="form-label">Database Name</label>
+                                                <input type="text" class="form-control" id="db_name" name="db_name" 
+                                                       value="{{ config.db_name }}" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="user" class="form-label">Username</label>
+                                                <input type="text" class="form-control" id="user" name="user" 
+                                                       value="{{ config.user }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="password" name="password" 
+                                                       value="{{ config.password }}">
+                                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- MongoDB Settings -->
+                                <div class="card mb-4 db-settings-section" id="mongodb-settings" 
+                                     style="{% if config.db_type != 'mongodb' %}display: none;{% endif %}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">MongoDB Configuration</h5>
+                                        
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" 
+                                                        data-bs-target="#basic-mongo" type="button" role="tab">
+                                                    Basic Setup
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" 
+                                                        data-bs-target="#advanced-mongo" type="button" role="tab">
+                                                    Connection URI
+                                                </button>
+                                            </li>
+                                        </ul>
+                                        
+                                        <div class="tab-content pt-3">
+                                            <div class="tab-pane fade show active" id="basic-mongo" role="tabpanel">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label for="mongo_host" class="form-label">Host</label>
+                                                        <input type="text" class="form-control" id="mongo_host" name="host" 
+                                                               value="{{ config.host }}" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="mongo_port" class="form-label">Port</label>
+                                                        <input type="number" class="form-control" id="mongo_port" name="port" 
+                                                               value="{{ config.port or '27017' }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-12">
+                                                        <label for="mongo_db_name" class="form-label">Database Name</label>
+                                                        <input type="text" class="form-control" id="mongo_db_name" name="db_name" 
+                                                               value="{{ config.db_name }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label for="mongo_user" class="form-label">Username</label>
+                                                        <input type="text" class="form-control" id="mongo_user" name="user" 
+                                                               value="{{ config.user }}">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="mongo_password" class="form-label">Password</label>
+                                                        <div class="input-group">
+                                                            <input type="password" class="form-control" id="mongo_password" name="password" 
+                                                                   value="{{ config.password }}">
+                                                            <button class="btn btn-outline-secondary toggle-password" type="button">
+                                                                <i class="bi bi-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label for="mongo_auth_source" class="form-label">Auth Source</label>
+                                                        <input type="text" class="form-control" id="mongo_auth_source" name="mongo_auth_source" 
+                                                               value="{{ config.mongo_auth_source or 'admin' }}">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="mongo_auth_mechanism" class="form-label">Auth Mechanism</label>
+                                                        <select class="form-select" id="mongo_auth_mechanism" name="mongo_auth_mechanism">
+                                                            <option value="SCRAM-SHA-256" {% if config.mongo_auth_mechanism == 'SCRAM-SHA-256' %}selected{% endif %}>SCRAM-SHA-256</option>
+                                                            <option value="SCRAM-SHA-1" {% if config.mongo_auth_mechanism == 'SCRAM-SHA-1' %}selected{% endif %}>SCRAM-SHA-1</option>
+                                                            <option value="MONGODB-CR" {% if config.mongo_auth_mechanism == 'MONGODB-CR' %}selected{% endif %}>MONGODB-CR</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="tab-pane fade" id="advanced-mongo" role="tabpanel">
+                                                <div class="mb-3">
+                                                    <label for="mongo_uri" class="form-label">MongoDB Connection URI</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="mongo_uri" name="mongo_uri" 
+                                                               value="{{ config.mongo_uri }}" placeholder="mongodb://[username:password@]host[:port]/database">
+                                                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="form-text">
+                                                        If provided, this URI will be used instead of the individual connection parameters above.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Connection String Preview -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Connection String Preview</h5>
+                                        <div class="alert alert-info">
+                                            <code id="connection-string-preview">{{ config.uri }}</code>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-primary" id="test-connection-btn">
+                                            <i class="bi bi-check-circle me-1"></i> Test Connection
+                                        </button>
+                                        <div class="alert connection-test-result" id="connection-test-result">
+                                            <i class="bi me-1"></i> <span id="connection-test-message"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="button" class="btn btn-outline-secondary me-md-2" onclick="location.reload()">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-1"></i> Save Configuration
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Migration Tab -->
+                        <div class="tab-pane fade" id="tab-migration" role="tabpanel">
+                            <h5 class="card-title">Database Migration</h5>
+                            <p class="text-muted mb-4">
+                                Migrate your data between different database systems. 
+                                Make sure to back up your data before performing migrations.
+                            </p>
+                            
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Warning:</strong> Database migration is a complex operation that may take time 
+                                and could potentially lead to data loss if not performed correctly. 
+                                Please ensure you have a backup before proceeding.
+                            </div>
+                            
+                            <form id="migration-form" action="{{ url_for('admin.migrate_database') }}" method="POST">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Source Database</h6>
+                                                <!-- Source database selection fields - similar to connection settings -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Database Type</label>
+                                                    <select class="form-select" name="source_db_type" required>
+                                                        {% for db_key, db_info in db_types.items() %}
+                                                        <option value="{{ db_key }}" {% if db_key == config.db_type %}selected{% endif %}>
+                                                            {{ db_info.name }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <!-- Simplified connection parameters for brevity -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Connection String/Path</label>
+                                                    <input type="text" class="form-control" name="source_connection" 
+                                                           value="{{ config.uri }}" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-arrow-right" style="font-size: 2rem;"></i>
+                                    </div>
+                                    
+                                    <div class="col-md-5">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Target Database</h6>
+                                                <!-- Target database selection fields -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Database Type</label>
+                                                    <select class="form-select" name="target_db_type" required>
+                                                        {% for db_key, db_info in db_types.items() %}
+                                                        <option value="{{ db_key }}">{{ db_info.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <!-- Simplified connection parameters for brevity -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Connection String/Path</label>
+                                                    <input type="text" class="form-control" name="target_connection" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="migration-confirm" required>
+                                        <label class="form-check-label" for="migration-confirm">
+                                            I understand the risks and have backed up my data
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="submit" class="btn btn-danger" id="start-migration-btn" disabled>
+                                            <i class="bi bi-database-fill-gear me-1"></i> Start Migration
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Backup Tab -->
+                        <div class="tab-pane fade" id="tab-backup" role="tabpanel">
+                            <h5 class="card-title">Backup & Restore</h5>
+                            <p class="text-muted mb-4">
+                                Create backups of your database and restore from previous backups if needed.
+                            </p>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Create Backup</h6>
+                                            <p class="small text-muted">
+                                                Create a backup of your current database. 
+                                                Backups are stored in the backup directory.
+                                            </p>
+                                            <form action="{{ url_for('admin.backup_database') }}" method="POST">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Backup Description</label>
+                                                    <input type="text" class="form-control" name="backup_description" 
+                                                           placeholder="Optional description">
+                                                </div>
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="include_config" id="include-config" checked>
+                                                    <label class="form-check-label" for="include-config">
+                                                        Include configuration files in backup
+                                                    </label>
+                                                </div>
+                                                <div class="d-grid">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-download me-1"></i> Create Backup
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Restore from Backup</h6>
+                                            <p class="small text-muted">
+                                                Restore your database from a previous backup.
+                                                This will replace your current data.
+                                            </p>
+                                            <form action="{{ url_for('admin.restore_database') }}" method="POST">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Select Backup</label>
+                                                    <select class="form-select" name="backup_file" required>
+                                                        <option value="">-- Select a backup file --</option>
+                                                        {% for backup in backups %}
+                                                        <option value="{{ backup.filename }}">
+                                                            {{ backup.date }} - {{ backup.description or 'No description' }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="restore-confirm" required>
+                                                    <label class="form-check-label" for="restore-confirm">
+                                                        I understand this will overwrite current data
+                                                    </label>
+                                                </div>
+                                                <div class="d-grid">
+                                                    <button type="submit" class="btn btn-warning" id="restore-btn" disabled>
+                                                        <i class="bi bi-cloud-upload me-1"></i> Restore Backup
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Available Backups</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Description</th>
+                                                    <th>Size</th>
+                                                    <th>Database Type</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if backups %}
+                                                    {% for backup in backups %}
+                                                    <tr>
+                                                        <td>{{ backup.date }}</td>
+                                                        <td>{{ backup.description or '-' }}</td>
+                                                        <td>{{ backup.size }}</td>
+                                                        <td>{{ backup.db_type }}</td>
+                                                        <td>
+                                                            <div class="d-flex gap-2">
+                                                                <a href="{{ url_for('admin.download_backup', filename=backup.filename) }}" 
+                                                                   class="btn btn-sm btn-outline-primary">
+                                                                    <i class="bi bi-download"></i>
+                                                                </a>
+                                                                <form action="{{ url_for('admin.delete_backup') }}" method="POST" 
+                                                                      onsubmit="return confirm('Are you sure you want to delete this backup?');">
+                                                                    <input type="hidden" name="backup_file" value="{{ backup.filename }}">
+                                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">No backups available</td>
+                                                    </tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin/database-settings.js') }}"></script>
+{% endblock %} 

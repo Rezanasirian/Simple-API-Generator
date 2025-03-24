@@ -1,0 +1,259 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "debug" %}
+
+{% block title %}API Generator - Debug{% endblock %}
+
+{% block content %}
+<!-- Direct page header implementation -->
+<div class="pagetitle mb-4">
+    <div class="header-container">
+        <div>
+            <h1 class="mb-0">API Debug</h1>
+            <nav class="mt-2">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('API_ApiList.apiList') }}">API List</a></li>
+                    <li class="breadcrumb-item active">Debug</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex">
+            <a href="{{ url_for('API_ApiList.apiList') }}" class="btn btn-outline-primary">
+                <i class="bi bi-list"></i>
+                <span>Back to API List</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <!-- Test API Endpoints -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>API Endpoint Tests</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Troubleshooting Help:</strong> Use these buttons to test different parts of the API system.
+                    </div>
+                    
+                    <div class="btn-group mb-3">
+                        <button id="testApiDetailsBtn" class="btn btn-info">Test API Details Endpoint</button>
+                        <a href="{{ url_for('API_ApiList.debug_api_json') }}" class="btn btn-warning" target="_blank">View Raw API JSON</a>
+                        <a href="{{ url_for('API_ApiList.debug_apilist') }}" class="btn btn-success" target="_blank">View Debug API List</a>
+                    </div>
+                    
+                    <div id="apiDetailsResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Raw API Data -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Raw API Data</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6>Data Container Status:</h6>
+                        <div id="dataContainerStatus"></div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>API List ({{ api_list|length }} items):</h6>
+                        <div class="border p-3 bg-light">
+                            <pre>{{ api_list | tojson(indent=2) }}</pre>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h6>API Configs:</h6>
+                        <div class="border p-3 bg-light">
+                            <pre>{{ api_configs | tojson(indent=2) }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- API Configuration File -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>API Configuration File Path</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-secondary">
+                        <code>{{ api_config_path }}</code>
+                    </div>
+                    <button id="validateJsonBtn" class="btn btn-primary">Validate JSON Structure</button>
+                    <div id="validateResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!-- Data container for API data -->
+<div id="apiDataContainer" 
+     data-api-list='{{ api_list | default([]) | tojson | safe }}'
+     data-api-configs='{{ api_configs | default({}) | tojson | safe }}'
+     style="display:none;">
+</div>
+
+<script>
+    // Get API data from data attributes
+    const dataContainer = document.getElementById('apiDataContainer');
+    window.apiList = JSON.parse(dataContainer.getAttribute('data-api-list') || '[]');
+    window.apiConfigs = JSON.parse(dataContainer.getAttribute('data-api-configs') || '{}');
+    
+    // For debugging
+    console.log('API List from server:', window.apiList);
+    console.log('API Configs from server:', window.apiConfigs);
+    
+    // Update data container status
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusDiv = document.getElementById('dataContainerStatus');
+        if (statusDiv) {
+            let status = '<div class="alert alert-success">Data container initialized successfully.</div>';
+            
+            if (!window.apiList || window.apiList.length === 0) {
+                status = '<div class="alert alert-warning">API List is empty or not initialized properly.</div>';
+            }
+            
+            if (!window.apiConfigs || Object.keys(window.apiConfigs).length === 0) {
+                status += '<div class="alert alert-warning">API Configs is empty or not initialized properly.</div>';
+            }
+            
+            statusDiv.innerHTML = status;
+        }
+        
+        // Attach JSON validation handler
+        const validateJsonBtn = document.getElementById('validateJsonBtn');
+        if (validateJsonBtn) {
+            validateJsonBtn.addEventListener('click', function() {
+                try {
+                    const validateResult = document.getElementById('validateResult');
+                    
+                    // Check if API list and configs are valid
+                    if (Array.isArray(window.apiList) && typeof window.apiConfigs === 'object') {
+                        // Check if each API in apiList has a matching config
+                        const missingConfigs = window.apiList.filter(api => !window.apiConfigs[api]);
+                        
+                        if (missingConfigs.length > 0) {
+                            validateResult.innerHTML = `
+                                <div class="alert alert-warning">
+                                    <strong>Warning:</strong> The following APIs are in the list but don't have configurations:
+                                    <ul>
+                                        ${missingConfigs.map(api => `<li>${api}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        } else {
+                            validateResult.innerHTML = `
+                                <div class="alert alert-success">
+                                    <strong>Success:</strong> JSON structure is valid. All APIs have proper configurations.
+                                </div>
+                            `;
+                        }
+                    } else {
+                        validateResult.innerHTML = `
+                            <div class="alert alert-danger">
+                                <strong>Error:</strong> Invalid data structure. API list should be an array and configs should be an object.
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error validating JSON:', error);
+                }
+            });
+        }
+    });
+    
+    // Handle API fetch errors
+    window.addEventListener('error', function(event) {
+        console.error('Error event:', event.error);
+    });
+    
+    // Log network errors
+    function logNetworkActivity() {
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            console.log('Fetching:', url, options);
+            return originalFetch(url, options)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response;
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    throw error;
+                });
+        }
+    }
+    
+    logNetworkActivity();
+    
+    // Test API Details endpoint
+    document.getElementById('testApiDetailsBtn')?.addEventListener('click', function() {
+        const resultDiv = document.getElementById('apiDetailsResult');
+        resultDiv.innerHTML = '<div class="alert alert-info">Testing API details endpoint...</div>';
+        
+        // Test each possible URL
+        const urls = ['/api_details', '/api/api_details', '/api/apiList/api_details'];
+        
+        Promise.all(urls.map(url => 
+            fetch(url)
+                .then(response => ({
+                    url,
+                    status: response.status,
+                    ok: response.ok,
+                    text: response.ok ? response.text() : Promise.resolve('Error')
+                }))
+                .then(result => 
+                    result.text.then(text => ({
+                        url: result.url,
+                        status: result.status,
+                        ok: result.ok,
+                        body: text
+                    }))
+                )
+                .catch(error => ({
+                    url,
+                    error: error.toString()
+                }))
+        ))
+        .then(results => {
+            let html = '<div class="alert alert-info">Results:</div>';
+            
+            results.forEach(result => {
+                if(result.error) {
+                    html += `<div class="alert alert-danger">
+                        <strong>${result.url}:</strong> ${result.error}
+                    </div>`;
+                } else if(result.ok) {
+                    html += `<div class="alert alert-success">
+                        <strong>${result.url}:</strong> Success (${result.status})
+                        <pre>${result.body.substring(0, 200)}${result.body.length > 200 ? '...' : ''}</pre>
+                    </div>`;
+                } else {
+                    html += `<div class="alert alert-warning">
+                        <strong>${result.url}:</strong> Failed (${result.status})
+                    </div>`;
+                }
+            });
+            
+            resultDiv.innerHTML = html;
+        });
+    });
+</script>
+{% endblock %} 

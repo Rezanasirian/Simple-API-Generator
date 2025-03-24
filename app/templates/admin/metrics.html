@@ -1,0 +1,243 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "admin_metrics" %}
+{% set url_for_security = ['auth.api_metrics'] %}
+
+{% block title %}API Metrics - Admin Dashboard{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle mb-4">
+    <div class="header-container">
+        <div>
+            <h1>API Metrics Dashboard</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('auth.admin_dashboard') }}">Admin</a></li>
+                    <li class="breadcrumb-item active">API Metrics</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <form method="get" class="d-flex gap-2">
+                <select name="period" class="form-select" onchange="this.form.submit()">
+                    <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+                    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
+                    <option value="90" {% if days == 90 %}selected{% endif %}>Last 90 days</option>
+                    <option value="365" {% if days == 365 %}selected{% endif %}>Last year</option>
+                </select>
+            </form>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <!-- Overview Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card info-card">
+                <div class="card-body">
+                    <h5 class="card-title">Total API Calls</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ daily_metrics.total_calls }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card info-card success-card">
+                <div class="card-body">
+                    <h5 class="card-title">Success Rate</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="ps-3">
+                            {% set success_rate = 0 %}
+                            {% if daily_metrics.total_calls > 0 %}
+                                {% set success_rate = (daily_metrics.successful_calls / daily_metrics.total_calls) * 100 %}
+                            {% endif %}
+                            <h6>{{ success_rate | round(2) }}%</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card info-card warning-card">
+                <div class="card-body">
+                    <h5 class="card-title">Avg Response Time</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-stopwatch"></i>
+                        </div>
+                        <div class="ps-3">
+                            {% set avg_time = 0 %}
+                            {% set count = 0 %}
+                            {% for api_id, metrics in api_metrics.items() %}
+                                {% if metrics.average_response_time > 0 %}
+                                    {% set avg_time = avg_time + metrics.average_response_time %}
+                                    {% set count = count + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if count > 0 %}
+                                {% set avg_time = avg_time / count %}
+                            {% endif %}
+                            <h6>{{ avg_time | round(3) }}s</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card info-card danger-card">
+                <div class="card-body">
+                    <h5 class="card-title">Error Count</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ daily_metrics.failed_calls }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- API Usage Chart -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">API Usage <span>| {{ days }} days</span></h5>
+                    <canvas id="apiUsageChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Performance Table -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">API Performance</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>API</th>
+                                    <th>Calls</th>
+                                    <th>Avg Time</th>
+                                    <th>Error %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for api in api_performance %}
+                                <tr onclick="window.location='{{ url_for('auth.api_metrics', api_id=api.api_id) }}'" style="cursor:pointer">
+                                    <td>{{ api.api_id }}</td>
+                                    <td>{{ api.total_calls }}</td>
+                                    <td>{{ api.avg_response_time | round(3) }}s</td>
+                                    <td>
+                                        <span class="badge {% if api.error_rate > 0.1 %}bg-danger{% elif api.error_rate > 0.05 %}bg-warning{% else %}bg-success{% endif %}">
+                                            {{ (api.error_rate * 100) | round(1) }}%
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No API metrics available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Daily Activity Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Daily API Activity</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Total Calls</th>
+                                    <th>Success</th>
+                                    <th>Failed</th>
+                                    <th>Success Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for date, data in daily_metrics.daily_data.items() %}
+                                <tr>
+                                    <td>{{ date }}</td>
+                                    <td>{{ data.total_calls }}</td>
+                                    <td>{{ data.successful_calls }}</td>
+                                    <td>{{ data.failed_calls }}</td>
+                                    <td>
+                                        {% set success_rate = 0 %}
+                                        {% if data.total_calls > 0 %}
+                                            {% set success_rate = (data.successful_calls / data.total_calls) * 100 %}
+                                        {% endif %}
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ success_rate }}%" 
+                                                aria-valuenow="{{ success_rate }}" aria-valuemin="0" aria-valuemax="100">
+                                                {{ success_rate | round(1) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No daily metrics available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Hidden elements to store chart data #}
+<div class="d-none">
+    <div id="chart-dates">{{ dates|tojson }}</div>
+    <div id="chart-api-calls">{{ api_calls|tojson }}</div>
+    <div id="chart-success-calls">{{ success_calls|tojson }}</div>
+    <div id="chart-error-calls">{{ error_calls|tojson }}</div>
+    
+    {% if api_performance %}
+    <div id="api-ids">{{ api_performance|map(attribute='api_id')|list|tojson }}</div>
+    <div id="api-response-times">{{ api_performance|map(attribute='avg_response_time')|list|tojson }}</div>
+    <div id="api-error-rates">{{ api_performance|map(attribute='error_rate')|list|tojson }}</div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin/metrics-dashboard.js') }}"></script>
+{% endblock %} 

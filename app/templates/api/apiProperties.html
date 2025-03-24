@@ -1,0 +1,35 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "api_list" %}
+
+{% block title %}API Properties - API Generator{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle mb-4">
+    <div class="header-container">
+        <div>
+            <h1>API Properties</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('API_ApiList.apiList') }}">API List</a></li>
+                    <li class="breadcrumb-item active">API Properties</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12">
+            <!-- API Properties Form will go here -->
+        </div>
+    </div>
+</section>
+{% endblock %}

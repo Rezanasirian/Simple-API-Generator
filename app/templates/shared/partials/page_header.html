@@ -1,0 +1,58 @@
+<!-- 
+Page Header Component with Title and Breadcrumb
+
+USAGE EXAMPLES (this is documentation, do not copy directly):
+
+Example 1 - Using a with block:
+```jinja
+{% with 
+    title='Page Title',
+    breadcrumb_items=[
+        {'url': url_for('main.index'), 'text': 'Home'}, 
+        {'text': 'Current Page'}
+    ],
+    action_buttons='<button class="btn btn-primary">Action</button>'
+%}
+    {% include 'shared/partials/page_header.html' %}
+{% endwith %}
+```
+
+Example 2 - Setting variables before include:
+```jinja
+{% set title = 'Page Title' %}
+{% set breadcrumb_items = [
+    {'url': url_for('main.index'), 'text': 'Home'}, 
+    {'text': 'Current Page'}
+] %}
+{% set action_buttons = '<button class="btn btn-primary">Action</button>' %}
+{% include 'shared/partials/page_header.html' %}
+```
+
+PARAMETERS:
+- title: Page title (required)
+- breadcrumb_items: List of breadcrumb items (required)
+- action_buttons: Optional HTML for action buttons
+-->
+<div class="pagetitle mb-4">
+    <div class="header-container">
+        <div>
+            <h1 class="mb-0">{{ title }}</h1>
+            <nav class="mt-2">
+                <ol class="breadcrumb">
+                    {% for item in breadcrumb_items %}
+                        {% if item.url %}
+                            <li class="breadcrumb-item"><a href="{{ item.url }}">{{ item.text }}</a></li>
+                        {% else %}
+                            <li class="breadcrumb-item active">{{ item.text }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            </nav>
+        </div>
+        {% if action_buttons %}
+        <div class="d-flex">
+            {{ action_buttons|safe }}
+        </div>
+        {% endif %}
+    </div>
+</div> 

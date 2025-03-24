@@ -1,0 +1,84 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "api_docs" %}
+
+{% block title %}API Documentation - API Generator{% endblock %}
+
+{% block extra_head %}
+<!-- Swagger UI CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css">
+<style>
+    .swagger-ui .topbar {
+        display: none;
+    }
+    .swagger-ui .info {
+        margin: 30px 0;
+    }
+    .swagger-container {
+        margin: 0;
+        padding: 0;
+    }
+    .swagger-ui .scheme-container {
+        background: #fff;
+        box-shadow: none;
+        padding: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle mb-4">
+    <div class="header-container">
+        <div>
+            <h1>API Documentation</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li class="breadcrumb-item active">API Documentation</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a href="{{ url_for('api_docs.export_swagger') }}" class="btn btn-outline-primary">
+                <i class="bi bi-download"></i> Export Swagger
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <div id="swagger-ui" class="swagger-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<!-- Swagger UI JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js"></script>
+<script>
+    window.onload = function() {
+        const ui = SwaggerUIBundle({
+            spec: {{ swagger_spec | safe }},
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+            ],
+            layout: "StandaloneLayout",
+            docExpansion: "list",
+            defaultModelsExpandDepth: 1,
+            defaultModelExpandDepth: 1,
+            displayRequestDuration: true
+        });
+        window.ui = ui;
+    };
+</script>
+{% endblock %} 

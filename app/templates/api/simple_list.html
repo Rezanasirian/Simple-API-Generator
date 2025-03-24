@@ -1,0 +1,116 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "api_list" %}
+
+{% block title %}API Generator - Simple API List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Simple page header without using the include -->
+    <div class="mb-4">
+        <h1>API List</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+                <li class="breadcrumb-item active">API List</li>
+            </ol>
+        </nav>
+        <div class="mt-2">
+            <a href="{{ url_for('api_docs.swagger_ui') }}" class="btn btn-outline-primary me-2">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>View Documentation</span>
+            </a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addApiModal">
+                <i class="bi bi-plus-lg"></i> Add New API
+            </button>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>API List</h3>
+                </div>
+                <div class="card-body">
+                    <p>Found {{ api_list|length }} APIs</p>
+                    
+                    {% if api_list and api_list|length > 0 %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>API ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Version</th>
+                                    <th>Database</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for api_id in api_list %}
+                                    {% set config = api_configs.get(api_id, {}) %}
+                                    <tr>
+                                        <td>{{ api_id }}</td>
+                                        <td>{{ config.get('name', api_id) }}</td>
+                                        <td>{{ config.get('description', 'No description') }}</td>
+                                        <td>{{ config.get('version', '1.0.0') }}</td>
+                                        <td>
+                                            {% if config.database %}
+                                                {{ config.database.get('type', 'N/A') }} / 
+                                                {{ config.database.get('table', 'N/A') }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="/api/edit/{{ api_id }}" class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="/api/test?key={{ api_id }}" class="btn btn-sm btn-info mx-1">
+                                                    <i class="bi bi-play"></i>
+                                                </a>
+                                                <button onclick="if(confirm('Delete this API?')) location.href='/api/delete/{{ api_id }}';" class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            No APIs found. Click "Add New API" to create one.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Debug Information</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5>API List ({{ api_list|length }} items):</h5>
+                        <pre class="bg-light p-3">{{ api_list|pprint }}</pre>
+                    </div>
+                    
+                    <div>
+                        <h5>API Configs:</h5>
+                        <pre class="bg-light p-3">{{ api_configs|pprint }}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Modals -->
+{% include 'modals/add_api_modal.html' %}
+{% endblock %} 
