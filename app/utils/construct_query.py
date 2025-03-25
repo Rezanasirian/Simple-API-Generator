@@ -123,9 +123,9 @@ class QueryConstructor:
         
         if fields:
             field_list = ", ".join(fields)
-            base_query = f"SELECT {field_list} FROM {db_config['database']}.{db_config['table']}"
+            base_query = f"SELECT {field_list} FROM {db_config['name']}.{db_config['table']}"
         else:
-            base_query = f"SELECT * FROM {db_config['database']}.{db_config['table']}"
+            base_query = f"SELECT * FROM {db_config['name']}.{db_config['table']}"
         
         # Add conditions
         condition_parts = []
@@ -180,22 +180,21 @@ class QueryConstructor:
         query = {}
         
         # Build the filter criteria
-        for condition_group in api_config.get('Conditions', []):
-            for param_name, condition_config in condition_group.items():
-                if param_name in parameters:
-                    param_value = parameters[param_name]
-                    
-                    # Skip if parameter should be ignored
-                    if param_value == condition_config.get('IgnoreIf'):
-                        continue
-                    
-                    column = condition_config.get('Column')
-                    operator = condition_config.get('Operator')
-                    
-                    # Convert SQL operator to MongoDB operator and add to query
-                    mongo_operator = self._sql_to_mongo_operator(operator)
-                    query[column] = {mongo_operator: param_value}
-        
+        for condition_group in api_config.get('conditions', []):
+            if condition_group.get('parameter') in parameters:
+                param_value = parameters[condition_group.get('parameter')]
+
+                # Skip if parameter should be ignored
+                # if param_value == condition_config.get('IgnoreIf'):
+                #     continue
+
+                column = condition_group.get('column')
+                operator = condition_group.get('operator')
+
+                # Convert SQL operator to MongoDB operator and add to query
+                mongo_operator = self._sql_to_mongo_operator(operator)
+                query[column] = {mongo_operator: param_value}
+
         return query
         
     def _build_condition(self, api_config: Dict[str, Any], param_name: str, param_value: Any) -> str:

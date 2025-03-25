@@ -4,7 +4,7 @@ from app.services.APIQueryBuilder import APIQueryBuilder
 from app.services.logger import setup_logging
 from app.services.database import query_executor, DatabaseConnectionError
 from app.services.connection_configs import DatabaseType
-from app.config.database import DatabaseConfig
+from config.database import DatabaseConfig
 import json
 import traceback
 from typing import Dict, Any, List, Optional, Union

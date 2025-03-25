@@ -98,6 +98,14 @@
 <!-- Include Modals -->
 {% include 'modals/add_api_modal.html' %}
 {% include 'modals/edit_api_modal.html' %}
+<!-- Your main content here -->
+
+<!-- Include separated modals -->
+{% include 'modals/condition_modal.html' %}
+<!-- Other modals would be included in a similar way -->
+
+<!-- Include JavaScript files -->
+
 {% endblock %}
 
 {% block scripts %}
@@ -146,5 +154,5 @@
         }
     })();
 </script>
-<script src="{{ url_for('static', filename='js/apiList.js') }}"></script>
+
 {% endblock %}
