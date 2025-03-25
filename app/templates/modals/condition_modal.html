@@ -9,6 +9,7 @@
             <div class="modal-body">
                 <form id="conditionForm">
                     <input type="hidden" name="action" value="add_condition">
+                    <input type="hidden" id="conditionIndex" name="conditionIndex" value="-1">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="Parameter" class="form-label">Parameter</label>
@@ -112,7 +113,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="saveCondition">Save Condition</button>
+                        <button type="button" class="btn btn-primary" id="saveConditionBtn">Save Condition</button>
                     </div>
                 </form>
             </div>

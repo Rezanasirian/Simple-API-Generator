@@ -190,67 +190,67 @@
         </div>
     </div>
 </div>
-
-<!-- Add Condition Modal -->
-<div class="modal fade" id="addConditionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Condition</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="conditionForm">
-                    <input type="hidden" id="conditionIndex" value="-1">
-                    <div class="mb-3">
-                        <label for="conditionParameter" class="form-label">Parameter Name</label>
-                        <input type="text" class="form-control" id="conditionParameter" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionDisplayName" class="form-label">Display Name</label>
-                        <input type="text" class="form-control" id="conditionDisplayName">
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionColumn" class="form-label">Column</label>
-                        <select class="form-select column-select" id="conditionColumn" required>
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionOperator" class="form-label">Operator</label>
-                        <select class="form-select" id="conditionOperator" required>
-                            <option value="=">=</option>
-                            <option value="<"><</option>
-                            <option value=">">></option>
-                            <option value="<="><=</option>
-                            <option value=">=">>=</option>
-                            <option value="!=">!=</option>
-                            <option value="like">LIKE</option>
-                            <option value="in">IN</option>
-                            <option value="not in">NOT IN</option>
-                            <option value="between">BETWEEN</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionType" class="form-label">Data Type</label>
-                        <select class="form-select" id="conditionType" required>
-                            <option value="string">String</option>
-                            <option value="integer">Integer</option>
-                            <option value="float">Float</option>
-                            <option value="boolean">Boolean</option>
-                            <option value="date">Date</option>
-                            <option value="array">Array</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveConditionBtn">Save</button>
-            </div>
-        </div>
-    </div>
-</div>
+{##}
+{#<!-- Add Condition Modal -->#}
+{#<div class="modal fade" id="addConditionModal" tabindex="-1" aria-hidden="true">#}
+{#    <div class="modal-dialog">#}
+{#        <div class="modal-content">#}
+{#            <div class="modal-header">#}
+{#                <h5 class="modal-title">Add Condition</h5>#}
+{#                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#            </div>#}
+{#            <div class="modal-body">#}
+{#                <form id="conditionForm">#}
+{#                    <input type="hidden" id="conditionIndex" value="-1">#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionParameter" class="form-label">Parameter Name</label>#}
+{#                        <input type="text" class="form-control" id="conditionParameter" required>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionDisplayName" class="form-label">Display Name</label>#}
+{#                        <input type="text" class="form-control" id="conditionDisplayName">#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionColumn" class="form-label">Column</label>#}
+{#                        <select class="form-select column-select" id="conditionColumn" required>#}
+{#                            <!-- Populated dynamically -->#}
+{#                        </select>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionOperator" class="form-label">Operator</label>#}
+{#                        <select class="form-select" id="conditionOperator" required>#}
+{#                            <option value="=">=</option>#}
+{#                            <option value="<"><</option>#}
+{#                            <option value=">">></option>#}
+{#                            <option value="<="><=</option>#}
+{#                            <option value=">=">>=</option>#}
+{#                            <option value="!=">!=</option>#}
+{#                            <option value="like">LIKE</option>#}
+{#                            <option value="in">IN</option>#}
+{#                            <option value="not in">NOT IN</option>#}
+{#                            <option value="between">BETWEEN</option>#}
+{#                        </select>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionType" class="form-label">Data Type</label>#}
+{#                        <select class="form-select" id="conditionType" required>#}
+{#                            <option value="string">String</option>#}
+{#                            <option value="integer">Integer</option>#}
+{#                            <option value="float">Float</option>#}
+{#                            <option value="boolean">Boolean</option>#}
+{#                            <option value="date">Date</option>#}
+{#                            <option value="array">Array</option>#}
+{#                        </select>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#            <div class="modal-footer">#}
+{#                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>#}
+{#                <button type="button" class="btn btn-primary" id="saveConditionBtn">Save</button>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
 
 <!-- Add Transformation Modal -->
 <div class="modal fade" id="addTransformationModal" tabindex="-1" aria-hidden="true">
@@ -329,17 +329,11 @@
     // Add event listeners when the document is ready
     document.addEventListener('DOMContentLoaded', function() {
         // Condition buttons
-        document.getElementById('addConditionBtn').addEventListener('click', function() {
-            const conditionModal = new bootstrap.Modal(document.getElementById('addConditionModal'));
-            document.getElementById('conditionIndex').value = -1;
-            document.getElementById('conditionForm').reset();
-            conditionModal.show();
-        });
-        
+
         document.getElementById('saveConditionBtn').addEventListener('click', function() {
             saveCondition();
         });
-        
+
         // Transformation buttons
         document.getElementById('addTransformationBtn').addEventListener('click', function() {
             const transformationModal = new bootstrap.Modal(document.getElementById('addTransformationModal'));
@@ -359,30 +353,30 @@
     });
     
     // Functions to handle conditions and transformations
-    function saveCondition() {
-        const index = parseInt(document.getElementById('conditionIndex').value);
-        const condition = {
-            parameter: document.getElementById('conditionParameter').value,
-            display_name: document.getElementById('conditionDisplayName').value,
-            column: document.getElementById('conditionColumn').value,
-            operator: document.getElementById('conditionOperator').value,
-            type: document.getElementById('conditionType').value
-        };
-        
-        if (index === -1) {
-            // Add new condition
-            currentConditions.push(condition);
-        } else {
-            // Update existing condition
-            currentConditions[index] = condition;
-        }
-        
-        // Update the conditions table
-        updateConditionsTable();
-        
-        // Close modal
-        bootstrap.Modal.getInstance(document.getElementById('addConditionModal')).hide();
-    }
+    {#function saveCondition() {#}
+    {#    const index = parseInt(document.getElementById('conditionIndex').value);#}
+    {#    const condition = {#}
+    {#        parameter: document.getElementById('conditionParameter').value,#}
+    {#        display_name: document.getElementById('conditionDisplayName').value,#}
+    {#        column: document.getElementById('conditionColumn').value,#}
+    {#        operator: document.getElementById('conditionOperator').value,#}
+    {#        type: document.getElementById('conditionType').value#}
+    {#    };#}
+    {#    #}
+    {#    if (index === -1) {#}
+    {#        // Add new condition#}
+    {#        currentConditions.push(condition);#}
+    {#    } else {#}
+    {#        // Update existing condition#}
+    {#        currentConditions[index] = condition;#}
+    {#    }#}
+    {#    #}
+    {#    // Update the conditions table#}
+    {#    updateConditionsTable();#}
+    {#    #}
+    {#    // Close modal#}
+    {#    bootstrap.Modal.getInstance(document.getElementById('ConditionModal')).hide();#}
+    {#}#}
     
     function updateConditionsTable() {
         const conditionsTableBody = document.getElementById('conditionsTableBody');
@@ -481,7 +475,7 @@
         document.getElementById('conditionOperator').value = condition.operator;
         document.getElementById('conditionType').value = condition.type;
         
-        const conditionModal = new bootstrap.Modal(document.getElementById('addConditionModal'));
+        const conditionModal = new bootstrap.Modal(document.getElementById('ConditionModal'));
         conditionModal.show();
     }
     
