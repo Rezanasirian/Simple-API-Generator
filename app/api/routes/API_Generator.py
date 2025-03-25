@@ -31,7 +31,7 @@ def handle_api_errors(f):
         except Exception as e:
             logger.error(f"Unexpected error: {e}", exc_info=True)
             return jsonify({
-                "error": "Internal server error", 
+                "error": "Internal server error",
                 "details": str(e),
                 "trace": traceback.format_exc() if request.args.get('debug') == '1' else None
             }), 500
@@ -122,7 +122,7 @@ def execute_database_query(
     if db_type == DatabaseType.MONGODB.value:
         return query_executor.execute_query(
             query=query,
-            database=db_config.get('database'),
+            database=db_config.get('name'),
             collection=db_config.get('table')
         )
     else:  # SQL databases (Trino, MySQL)
@@ -147,7 +147,7 @@ def get_row_count(
 
     if db_type == DatabaseType.MONGODB.value:
         collection = query_executor.mongo_db.get_collection(
-            db_config['database'],
+            db_config['name'],
             db_config['table']
         )
         return collection.count_documents(query)
@@ -170,12 +170,14 @@ def format_response_data(results: List[Dict[str, Any]], api_config: Dict[str, An
     Returns:
         Formatted response data
     """
-    response_config = api_config.get('response', {})
-    fields = response_config.get('fields', [])
-    transformations = response_config.get('transformations', {})
+    # response_config = api_config.get('response', {})
+    fields = api_config.get('response_fields', [])
+    transformations = api_config.get('transformations', {})
     
     # If no fields specified, return all fields
     if not fields:
+        for result in results:
+            result.pop('_id')
         return results
     
     formatted_results = []
@@ -225,14 +227,14 @@ def create_api_blueprint(name: str, config: Dict[str, Any]) -> Blueprint:
     bp = Blueprint(name, __name__)
 
     @bp.route("/" + name, methods=['POST'])
-    @handle_api_errors
+    # @handle_api_errors
     def handle_api():
         """Handle API requests."""
         try:
             # Parse request data
             body_data = request.get_data()
             body_data_json = request.get_json() or {}
-
+            logger.info('body_data_json',body_data_json)
             # Validate request data
             is_valid, error = validate_request_data(body_data_json, config)
             if not is_valid:
@@ -264,8 +266,8 @@ def create_api_blueprint(name: str, config: Dict[str, Any]) -> Blueprint:
             
             if order_direction not in ['ASC', 'DESC']:
                 order_direction = default_order_direction
-
             # Construct query
+            logger.debug(body_data_json)
             query = query_constructor.construct_query(
                 api_name=name,
                 parameters=body_data_json,
@@ -274,15 +276,16 @@ def create_api_blueprint(name: str, config: Dict[str, Any]) -> Blueprint:
                 order_by=order_by,
                 order_direction=order_direction
             )
-
             # Execute query
             results = execute_database_query(query, db_config)
-            
             # Format response data based on configuration
+            # results[0].pop('_id')
             formatted_results = format_response_data(results, config)
 
             # Get total count
             total_count = get_row_count(query, db_config)
+
+
 
             # Prepare response
             response_data = {

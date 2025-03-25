@@ -5,9 +5,9 @@
         "version": "1.0.0",
         "database": {
             "type": "mongodb",
-            "name": "",
-            "table": "",
-            "last_update_table": null
+            "name": "testReza",
+            "table": "people",
+            "last_update_table": "people"
         },
         "pagination": {
             "enabled": true,
@@ -23,16 +23,16 @@
             "enabled": false,
             "ttl": 60
         },
-        "Conditions": [
+        "conditions": [
             {
                 "Founded_year": {
                     "action": "update_condition",
-                    "Parameter": "Founded_year",
-                    "Name": "Founded Year",
+                    "parameter": "Founded_year",
+                    "name": "Founded Year",
                     "display_name": "Founded Year",
-                    "Column": "founded_year",
-                    "Operator": "=",
-                    "IgnoreIf": "-3",
+                    "column": "founded_year",
+                    "operator": "=",
+                    "ignoreIf": "-3",
                     "required": false,
                     "data_type": "integer",
                     "category": "Identification",
@@ -46,12 +46,12 @@
             {
                 "month": {
                     "action": "update_condition",
-                    "Parameter": "month",
-                    "Name": "Month",
+                    "parameter": "month",
+                    "name": "Month",
                     "display_name": "Month",
-                    "Column": "founded_month",
-                    "Operator": "=",
-                    "IgnoreIf": "-3",
+                    "column": "founded_month",
+                    "operator": "=",
+                    "ignoreIf": "-3",
                     "required": false,
                     "data_type": "integer",
                     "category": "Identification",
@@ -65,12 +65,12 @@
             {
                 "category_code": {
                     "action": "update_condition",
-                    "Parameter": "category_code",
-                    "Name": "Category Code",
+                    "parameter": "category_code",
+                    "name": "Category Code",
                     "display_name": "Category Code",
-                    "Column": "category_code",
-                    "Operator": "=",
-                    "IgnoreIf": "All",
+                    "column": "category_code",
+                    "operator": "=",
+                    "ignoreIf": "All",
                     "required": false,
                     "data_type": "string",
                     "category": "Identification",
@@ -89,236 +89,6 @@
             "transformations": {
                 "founded_date": "CONCAT(founded_year, '-', founded_month, '-01')"
             }
-        },
-        "response_fields": [],
-        "conditions": [
-            {
-                "parameter": "aaa",
-                "display_name": "aaa",
-                "column": "",
-                "operator": "=",
-                "type": "string"
-            }
-        ],
-        "transformations": []
-    },
-    "API_CUS_DepCustomer": {
-        "name": "Customer Deposit API",
-        "description": "Retrieves customer deposit information from MySQL database",
-        "version": "1.0.0",
-        "database": {
-            "type": "mysql",
-            "table": "RPT_CUS_DepCustomer",
-            "database": "banking"
-        },
-        "pagination": {
-            "enabled": true,
-            "default_limit": 50,
-            "max_limit": 100
-        },
-        "ordering": {
-            "default_field": "cust_no",
-            "default_direction": "ASC"
-        },
-        "LastUpdateTableName": "RPT_CUS_DepCustomer",
-        "cache": {
-            "enabled": false,
-            "ttl_seconds": 3600
-        },
-        "Conditions": [
-            {
-                "BranchNo": {
-                    "action": "update_condition",
-                    "Parameter": "BranchNo",
-                    "Name": "Branch Number",
-                    "display_name": "Branch Number",
-                    "Column": "branch_id",
-                    "Operator": "in",
-                    "IgnoreIf": "All",
-                    "required": false,
-                    "data_type": "string",
-                    "category": "Filter",
-                    "transformations": {
-                        "cast": "varchar(20)"
-                    }
-                }
-            },
-            {
-                "acct_no": {
-                    "action": "update_condition",
-                    "Parameter": "acct_no",
-                    "Name": "Account Number",
-                    "display_name": "Account Number",
-                    "Column": "acct_no",
-                    "Operator": "<",
-                    "IgnoreIf": "-3",
-                    "required": false,
-                    "data_type": "string",
-                    "category": "Identification",
-                    "transformations": {
-                        "substring": [
-                            2,
-                            11
-                        ],
-                        "replace": [
-                            null,
-                            null
-                        ],
-                        "trim": true,
-                        "sqlCommand": "cast as int"
-                    },
-                    "validation": {
-                        "min_length": 5,
-                        "max_length": 20,
-                        "pattern": "^[0-9]+"
-                    }
-                }
-            }
-        ],
-        "response": {
-            "fields": [
-                "cust_no",
-                "acct_no",
-                "branch_id",
-                "balance",
-                "last_activity_date"
-            ],
-            "transformations": {}
         }
-    },
-    "API_titanic": {
-        "name": "\u062a\u0627\u06cc\u062a\u0627\u0646\u06cc\u06a9",
-        "version": "1.0.0",
-        "description": "",
-        "tags": "name",
-        "database": {
-            "type": "mongodb",
-            "name": "testReza",
-            "table": "titanic",
-            "last_update_table": "titanic"
-        },
-        "pagination": {
-            "enabled": true,
-            "default_limit": 10,
-            "max_limit": 100
-        },
-        "ordering": {
-            "default_field": "Name",
-            "default_direction": "ASC"
-        },
-        "cache": {
-            "enabled": false,
-            "ttl": 60
-        },
-        "response_fields": [
-            "PassengerId",
-            "Survived",
-            "Pclass",
-            "Name",
-            "Sex",
-            "Age",
-            "SibSp",
-            "Parch",
-            "Ticket"
-        ],
-        "conditions": [],
-        "transformations": []
-    },
-    "API_TITANIC": {
-        "name": "API_TITANIC",
-        "version": "1.0.0",
-        "description": "",
-        "tags": "",
-        "database": {
-            "type": "mongodb",
-            "name": "testReza",
-            "table": "titanic",
-            "last_update_table": "titanic"
-        },
-        "pagination": {
-            "enabled": true,
-            "default_limit": 10,
-            "max_limit": 100
-        },
-        "ordering": {
-            "default_field": "",
-            "default_direction": "ASC"
-        },
-        "cache": {
-            "enabled": false,
-            "ttl": 60
-        },
-        "response_fields": [
-            "PassengerId",
-            "Survived",
-            "Pclass",
-            "Name",
-            "Sex",
-            "Age",
-            "SibSp",
-            "Parch",
-            "Ticket",
-            "Fare",
-            "Embarked"
-        ],
-        "conditions": [],
-        "transformations": []
-    },
-    "API_cus": {
-        "name": "API_cus_People",
-        "version": "1.0.0",
-        "description": "",
-        "tags": "",
-        "database": {
-            "type": "mongodb",
-            "name": "testReza",
-            "table": "people",
-            "last_update_table": null
-        },
-        "pagination": {
-            "enabled": true,
-            "default_limit": 10,
-            "max_limit": 100
-        },
-        "ordering": {
-            "default_field": "name",
-            "default_direction": "ASC"
-        },
-        "cache": {
-            "enabled": false,
-            "ttl": 60
-        },
-        "response_fields": [
-            "name",
-            "isActive",
-            "registered",
-            "age",
-            "gender",
-            "company"
-        ],
-        "conditions": [
-            {
-                "column": "name",
-                "display_name": "\u0646\u0627\u0645",
-                "operator": "like",
-                "parameter": "Name",
-                "type": "string"
-            },
-            {
-                "column": "age",
-                "display_name": "\u0633\u0646",
-                "operator": "=",
-                "parameter": "Age",
-                "type": "integer"
-            }
-        ],
-        "transformations": [
-            {
-                "source": "name",
-                "type": "format_number",
-                "target": "name",
-                "params": ""
-            }
-        ]
     }
 }

@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash
 from app.models import db, User
 from app.forms import RegistrationForm
 from app.services.user_manager import UserManager
-from app.config.database import DatabaseConfig
+from config.database import DatabaseConfig
 import os
 import json
 import tempfile

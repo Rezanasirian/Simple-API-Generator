@@ -161,7 +161,7 @@ def get_row_count(
 
     if db_type == 'mongodb':
         collection = query_executor.mongo_db.get_collection(
-            db_config['database'],
+            db_config['name'],
             db_config['table']
         )
         return collection.count_documents(query)
