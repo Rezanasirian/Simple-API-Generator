@@ -1,0 +1,217 @@
+<div class="modal fade" id="apiModal" tabindex="-1" aria-labelledby="apiModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="apiModalLabel">Add or Edit API</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form id="apiForm">
+          <!-- Field to track mode: "add" or "edit" -->
+          <input type="hidden" id="apiMode" value="add">
+          <!-- Hidden field for existing API ID if editing -->
+          <input type="hidden" id="apiIdHidden" value="">
+
+          <!-- (Optional) For "add" mode, we want a user-defined ID -->
+          <div id="apiIdContainer" class="mb-3" style="display: none;">
+            <label for="apiIdInput" class="form-label">API ID (For New APIs)</label>
+            <input type="text" class="form-control" id="apiIdInput" placeholder="Unique ID (e.g. API_CUS_Customer)">
+            <small class="text-muted">Required when creating a new API.</small>
+          </div>
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-selected="true">
+                General
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database" type="button" role="tab" aria-selected="false">
+                Database
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="pagination-tab" data-bs-toggle="tab" data-bs-target="#pagination" type="button" role="tab" aria-selected="false">
+                Pagination & Ordering
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="cache-tab" data-bs-toggle="tab" data-bs-target="#cache" type="button" role="tab" aria-selected="false">
+                Cache
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="response-tab" data-bs-toggle="tab" data-bs-target="#response" type="button" role="tab" aria-selected="false">
+                Response
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="conditions-tab" data-bs-toggle="tab" data-bs-target="#conditions" type="button" role="tab" aria-selected="false">
+                API Conditions
+              </button>
+            </li>
+          </ul>
+
+          <!-- Tab content -->
+          <div class="tab-content">
+            <!-- GENERAL TAB -->
+            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="apiName" class="form-label">API Display Name</label>
+                  <input type="text" class="form-control" id="apiName" placeholder="My Awesome API">
+                </div>
+                <div class="col-md-6">
+                  <label for="apiVersion" class="form-label">Version</label>
+                  <input type="text" class="form-control" id="apiVersion" placeholder="1.0.0">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="apiDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="apiDescription" rows="3" placeholder="Describe the API..."></textarea>
+              </div>
+            </div>
+
+            <!-- DATABASE TAB -->
+            <div class="tab-pane fade" id="database" role="tabpanel" aria-labelledby="database-tab">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="databaseType" class="form-label">Database Type</label>
+                  <select class="form-select" id="databaseType">
+                    <option value="">Select DB Type</option>
+                    <option value="mongodb">MongoDB</option>
+                    <option value="mysql">MySQL</option>
+                    <option value="trino">Trino</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="databaseName" class="form-label">Database Name</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="databaseName">
+                    <button class="btn btn-outline-primary" type="button" onclick="loadDatabaseTables(document.getElementById('databaseType').value, 'tableSelect', 'lastUpdateTable')">
+                      <i class="bi bi-arrow-repeat"></i> Load Tables
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="tableSelect" class="form-label">Table/Collection</label>
+                  <select class="form-select" id="tableSelect">
+                    <option value="">Select Table/Collection</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="lastUpdateTable" class="form-label">Last Update Table</label>
+                  <select class="form-select" id="lastUpdateTable">
+                    <option value="">Select Last Update Table</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGINATION & ORDERING TAB -->
+            <div class="tab-pane fade" id="pagination" role="tabpanel" aria-labelledby="pagination-tab">
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="enablePagination">
+                <label class="form-check-label" for="enablePagination">Enable Pagination</label>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="defaultLimit" class="form-label">Default Limit</label>
+                  <input type="number" class="form-control" id="defaultLimit" value="10" min="1">
+                </div>
+                <div class="col-md-6">
+                  <label for="maxLimit" class="form-label">Max Limit</label>
+                  <input type="number" class="form-control" id="maxLimit" value="100" min="1">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="defaultOrderField" class="form-label">Default Order Field</label>
+                  <select class="form-select" id="defaultOrderField">
+                    <option value="">Select Field</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="defaultOrderDirection" class="form-label">Order Direction</label>
+                  <select class="form-select" id="defaultOrderDirection">
+                    <option value="ASC">ASC</option>
+                    <option value="DESC">DESC</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- CACHE TAB -->
+            <div class="tab-pane fade" id="cache" role="tabpanel" aria-labelledby="cache-tab">
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="enableCache">
+                <label class="form-check-label" for="enableCache">Enable Caching</label>
+              </div>
+              <div class="mb-3">
+                <label for="cacheTTL" class="form-label">Cache TTL (seconds)</label>
+                <input type="number" class="form-control" id="cacheTTL" value="60" min="1">
+              </div>
+            </div>
+
+            <!-- RESPONSE TAB -->
+            <div class="tab-pane fade" id="response" role="tabpanel" aria-labelledby="response-tab">
+              <div class="mb-3">
+                <label for="responseFields" class="form-label">Response Fields</label>
+                <select class="form-select column-select" id="responseFields" multiple size="10">
+                  <!-- Dynamically loaded columns if you want -->
+                </select>
+                <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Transformations</label>
+                <div id="transformationsContainer">
+                  <!-- transformation cards appear here -->
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addTransformationBtn">
+                  <i class="bi bi-plus"></i> Add Transformation
+                </button>
+              </div>
+            </div>
+
+            <!-- CONDITIONS TAB -->
+            <div class="tab-pane fade" id="conditions" role="tabpanel" aria-labelledby="conditions-tab">
+              <h5>API Conditions</h5>
+              <table class="table table-sm table-striped">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Display Name</th>
+                    <th>Column</th>
+                    <th>Operator</th>
+                    <th>Data Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="conditionsTableBody">
+                  <!-- condition rows appended here -->
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-outline-primary btn-sm" id="addConditionBtn">
+                <i class="bi bi-plus"></i> Add Condition
+              </button>
+            </div>
+          </div><!-- .tab-content -->
+
+        </form><!-- #apiForm -->
+      </div><!-- .modal-body -->
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <!-- Single button for create or save -->
+        <button type="button" class="btn btn-primary" id="apiModalActionBtn">Create/Save</button>
+      </div>
+    </div>
+  </div>
+</div>

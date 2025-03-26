@@ -21,8 +21,11 @@ from flask_login import current_user, login_required
       <!-- Core JavaScript -->
       <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
       <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
-      <script src="{{ url_for('static', filename='js/apiList.js') }}" defer></script>
-       <script src="{{ url_for('static', filename='js/condition_modal.js') }}"></script>
+{#      <script src="{{ url_for('static', filename='js/apiList.js') }}" defer></script>#}
+         <script type="module" src="{{ url_for('static', filename='js/main/main.js') }}" defer></script>
+{#        <script type="module" src="js/main/main.js"></script>#}
+
+{#       <script src="{{ url_for('static', filename='js/condition_modal.js') }}"></script>#}
 
 
       <!-- Additional Scripts -->
@@ -133,11 +136,11 @@ from flask_login import current_user, login_required
       </main>
 
       <!-- Footer -->
-      <footer id="footer" class="footer">
-         <div class="copyright">
-            &copy; 2023 <strong><span>API Generator</span></strong>. All Rights Reserved
-         </div>
-      </footer>
+{#      <footer id="footer" class="footer">#}
+{#         <div class="copyright">#}
+{#            &copy; 2023 <strong><span>API Generator</span></strong>. All Rights Reserved#}
+{#         </div>#}
+{#      </footer>#}
 
       <!-- Back to top button -->
       <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
