@@ -75,7 +75,7 @@ from flask_login import current_user, login_required
       </header>
 
       <!-- Sidebar -->
-      <aside id="sidebar" class="sidebar">
+      <aside id="sidebar" class="sidebar collapsed">
          <ul class="sidebar-nav">
             <li class="nav-item">
                <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ url_for('API_ApiList.apiList') }}">
@@ -127,13 +127,13 @@ from flask_login import current_user, login_required
       </aside>
     {% endif %}
       <!-- Main Content -->
-      <main id="main" class="main">
+      <div id="main" class="main">
          <!-- Flash Messages -->
          {% include 'shared/partials/alerts.html' %}
          
          <!-- Page Content -->
          {% block content %}{% endblock %}
-      </main>
+      </div>
 
       <!-- Footer -->
 {#      <footer id="footer" class="footer">#}
