@@ -1,546 +1,546 @@
-<!-- Edit API Modal -->
-<div class="modal fade" id="EditApi" tabindex="-1" aria-labelledby="EditApiLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="EditApiLabel">Edit API</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editApiForm">
-                    <input type="hidden" id="editApiId" name="api_id">
-                    
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs mb-3" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">General</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database" type="button" role="tab" aria-controls="database" aria-selected="false">Database</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pagination-tab" data-bs-toggle="tab" data-bs-target="#pagination" type="button" role="tab" aria-controls="pagination" aria-selected="false">Pagination & Ordering</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="cache-tab" data-bs-toggle="tab" data-bs-target="#cache" type="button" role="tab" aria-controls="cache" aria-selected="false">Cache</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="response-tab" data-bs-toggle="tab" data-bs-target="#response" type="button" role="tab" aria-controls="response" aria-selected="false">Response</button>
-                        </li>
-                    </ul>
-                    
-                    <!-- Tab content -->
-                    <div class="tab-content">
-                        <!-- General Tab -->
-                        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="editApiName" class="form-label">Display Name</label>
-                                    <input type="text" class="form-control" id="editApiName" name="name" placeholder="API display name">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="editApiVersion" class="form-label">Version</label>
-                                    <input type="text" class="form-control" id="editApiVersion" name="version" placeholder="1.0.0">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="editApiDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="editApiDescription" name="description" rows="3" placeholder="Description of the API"></textarea>
-                            </div>
-                        </div>
-                        
-                        <!-- Database Tab -->
-                        <div class="tab-pane fade" id="database" role="tabpanel" aria-labelledby="database-tab">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="editDatabaseType" class="form-label">Database Type</label>
-                                    <select class="form-select" id="editDatabaseType" name="database_type" onchange="loadDatabaseTables(this.value)">
-                                        <option value="">Select Database Type</option>
-                                        <option value="mongodb">MongoDB</option>
-                                        <option value="mysql">MySQL</option>
-                                        <option value="trino">Trino</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="editDatabaseName" class="form-label">Database Name</label>
-                                    <input type="text" class="form-control" id="editDatabaseName" name="database_name" placeholder="Database name">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="editTable" class="form-label">Table/Collection</label>
-                                    <select class="form-select" id="editTable" name="table" onchange="loadTableColumns(this.value)">
-                                        <option value="">Select Table/Collection</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="editLastUpdateTable" class="form-label">Last Update Table (optional)</label>
-                                    <select class="form-select" id="editLastUpdateTable" name="last_update_table">
-                                        <option value="">Select Last Update Table</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Pagination & Ordering Tab -->
-                        <div class="tab-pane fade" id="pagination" role="tabpanel" aria-labelledby="pagination-tab">
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="enablePagination" name="enable_pagination">
-                                    <label class="form-check-label" for="enablePagination">Enable Pagination</label>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="defaultLimit" class="form-label">Default Limit</label>
-                                    <input type="number" class="form-control" id="defaultLimit" name="default_limit" value="10" min="1">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="maxLimit" class="form-label">Maximum Limit</label>
-                                    <input type="number" class="form-control" id="maxLimit" name="max_limit" value="100" min="1">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="defaultOrderField" class="form-label">Default Order Field</label>
-                                    <select class="form-select column-select" id="defaultOrderField" name="default_order_field">
-                                        <option value="">Select Field</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="defaultOrderDirection" class="form-label">Default Order Direction</label>
-                                    <select class="form-select" id="defaultOrderDirection" name="default_order_direction">
-                                        <option value="ASC">Ascending</option>
-                                        <option value="DESC">Descending</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Cache Tab -->
-                        <div class="tab-pane fade" id="cache" role="tabpanel" aria-labelledby="cache-tab">
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="enableCache" name="enable_cache">
-                                    <label class="form-check-label" for="enableCache">Enable Caching</label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="cacheTTL" class="form-label">Cache TTL (seconds)</label>
-                                <input type="number" class="form-control" id="cacheTTL" name="cache_ttl" value="60" min="1">
-                            </div>
-                        </div>
-                        
-                        <!-- Response Tab -->
-                        <div class="tab-pane fade" id="response" role="tabpanel" aria-labelledby="response-tab">
-                            <div class="mb-3">
-                                <label for="responseFields" class="form-label">Response Fields</label>
-                                <select class="form-select column-select" id="responseFields" name="response_fields" multiple size="10">
-                                    <!-- Populated dynamically -->
-                                </select>
-                                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple fields</small>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Response Transformations</label>
-                                <div id="transformationsContainer">
-                                    <!-- Transformations will be added here -->
-                                </div>
-                                <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addTransformationBtn">
-                                    <i class="bi bi-plus"></i> Add Transformation
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- API Conditions -->
-                    <div class="mt-4">
-                        <h5>API Conditions</h5>
-                        <table class="table table-sm table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Parameter</th>
-                                    <th>Display Name</th>
-                                    <th>Column</th>
-                                    <th>Operator</th>
-                                    <th>Data Type</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="conditionsTableBody">
-                                <!-- Conditions will be added here -->
-                            </tbody>
-                        </table>
-                        <button type="button" class="btn btn-outline-primary btn-sm" id="addConditionBtn">
-                            <i class="bi bi-plus"></i> Add Condition
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveApiBtn">Save Changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add Condition Modal -->
-<div class="modal fade" id="addConditionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Condition</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="conditionForm">
-                    <input type="hidden" id="conditionIndex" value="-1">
-                    <div class="mb-3">
-                        <label for="conditionParameter" class="form-label">Parameter Name</label>
-                        <input type="text" class="form-control" id="conditionParameter" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionDisplayName" class="form-label">Display Name</label>
-                        <input type="text" class="form-control" id="conditionDisplayName">
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionColumn" class="form-label">Column</label>
-                        <select class="form-select column-select" id="conditionColumn" required>
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionOperator" class="form-label">Operator</label>
-                        <select class="form-select" id="conditionOperator" required>
-                            <option value="=">=</option>
-                            <option value="<"><</option>
-                            <option value=">">></option>
-                            <option value="<="><=</option>
-                            <option value=">=">>=</option>
-                            <option value="!=">!=</option>
-                            <option value="like">LIKE</option>
-                            <option value="in">IN</option>
-                            <option value="not in">NOT IN</option>
-                            <option value="between">BETWEEN</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="conditionType" class="form-label">Data Type</label>
-                        <select class="form-select" id="conditionType" required>
-                            <option value="string">String</option>
-                            <option value="integer">Integer</option>
-                            <option value="float">Float</option>
-                            <option value="boolean">Boolean</option>
-                            <option value="date">Date</option>
-                            <option value="array">Array</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveConditionBtn">Save</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add Transformation Modal -->
-<div class="modal fade" id="addTransformationModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Transformation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="transformationForm">
-                    <input type="hidden" id="transformationIndex" value="-1">
-                    <div class="mb-3">
-                        <label for="transformationSource" class="form-label">Source Field</label>
-                        <select class="form-select column-select" id="transformationSource" required>
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="transformationType" class="form-label">Transformation Type</label>
-                        <select class="form-select" id="transformationType" required>
-                            <option value="format_date">Format Date</option>
-                            <option value="format_number">Format Number</option>
-                            <option value="map">Map Values</option>
-                            <option value="concat">Concatenate</option>
-                            <option value="custom">Custom Function</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="transformationTarget" class="form-label">Target Field</label>
-                        <input type="text" class="form-control" id="transformationTarget" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="transformationParams" class="form-label">Parameters (JSON)</label>
-                        <textarea class="form-control" id="transformationParams" rows="4"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveTransformationBtn">Save</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript to handle conditions and transformations -->
-<script>
-    // Will be initialized when the edit modal opens
-    let currentConditions = [];
-    let currentTransformations = [];
-    
-    // Add event listeners when the document is ready
-    document.addEventListener('DOMContentLoaded', function() {
-        // Condition buttons
-        document.getElementById('addConditionBtn').addEventListener('click', function() {
-            const conditionModal = new bootstrap.Modal(document.getElementById('addConditionModal'));
-            document.getElementById('conditionIndex').value = -1;
-            document.getElementById('conditionForm').reset();
-            conditionModal.show();
-        });
-        
-        document.getElementById('saveConditionBtn').addEventListener('click', function() {
-            saveCondition();
-        });
-        
-        // Transformation buttons
-        document.getElementById('addTransformationBtn').addEventListener('click', function() {
-            const transformationModal = new bootstrap.Modal(document.getElementById('addTransformationModal'));
-            document.getElementById('transformationIndex').value = -1;
-            document.getElementById('transformationForm').reset();
-            transformationModal.show();
-        });
-        
-        document.getElementById('saveTransformationBtn').addEventListener('click', function() {
-            saveTransformation();
-        });
-        
-        // Save API button
-        document.getElementById('saveApiBtn').addEventListener('click', function() {
-            saveApi();
-        });
-    });
-    
-    // Functions to handle conditions and transformations
-    function saveCondition() {
-        const index = parseInt(document.getElementById('conditionIndex').value);
-        const condition = {
-            parameter: document.getElementById('conditionParameter').value,
-            display_name: document.getElementById('conditionDisplayName').value,
-            column: document.getElementById('conditionColumn').value,
-            operator: document.getElementById('conditionOperator').value,
-            type: document.getElementById('conditionType').value
-        };
-        
-        if (index === -1) {
-            // Add new condition
-            currentConditions.push(condition);
-        } else {
-            // Update existing condition
-            currentConditions[index] = condition;
-        }
-        
-        // Update the conditions table
-        updateConditionsTable();
-        
-        // Close modal
-        bootstrap.Modal.getInstance(document.getElementById('addConditionModal')).hide();
-    }
-    
-    function updateConditionsTable() {
-        const conditionsTableBody = document.getElementById('conditionsTableBody');
-        conditionsTableBody.innerHTML = '';
-        
-        currentConditions.forEach((condition, index) => {
-            const row = document.createElement('tr');
-            row.dataset.index = index;
-            
-            row.innerHTML = `
-                <td>${condition.parameter}</td>
-                <td>${condition.display_name || condition.parameter}</td>
-                <td>${condition.column}</td>
-                <td>${condition.operator}</td>
-                <td>${condition.type}</td>
-                <td>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-primary me-1" onclick="editCondition(${index})">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteCondition(${index})">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            `;
-            
-            conditionsTableBody.appendChild(row);
-        });
-    }
-    
-    function saveTransformation() {
-        const index = parseInt(document.getElementById('transformationIndex').value);
-        const transformation = {
-            source: document.getElementById('transformationSource').value,
-            type: document.getElementById('transformationType').value,
-            target: document.getElementById('transformationTarget').value,
-            params: document.getElementById('transformationParams').value
-        };
-        
-        if (index === -1) {
-            // Add new transformation
-            currentTransformations.push(transformation);
-        } else {
-            // Update existing transformation
-            currentTransformations[index] = transformation;
-        }
-        
-        // Update the transformations container
-        updateTransformationsContainer();
-        
-        // Close modal
-        bootstrap.Modal.getInstance(document.getElementById('addTransformationModal')).hide();
-    }
-    
-    function updateTransformationsContainer() {
-        const container = document.getElementById('transformationsContainer');
-        container.innerHTML = '';
-        
-        currentTransformations.forEach((transformation, index) => {
-            const card = document.createElement('div');
-            card.className = 'card mb-2';
-            card.dataset.index = index;
-            
-            card.innerHTML = `
-                <div class="card-body py-2 px-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>${transformation.source}</strong> → 
-                            <strong>${transformation.target}</strong>
-                            <span class="badge bg-secondary ms-2">${transformation.type}</span>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="editTransformation(${index})">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteTransformation(${index})">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            container.appendChild(card);
-        });
-    }
-    
-    function editCondition(index) {
-        const condition = currentConditions[index];
-        
-        document.getElementById('conditionIndex').value = index;
-        document.getElementById('conditionParameter').value = condition.parameter;
-        document.getElementById('conditionDisplayName').value = condition.display_name || '';
-        document.getElementById('conditionColumn').value = condition.column;
-        document.getElementById('conditionOperator').value = condition.operator;
-        document.getElementById('conditionType').value = condition.type;
-        
-        const conditionModal = new bootstrap.Modal(document.getElementById('addConditionModal'));
-        conditionModal.show();
-    }
-    
-    function deleteCondition(index) {
-        if (confirm('Are you sure you want to delete this condition?')) {
-            currentConditions.splice(index, 1);
-            updateConditionsTable();
-        }
-    }
-    
-    function editTransformation(index) {
-        const transformation = currentTransformations[index];
-        
-        document.getElementById('transformationIndex').value = index;
-        document.getElementById('transformationSource').value = transformation.source;
-        document.getElementById('transformationType').value = transformation.type;
-        document.getElementById('transformationTarget').value = transformation.target;
-        document.getElementById('transformationParams').value = transformation.params;
-        
-        const transformationModal = new bootstrap.Modal(document.getElementById('addTransformationModal'));
-        transformationModal.show();
-    }
-    
-    function deleteTransformation(index) {
-        if (confirm('Are you sure you want to delete this transformation?')) {
-            currentTransformations.splice(index, 1);
-            updateTransformationsContainer();
-        }
-    }
-    
-    function saveApi() {
-        const formData = new FormData(document.getElementById('editApiForm'));
-        const apiData = {
-            id: document.getElementById('editApiId').value,
-            name: document.getElementById('editApiName').value,
-            version: document.getElementById('editApiVersion').value,
-            description: document.getElementById('editApiDescription').value,
-            
-            database: {
-                type: document.getElementById('editDatabaseType').value,
-                name: document.getElementById('editDatabaseName').value,
-                table: document.getElementById('editTable').value,
-                last_update_table: document.getElementById('editLastUpdateTable').value || null
-            },
-            
-            pagination: {
-                enabled: document.getElementById('enablePagination').checked,
-                default_limit: parseInt(document.getElementById('defaultLimit').value),
-                max_limit: parseInt(document.getElementById('maxLimit').value)
-            },
-            
-            ordering: {
-                default_field: document.getElementById('defaultOrderField').value,
-                default_direction: document.getElementById('defaultOrderDirection').value
-            },
-            
-            cache: {
-                enabled: document.getElementById('enableCache').checked,
-                ttl: parseInt(document.getElementById('cacheTTL').value)
-            },
-            
-            response_fields: Array.from(document.getElementById('responseFields').selectedOptions).map(option => option.value),
-            conditions: currentConditions,
-            transformations: currentTransformations
-        };
-        
-        // Save API to server
-        fetch('/api/update_api', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(apiData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('API saved successfully');
-                // Close modal and refresh page
-                bootstrap.Modal.getInstance(document.getElementById('EditApi')).hide();
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                showAlert(`Error saving API: ${data.error}`, 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error saving API:', error);
-            showAlert('Error saving API', 'danger');
-        });
-    }
-</script>
+{#<!-- Edit API Modal -->#}
+{#<div class="modal fade" id="EditApi" tabindex="-1" aria-labelledby="EditApiLabel" aria-hidden="true">#}
+{#    <div class="modal-dialog modal-xl">#}
+{#        <div class="modal-content">#}
+{#            <div class="modal-header">#}
+{#                <h5 class="modal-title" id="EditApiLabel">Edit API</h5>#}
+{#                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#            </div>#}
+{#            <div class="modal-body">#}
+{#                <form id="editApiForm">#}
+{#                    <input type="hidden" id="editApiId" name="api_id">#}
+{#                    #}
+{#                    <!-- Nav tabs -->#}
+{#                    <ul class="nav nav-tabs mb-3" role="tablist">#}
+{#                        <li class="nav-item" role="presentation">#}
+{#                            <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">General</button>#}
+{#                        </li>#}
+{#                        <li class="nav-item" role="presentation">#}
+{#                            <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database" type="button" role="tab" aria-controls="database" aria-selected="false">Database</button>#}
+{#                        </li>#}
+{#                        <li class="nav-item" role="presentation">#}
+{#                            <button class="nav-link" id="pagination-tab" data-bs-toggle="tab" data-bs-target="#pagination" type="button" role="tab" aria-controls="pagination" aria-selected="false">Pagination & Ordering</button>#}
+{#                        </li>#}
+{#                        <li class="nav-item" role="presentation">#}
+{#                            <button class="nav-link" id="cache-tab" data-bs-toggle="tab" data-bs-target="#cache" type="button" role="tab" aria-controls="cache" aria-selected="false">Cache</button>#}
+{#                        </li>#}
+{#                        <li class="nav-item" role="presentation">#}
+{#                            <button class="nav-link" id="response-tab" data-bs-toggle="tab" data-bs-target="#response" type="button" role="tab" aria-controls="response" aria-selected="false">Response</button>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                    #}
+{#                    <!-- Tab content -->#}
+{#                    <div class="tab-content">#}
+{#                        <!-- General Tab -->#}
+{#                        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">#}
+{#                            <div class="row mb-3">#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="editApiName" class="form-label">Display Name</label>#}
+{#                                    <input type="text" class="form-control" id="editApiName" name="name" placeholder="API display name">#}
+{#                                </div>#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="editApiVersion" class="form-label">Version</label>#}
+{#                                    <input type="text" class="form-control" id="editApiVersion" name="version" placeholder="1.0.0">#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="mb-3">#}
+{#                                <label for="editApiDescription" class="form-label">Description</label>#}
+{#                                <textarea class="form-control" id="editApiDescription" name="description" rows="3" placeholder="Description of the API"></textarea>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        #}
+{#                        <!-- Database Tab -->#}
+{#                        <div class="tab-pane fade" id="database" role="tabpanel" aria-labelledby="database-tab">#}
+{#                            <div class="row mb-3">#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="editDatabaseType" class="form-label">Database Type</label>#}
+{#                                    <select class="form-select" id="editDatabaseType" name="database_type" onchange="loadDatabaseTables(this.value)">#}
+{#                                        <option value="">Select Database Type</option>#}
+{#                                        <option value="mongodb">MongoDB</option>#}
+{#                                        <option value="mysql">MySQL</option>#}
+{#                                        <option value="trino">Trino</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="editDatabaseName" class="form-label">Database Name</label>#}
+{#                                    <input type="text" class="form-control" id="editDatabaseName" name="database_name" placeholder="Database name">#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="row mb-3">#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="editTable" class="form-label">Table/Collection</label>#}
+{#                                    <select class="form-select" id="editTable" name="table" onchange="loadTableColumns(this.value)">#}
+{#                                        <option value="">Select Table/Collection</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="editLastUpdateTable" class="form-label">Last Update Table (optional)</label>#}
+{#                                    <select class="form-select" id="editLastUpdateTable" name="last_update_table">#}
+{#                                        <option value="">Select Last Update Table</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        #}
+{#                        <!-- Pagination & Ordering Tab -->#}
+{#                        <div class="tab-pane fade" id="pagination" role="tabpanel" aria-labelledby="pagination-tab">#}
+{#                            <div class="mb-3">#}
+{#                                <div class="form-check form-switch">#}
+{#                                    <input class="form-check-input" type="checkbox" id="enablePagination" name="enable_pagination">#}
+{#                                    <label class="form-check-label" for="enablePagination">Enable Pagination</label>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="row mb-3">#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="defaultLimit" class="form-label">Default Limit</label>#}
+{#                                    <input type="number" class="form-control" id="defaultLimit" name="default_limit" value="10" min="1">#}
+{#                                </div>#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="maxLimit" class="form-label">Maximum Limit</label>#}
+{#                                    <input type="number" class="form-control" id="maxLimit" name="max_limit" value="100" min="1">#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="row mb-3">#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="defaultOrderField" class="form-label">Default Order Field</label>#}
+{#                                    <select class="form-select column-select" id="defaultOrderField" name="default_order_field">#}
+{#                                        <option value="">Select Field</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                                <div class="col-md-6">#}
+{#                                    <label for="defaultOrderDirection" class="form-label">Default Order Direction</label>#}
+{#                                    <select class="form-select" id="defaultOrderDirection" name="default_order_direction">#}
+{#                                        <option value="ASC">Ascending</option>#}
+{#                                        <option value="DESC">Descending</option>#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        #}
+{#                        <!-- Cache Tab -->#}
+{#                        <div class="tab-pane fade" id="cache" role="tabpanel" aria-labelledby="cache-tab">#}
+{#                            <div class="mb-3">#}
+{#                                <div class="form-check form-switch">#}
+{#                                    <input class="form-check-input" type="checkbox" id="enableCache" name="enable_cache">#}
+{#                                    <label class="form-check-label" for="enableCache">Enable Caching</label>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="mb-3">#}
+{#                                <label for="cacheTTL" class="form-label">Cache TTL (seconds)</label>#}
+{#                                <input type="number" class="form-control" id="cacheTTL" name="cache_ttl" value="60" min="1">#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        #}
+{#                        <!-- Response Tab -->#}
+{#                        <div class="tab-pane fade" id="response" role="tabpanel" aria-labelledby="response-tab">#}
+{#                            <div class="mb-3">#}
+{#                                <label for="responseFields" class="form-label">Response Fields</label>#}
+{#                                <select class="form-select column-select" id="responseFields" name="response_fields" multiple size="10">#}
+{#                                    <!-- Populated dynamically -->#}
+{#                                </select>#}
+{#                                <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple fields</small>#}
+{#                            </div>#}
+{#                            #}
+{#                            <div class="mb-3">#}
+{#                                <label class="form-label">Response Transformations</label>#}
+{#                                <div id="transformationsContainer">#}
+{#                                    <!-- Transformations will be added here -->#}
+{#                                </div>#}
+{#                                <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addTransformationBtn">#}
+{#                                    <i class="bi bi-plus"></i> Add Transformation#}
+{#                                </button>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    #}
+{#                    <!-- API Conditions -->#}
+{#                    <div class="mt-4">#}
+{#                        <h5>API Conditions</h5>#}
+{#                        <table class="table table-sm table-striped">#}
+{#                            <thead>#}
+{#                                <tr>#}
+{#                                    <th>Parameter</th>#}
+{#                                    <th>Display Name</th>#}
+{#                                    <th>Column</th>#}
+{#                                    <th>Operator</th>#}
+{#                                    <th>Data Type</th>#}
+{#                                    <th>Actions</th>#}
+{#                                </tr>#}
+{#                            </thead>#}
+{#                            <tbody id="conditionsTableBody">#}
+{#                                <!-- Conditions will be added here -->#}
+{#                            </tbody>#}
+{#                        </table>#}
+{#                        <button type="button" class="btn btn-outline-primary btn-sm" id="addConditionBtn">#}
+{#                            <i class="bi bi-plus"></i> Add Condition#}
+{#                        </button>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#            <div class="modal-footer">#}
+{#                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>#}
+{#                <button type="button" class="btn btn-primary" id="saveApiBtn">Save Changes</button>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<!-- Add Condition Modal -->#}
+{#<div class="modal fade" id="addConditionModal" tabindex="-1" aria-hidden="true">#}
+{#    <div class="modal-dialog">#}
+{#        <div class="modal-content">#}
+{#            <div class="modal-header">#}
+{#                <h5 class="modal-title">Add Condition</h5>#}
+{#                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#            </div>#}
+{#            <div class="modal-body">#}
+{#                <form id="conditionForm">#}
+{#                    <input type="hidden" id="conditionIndex" value="-1">#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionParameter" class="form-label">Parameter Name</label>#}
+{#                        <input type="text" class="form-control" id="conditionParameter" required>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionDisplayName" class="form-label">Display Name</label>#}
+{#                        <input type="text" class="form-control" id="conditionDisplayName">#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionColumn" class="form-label">Column</label>#}
+{#                        <select class="form-select column-select" id="conditionColumn" required>#}
+{#                            <!-- Populated dynamically -->#}
+{#                        </select>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionOperator" class="form-label">Operator</label>#}
+{#                        <select class="form-select" id="conditionOperator" required>#}
+{#                            <option value="=">=</option>#}
+{#                            <option value="<"><</option>#}
+{#                            <option value=">">></option>#}
+{#                            <option value="<="><=</option>#}
+{#                            <option value=">=">>=</option>#}
+{#                            <option value="!=">!=</option>#}
+{#                            <option value="like">LIKE</option>#}
+{#                            <option value="in">IN</option>#}
+{#                            <option value="not in">NOT IN</option>#}
+{#                            <option value="between">BETWEEN</option>#}
+{#                        </select>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="conditionType" class="form-label">Data Type</label>#}
+{#                        <select class="form-select" id="conditionType" required>#}
+{#                            <option value="string">String</option>#}
+{#                            <option value="integer">Integer</option>#}
+{#                            <option value="float">Float</option>#}
+{#                            <option value="boolean">Boolean</option>#}
+{#                            <option value="date">Date</option>#}
+{#                            <option value="array">Array</option>#}
+{#                        </select>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#            <div class="modal-footer">#}
+{#                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>#}
+{#                <button type="button" class="btn btn-primary" id="saveConditionBtn">Save</button>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<!-- Add Transformation Modal -->#}
+{#<div class="modal fade" id="addTransformationModal" tabindex="-1" aria-hidden="true">#}
+{#    <div class="modal-dialog">#}
+{#        <div class="modal-content">#}
+{#            <div class="modal-header">#}
+{#                <h5 class="modal-title">Add Transformation</h5>#}
+{#                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#            </div>#}
+{#            <div class="modal-body">#}
+{#                <form id="transformationForm">#}
+{#                    <input type="hidden" id="transformationIndex" value="-1">#}
+{#                    <div class="mb-3">#}
+{#                        <label for="transformationSource" class="form-label">Source Field</label>#}
+{#                        <select class="form-select column-select" id="transformationSource" required>#}
+{#                            <!-- Populated dynamically -->#}
+{#                        </select>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="transformationType" class="form-label">Transformation Type</label>#}
+{#                        <select class="form-select" id="transformationType" required>#}
+{#                            <option value="format_date">Format Date</option>#}
+{#                            <option value="format_number">Format Number</option>#}
+{#                            <option value="map">Map Values</option>#}
+{#                            <option value="concat">Concatenate</option>#}
+{#                            <option value="custom">Custom Function</option>#}
+{#                        </select>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="transformationTarget" class="form-label">Target Field</label>#}
+{#                        <input type="text" class="form-control" id="transformationTarget" required>#}
+{#                    </div>#}
+{#                    <div class="mb-3">#}
+{#                        <label for="transformationParams" class="form-label">Parameters (JSON)</label>#}
+{#                        <textarea class="form-control" id="transformationParams" rows="4"></textarea>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#            <div class="modal-footer">#}
+{#                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>#}
+{#                <button type="button" class="btn btn-primary" id="saveTransformationBtn">Save</button>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{#<!-- JavaScript to handle conditions and transformations -->#}
+{#<script>#}
+{#    // Will be initialized when the edit modal opens#}
+{#    let currentConditions = [];#}
+{#    let currentTransformations = [];#}
+{#    #}
+{#    // Add event listeners when the document is ready#}
+{#    document.addEventListener('DOMContentLoaded', function() {#}
+{#        // Condition buttons#}
+{#        document.getElementById('addConditionBtn').addEventListener('click', function() {#}
+{#            const conditionModal = new bootstrap.Modal(document.getElementById('addConditionModal'));#}
+{#            document.getElementById('conditionIndex').value = -1;#}
+{#            document.getElementById('conditionForm').reset();#}
+{#            conditionModal.show();#}
+{#        });#}
+{#        #}
+{#        document.getElementById('saveConditionBtn').addEventListener('click', function() {#}
+{#            saveCondition();#}
+{#        });#}
+{#        #}
+{#        // Transformation buttons#}
+{#        document.getElementById('addTransformationBtn').addEventListener('click', function() {#}
+{#            const transformationModal = new bootstrap.Modal(document.getElementById('addTransformationModal'));#}
+{#            document.getElementById('transformationIndex').value = -1;#}
+{#            document.getElementById('transformationForm').reset();#}
+{#            transformationModal.show();#}
+{#        });#}
+{#        #}
+{#        document.getElementById('saveTransformationBtn').addEventListener('click', function() {#}
+{#            saveTransformation();#}
+{#        });#}
+{#        #}
+{#        // Save API button#}
+{#        document.getElementById('saveApiBtn').addEventListener('click', function() {#}
+{#            saveApi();#}
+{#        });#}
+{#    });#}
+{#    #}
+{#    // Functions to handle conditions and transformations#}
+{#    function saveCondition() {#}
+{#        const index = parseInt(document.getElementById('conditionIndex').value);#}
+{#        const condition = {#}
+{#            parameter: document.getElementById('conditionParameter').value,#}
+{#            display_name: document.getElementById('conditionDisplayName').value,#}
+{#            column: document.getElementById('conditionColumn').value,#}
+{#            operator: document.getElementById('conditionOperator').value,#}
+{#            type: document.getElementById('conditionType').value#}
+{#        };#}
+{#        #}
+{#        if (index === -1) {#}
+{#            // Add new condition#}
+{#            currentConditions.push(condition);#}
+{#        } else {#}
+{#            // Update existing condition#}
+{#            currentConditions[index] = condition;#}
+{#        }#}
+{#        #}
+{#        // Update the conditions table#}
+{#        updateConditionsTable();#}
+{#        #}
+{#        // Close modal#}
+{#        bootstrap.Modal.getInstance(document.getElementById('addConditionModal')).hide();#}
+{#    }#}
+{#    #}
+{#    function updateConditionsTable() {#}
+{#        const conditionsTableBody = document.getElementById('conditionsTableBody');#}
+{#        conditionsTableBody.innerHTML = '';#}
+{#        #}
+{#        currentConditions.forEach((condition, index) => {#}
+{#            const row = document.createElement('tr');#}
+{#            row.dataset.index = index;#}
+{#            #}
+{#            row.innerHTML = `#}
+{#                <td>${condition.parameter}</td>#}
+{#                <td>${condition.display_name || condition.parameter}</td>#}
+{#                <td>${condition.column}</td>#}
+{#                <td>${condition.operator}</td>#}
+{#                <td>${condition.type}</td>#}
+{#                <td>#}
+{#                    <div class="btn-group">#}
+{#                        <button type="button" class="btn btn-sm btn-primary me-1" onclick="editCondition(${index})">#}
+{#                            <i class="bi bi-pencil"></i>#}
+{#                        </button>#}
+{#                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteCondition(${index})">#}
+{#                            <i class="bi bi-trash"></i>#}
+{#                        </button>#}
+{#                    </div>#}
+{#                </td>#}
+{#            `;#}
+{#            #}
+{#            conditionsTableBody.appendChild(row);#}
+{#        });#}
+{#    }#}
+{#    #}
+{#    function saveTransformation() {#}
+{#        const index = parseInt(document.getElementById('transformationIndex').value);#}
+{#        const transformation = {#}
+{#            source: document.getElementById('transformationSource').value,#}
+{#            type: document.getElementById('transformationType').value,#}
+{#            target: document.getElementById('transformationTarget').value,#}
+{#            params: document.getElementById('transformationParams').value#}
+{#        };#}
+{#        #}
+{#        if (index === -1) {#}
+{#            // Add new transformation#}
+{#            currentTransformations.push(transformation);#}
+{#        } else {#}
+{#            // Update existing transformation#}
+{#            currentTransformations[index] = transformation;#}
+{#        }#}
+{#        #}
+{#        // Update the transformations container#}
+{#        updateTransformationsContainer();#}
+{#        #}
+{#        // Close modal#}
+{#        bootstrap.Modal.getInstance(document.getElementById('addTransformationModal')).hide();#}
+{#    }#}
+{#    #}
+{#    function updateTransformationsContainer() {#}
+{#        const container = document.getElementById('transformationsContainer');#}
+{#        container.innerHTML = '';#}
+{#        #}
+{#        currentTransformations.forEach((transformation, index) => {#}
+{#            const card = document.createElement('div');#}
+{#            card.className = 'card mb-2';#}
+{#            card.dataset.index = index;#}
+{#            #}
+{#            card.innerHTML = `#}
+{#                <div class="card-body py-2 px-3">#}
+{#                    <div class="d-flex justify-content-between align-items-center">#}
+{#                        <div>#}
+{#                            <strong>${transformation.source}</strong> → #}
+{#                            <strong>${transformation.target}</strong>#}
+{#                            <span class="badge bg-secondary ms-2">${transformation.type}</span>#}
+{#                        </div>#}
+{#                        <div class="btn-group">#}
+{#                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="editTransformation(${index})">#}
+{#                                <i class="bi bi-pencil"></i>#}
+{#                            </button>#}
+{#                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteTransformation(${index})">#}
+{#                                <i class="bi bi-trash"></i>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            `;#}
+{#            #}
+{#            container.appendChild(card);#}
+{#        });#}
+{#    }#}
+{#    #}
+{#    function editCondition(index) {#}
+{#        const condition = currentConditions[index];#}
+{#        #}
+{#        document.getElementById('conditionIndex').value = index;#}
+{#        document.getElementById('conditionParameter').value = condition.parameter;#}
+{#        document.getElementById('conditionDisplayName').value = condition.display_name || '';#}
+{#        document.getElementById('conditionColumn').value = condition.column;#}
+{#        document.getElementById('conditionOperator').value = condition.operator;#}
+{#        document.getElementById('conditionType').value = condition.type;#}
+{#        #}
+{#        const conditionModal = new bootstrap.Modal(document.getElementById('addConditionModal'));#}
+{#        conditionModal.show();#}
+{#    }#}
+{#    #}
+{#    function deleteCondition(index) {#}
+{#        if (confirm('Are you sure you want to delete this condition?')) {#}
+{#            currentConditions.splice(index, 1);#}
+{#            updateConditionsTable();#}
+{#        }#}
+{#    }#}
+{#    #}
+{#    function editTransformation(index) {#}
+{#        const transformation = currentTransformations[index];#}
+{#        #}
+{#        document.getElementById('transformationIndex').value = index;#}
+{#        document.getElementById('transformationSource').value = transformation.source;#}
+{#        document.getElementById('transformationType').value = transformation.type;#}
+{#        document.getElementById('transformationTarget').value = transformation.target;#}
+{#        document.getElementById('transformationParams').value = transformation.params;#}
+{#        #}
+{#        const transformationModal = new bootstrap.Modal(document.getElementById('addTransformationModal'));#}
+{#        transformationModal.show();#}
+{#    }#}
+{#    #}
+{#    function deleteTransformation(index) {#}
+{#        if (confirm('Are you sure you want to delete this transformation?')) {#}
+{#            currentTransformations.splice(index, 1);#}
+{#            updateTransformationsContainer();#}
+{#        }#}
+{#    }#}
+{#    #}
+{#    function saveApi() {#}
+{#        const formData = new FormData(document.getElementById('editApiForm'));#}
+{#        const apiData = {#}
+{#            id: document.getElementById('editApiId').value,#}
+{#            name: document.getElementById('editApiName').value,#}
+{#            version: document.getElementById('editApiVersion').value,#}
+{#            description: document.getElementById('editApiDescription').value,#}
+{#            #}
+{#            database: {#}
+{#                type: document.getElementById('editDatabaseType').value,#}
+{#                name: document.getElementById('editDatabaseName').value,#}
+{#                table: document.getElementById('editTable').value,#}
+{#                last_update_table: document.getElementById('editLastUpdateTable').value || null#}
+{#            },#}
+{#            #}
+{#            pagination: {#}
+{#                enabled: document.getElementById('enablePagination').checked,#}
+{#                default_limit: parseInt(document.getElementById('defaultLimit').value),#}
+{#                max_limit: parseInt(document.getElementById('maxLimit').value)#}
+{#            },#}
+{#            #}
+{#            ordering: {#}
+{#                default_field: document.getElementById('defaultOrderField').value,#}
+{#                default_direction: document.getElementById('defaultOrderDirection').value#}
+{#            },#}
+{#            #}
+{#            cache: {#}
+{#                enabled: document.getElementById('enableCache').checked,#}
+{#                ttl: parseInt(document.getElementById('cacheTTL').value)#}
+{#            },#}
+{#            #}
+{#            response_fields: Array.from(document.getElementById('responseFields').selectedOptions).map(option => option.value),#}
+{#            conditions: currentConditions,#}
+{#            transformations: currentTransformations#}
+{#        };#}
+{#        #}
+{#        // Save API to server#}
+{#        fetch('/api/update_api', {#}
+{#            method: 'POST',#}
+{#            headers: {#}
+{#                'Content-Type': 'application/json'#}
+{#            },#}
+{#            body: JSON.stringify(apiData)#}
+{#        })#}
+{#        .then(response => response.json())#}
+{#        .then(data => {#}
+{#            if (data.success) {#}
+{#                showAlert('API saved successfully');#}
+{#                // Close modal and refresh page#}
+{#                bootstrap.Modal.getInstance(document.getElementById('EditApi')).hide();#}
+{#                setTimeout(() => window.location.reload(), 1500);#}
+{#            } else {#}
+{#                showAlert(`Error saving API: ${data.error}`, 'danger');#}
+{#            }#}
+{#        })#}
+{#        .catch(error => {#}
+{#            console.error('Error saving API:', error);#}
+{#            showAlert('Error saving API', 'danger');#}
+{#        });#}
+{#    }#}
+{#</script>#}
