@@ -10,13 +10,6 @@ export async function initializeApiList() {
     return;
   }
 
-  // If cached data is valid, use it
-  if (apiCache.isValid()) {
-    const cachedData = apiCache.get();
-    populateApiTable(apiTableBody, cachedData);
-    return;
-  }
-
   // Otherwise, fetch from the server
   try {
     const response = await fetch('/api/api_details');
@@ -25,9 +18,6 @@ export async function initializeApiList() {
     }
 
     const apis = await response.json();
-    // Cache the data
-    apiCache.set(apis);
-
     populateApiTable(apiTableBody, apis);
   } catch (error) {
     showAlert('Error loading API details: ' + error.message, 'danger');
