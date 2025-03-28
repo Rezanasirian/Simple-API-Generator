@@ -154,7 +154,7 @@ def get_api_details():
         
         # Create response with cache control headers
         response = make_response(jsonify(formatted_apis))
-        response.headers['Cache-Control'] = 'private, max-age=300'  # Cache for 5 minutes
+        # response.headers['Cache-Control'] = 'private, max-age=300'  # Cache for 5 minutes
         return response
     except Exception as e:
         logger.error(f"Error getting API details: {e}", exc_info=True)
@@ -199,7 +199,7 @@ def update_api():
         if not api_data or 'id' not in api_data:
             return jsonify({'success': False, 'error': 'Invalid API data'}), 400
         
-        api_id = api_data.pop('id')
+        api_id = api_data.get('id')
         
         api = APIQueryBuilder('config/ApiDoc.json')
         
