@@ -3,8 +3,8 @@ import { initializeApiList } from './apiList.js';
 import { initializeSidebarToggle, performDelete } from './ui.js';
 // import { initializeCheckboxUIEnhancements } from './uiEnhancements.js';
 // or if you integrated that logic into 'ui.js', just import from there
-import { createOrSaveApi, openApiModal } from './apiEditor2.js';
-import { editCondition, deleteCondition } from './conditions.js';
+import {createOrSaveApi, loadTableColumnsPromise, openApiModal} from './apiEditor2.js';
+import { editCondition, deleteCondition, saveCondition} from './conditions.js';
 import { initializeConditionModal } from './conditionModal.js';
 
 // If you have separate init for transformations or conditions, import them too
@@ -17,13 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeApiList();
 
 
-   initializeConditionModal();
-  document.getElementById('openAddApiBtn').addEventListener('click', () => {
-    openApiModal('add');
-  });
-  // If you need to call editCondition or something else,
-  // you can do so directly or attach an event listener.
-  // For example, if you have a table that uses event delegation:
+  initializeConditionModal();
+  const openAddApiBtn = document.getElementById('openAddApiBtn')
+    if(openAddApiBtn){
+        openAddApiBtn.addEventListener('click', () => {
+      openApiModal('add');
+    });
+    document.getElementById('apiModalActionBtn').addEventListener('click', function() {
+        createOrSaveApi();
+    });
+  }
+
+
   const conditionsTableBody = document.getElementById('conditionsTableBody');
   if (conditionsTableBody) {
     conditionsTableBody.addEventListener('click', e => {
@@ -42,17 +47,20 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmDeleteBtn.addEventListener('click', performDelete);
   }
 
-  // Add new API form submission
-  const createApiBtn = document.getElementById('createApiBtn');
-  if (createApiBtn) {
-    createApiBtn.addEventListener('click', createNewApi);
-  }
 
-  // Save (edit) form submission
-  const editApiSaveBtn = document.getElementById('editApiSaveBtn');
-  if (editApiSaveBtn) {
-    editApiSaveBtn.addEventListener('click', saveApi);
+
+  // // Save (edit) form submission
+  const saveConditionBtn = document.getElementById('saveConditionBtn');
+  if (saveConditionBtn) {
+    saveConditionBtn.addEventListener('click', saveCondition);
   }
+  const tableName = document.getElementById("tableSelect")
+  if(tableName){
+    tableName.addEventListener('change',function (){
+    let selectedTable = tableName.value
+    loadTableColumnsPromise(selectedTable, 'responseFields', 'defaultOrderField');
+
+  })}
 
   if (!conditionsTableBody) return;
 
