@@ -1,0 +1,261 @@
+{% extends "shared/layout.html" %}
+{% set active_page = "dashboard" %}
+
+{% block title %}Dashboard - API Generator{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle mb-4">
+    <h1>Dashboard</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </nav>
+</div>
+
+<section class="section dashboard">
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <!-- Total API Calls Card -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="card-icon bg-primary text-white">
+                            <i class="bi bi-lightning fs-4"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">Total API Calls</h5>
+                    <p class="stat-value mb-0">{{ total_calls }}</p>
+                    <p class="stat-label">All time</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Rate Card -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="card-icon bg-success text-white">
+                            <i class="bi bi-check-circle fs-4"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">Success Rate</h5>
+                    <p class="stat-value mb-0">{{ success_rate }}%</p>
+                    <p class="stat-label">Last 30 days</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active APIs Card -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="card-icon bg-info text-white">
+                            <i class="bi bi-code-square fs-4"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">Active APIs</h5>
+                    <p class="stat-value mb-0">{{ active_apis }}</p>
+                    <p class="stat-label">Configured APIs</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Card -->
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="card-icon bg-secondary text-white">
+                            <i class="bi bi-people fs-4"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold">Users</h5>
+                    <p class="stat-value mb-0">{{ total_users }}</p>
+                    <p class="stat-label">Active Users</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- API Usage Over Time Chart -->
+        <div class="col-lg-8">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">API Usage Over Time</h5>
+                    <div class="filters mb-3">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm period-selector" data-period="7">7 Days</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm period-selector active" data-period="30">30 Days</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm period-selector" data-period="90">90 Days</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="api-usage-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top APIs Chart -->
+        <div class="col-lg-4">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">Top APIs</h5>
+                    <div class="chart-container">
+                        <canvas id="top-apis-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Status Codes Chart -->
+        <div class="col-lg-6">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">Status Code Distribution</h5>
+                    <div class="chart-container">
+                        <canvas id="status-codes-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Response Time by API Chart -->
+        <div class="col-lg-6">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">Average Response Time by API</h5>
+                    <div class="chart-container">
+                        <canvas id="response-time-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Errors -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Errors</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">API</th>
+                                    <th scope="col">Timestamp</th>
+                                    <th scope="col">Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for error in recent_errors %}
+                                <tr>
+                                    <td>{{ error.api_id }}</td>
+                                    <td>{{ error.timestamp }}</td>
+                                    <td>{{ error.error_message }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center">No recent errors found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links Section (for admins only) -->
+    {% if current_user.is_admin %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">Admin Quick Links</h5>
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
+                        <div class="col">
+                            <a href="{{ url_for('auth.admin_users') }}" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-people me-2"></i> Manage Users
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="{{ url_for('admin.database_settings') }}" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-database me-2"></i> Database Settings
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="{{ url_for('API_ApiList.apiList') }}" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-list-check me-2"></i> API List
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="{{ url_for('auth.profile') }}" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-gear me-2"></i> Profile Settings
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h5 class="card-title">Server Information</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Python Version
+                            <span class="badge bg-primary">{{ python_version }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Flask Version
+                            <span class="badge bg-primary">{{ flask_version }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Server Time
+                            <span class="badge bg-primary">{{ server_time }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Uptime
+                            <span class="badge bg-primary">{{ uptime }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+// Initialize dashboard data from server
+document.addEventListener('DOMContentLoaded', function() {
+    initializeChartData({
+        apiUsageData: '{{ api_usage_data|tojson|safe }}',
+        topApisData: '{{ top_apis_data|tojson|safe }}',
+        statusCodesData: '{{ status_codes_data|tojson|safe }}',
+        responseTimeData: '{{ response_time_data|tojson|safe }}'
+    });
+});
+</script>
+{% endblock %}  

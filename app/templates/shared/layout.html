@@ -61,7 +61,7 @@ from flask_login import current_user, login_required
                      <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person me-2"></i> My Profile</a></li>
                      <li><a class="dropdown-item" href="{{ url_for('auth.api_keys') }}"><i class="bi bi-key me-2"></i> API Keys</a></li>
                      {% if current_user.is_admin %}
-                     <li><a class="dropdown-item" href="{{ url_for('auth.admin_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i> Admin Dashboard</a></li>
+                     <li><a class="dropdown-item" href="{{ url_for('dashboard.dashboard_view') }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
                      {% endif %}
                      <li><hr class="dropdown-divider"></li>
                      <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Sign Out</a></li>
@@ -78,8 +78,8 @@ from flask_login import current_user, login_required
       <aside id="sidebar" class="sidebar collapsed">
          <ul class="sidebar-nav">
             <li class="nav-item">
-               <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ url_for('API_ApiList.apiList') }}">
-                  <i class="bi bi-grid"></i>
+               <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard.dashboard_view') }}">
+                  <i class="bi bi-speedometer2"></i>
                   <span>Dashboard</span>
                </a>
             </li>
@@ -90,26 +90,14 @@ from flask_login import current_user, login_required
                </a>
             </li>
             <li class="nav-item">
-               <a class="nav-link {% if active_page == 'api_test' %}active{% endif %}" href="{{ url_for('API_test_api.apiTest') }}">
-                  <i class="bi bi-lightning"></i>
-                  <span>Test API</span>
-               </a>
-            </li>
-            <li class="nav-item">
                <a class="nav-link {% if active_page == 'api_docs' %}active{% endif %}" href="{{ url_for('api_docs.swagger_ui') }}">
                   <i class="bi bi-file-earmark-text"></i>
-                  <span>API Documentation</span>
+                  <span>Swagger UI</span>
                </a>
             </li>
-            
+
             {% if current_user.is_authenticated and current_user.is_admin %}
             <!-- <li class="nav-heading">Administration</li> -->
-            <li class="nav-item">
-               <a class="nav-link {% if active_page == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('auth.admin_dashboard') }}">
-                  <i class="bi bi-speedometer2"></i>
-                  <span>Admin Dashboard</span>
-               </a>
-            </li>
             <li class="nav-item">
                <a class="nav-link {% if active_page == 'admin_users' %}active{% endif %}" href="{{ url_for('auth.admin_users') }}">
                   <i class="bi bi-people"></i>

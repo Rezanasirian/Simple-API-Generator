@@ -27,15 +27,25 @@
 
 {% block content %}
 <div class="pagetitle mb-4">
-    <div class="header-container">
+    <div class="header-container d-flex justify-content-between align-items-start">
         <div>
-            <h1>API Documentation</h1>
+            <h1>Swagger UI for API Testing</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
-                    <li class="breadcrumb-item active">API Documentation</li>
+                    <li class="breadcrumb-item active">API Testing</li>
                 </ol>
             </nav>
+            <div class="alert alert-info mt-3">
+                <h5><i class="bi bi-info-circle"></i> How to Test Your APIs</h5>
+                <ol class="mb-0">
+                    <li>Click on an API endpoint below to expand its documentation</li>
+                    <li>Click the "Try it out" button to enable testing</li>
+                    <li>Fill in the required parameters (query parameters, body content, etc.)</li>
+                    <li>Click "Execute" to send the request</li>
+                    <li>View the response body, headers, and status code below</li>
+                </ol>
+            </div>
         </div>
         <div>
             <a href="{{ url_for('api_docs.export_swagger') }}" class="btn btn-outline-primary">
@@ -64,8 +74,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js"></script>
 <script>
     window.onload = function() {
+        const swaggerSpec = JSON.parse('{{ swagger_spec|safe }}');
         const ui = SwaggerUIBundle({
-            spec: {{ swagger_spec | safe }},
+            spec: swaggerSpec,
             dom_id: '#swagger-ui',
             deepLinking: true,
             presets: [
