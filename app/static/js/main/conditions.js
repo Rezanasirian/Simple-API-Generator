@@ -55,25 +55,40 @@ export function updateConditionsTable() {
     conditionsTableBody.appendChild(row);
   });
 }
-
 // “Edit” an existing condition
 export function editCondition(index) {
-  // e.g., let condition = staticState.currentConditions[index];
-  // Adjust if you store conditions differently
+  // Fetch the condition object from state
   const condition = state.currentConditions[index];
 
+  // Set the condition index for saving the edited condition
   document.getElementById('conditionIndex').value = index;
+
+  // Populate Parameter and Name
   document.getElementById('Parameter').value = condition.parameter || condition.Parameter || '';
   document.getElementById('Name').value = condition.Name || condition.display_name || '';
 
   // Re-populate the Column dropdown
   document.getElementById('Column').innerHTML = '<option value="">Loading columns...</option>';
-  populateColumnDropdown('Column', condition.Column || condition.column);
+  // populateColumnDropdown('Column', condition.Column || condition.column);
 
-  document.getElementById('Operator').value = condition.Operator || condition.operator || '=';
-  document.getElementById('IgnoreIf').value = condition.IgnoreIf || '';
+  // Populate Operator
+  document.getElementById('Operator').value = condition.operator || condition.operator || '=';
 
-  // Now handle transformations checkboxes
+  // Populate IgnoreIf
+  document.getElementById('IgnoreIf').value = condition.ignoreIf || '';
+
+  // Populate Data Type and Category
+  document.getElementById('dataType').value = condition.data_type || '';
+  document.getElementById('category').value = condition.category || '';
+
+  // Set "Required" checkbox based on condition's required property
+  document.getElementById('requiredCheck').checked = condition.required || false;
+
+  // Populate Validation (Min and Max)
+  document.getElementById('minValidation').value = condition.validation?.min || '';
+  document.getElementById('maxValidation').value = condition.validation?.max || '';
+
+  // Handle transformations checkboxes
   const transformations = condition.transformations || {};
 
   // Cast
@@ -90,31 +105,31 @@ export function editCondition(index) {
   document.getElementById('trimCheck').checked = !!transformations.trim;
 
   // Replace
-  const hasReplace = Array.isArray(transformations.replace);
+  const hasReplace = transformations.replace && transformations.replace.from && transformations.replace.to;
   document.getElementById('replaceCheck').checked = hasReplace;
   const replaceDiv = document.getElementById('div-replaceCheck');
   if (replaceDiv) replaceDiv.style.display = hasReplace ? 'block' : 'none';
   if (hasReplace) {
-    document.getElementById('replaceOld').value = transformations.replace[0] || '';
-    document.getElementById('replaceNew').value = transformations.replace[1] || '';
+    document.getElementById('replaceOld').value = transformations.replace.from || '';
+    document.getElementById('replaceNew').value = transformations.replace.to || '';
   }
 
   // Substring
-  const hasSubstring = Array.isArray(transformations.substring);
+  const hasSubstring = transformations.substring && transformations.substring.start && transformations.substring.end;
   document.getElementById('substringCheck').checked = hasSubstring;
   const substringDiv = document.getElementById('div-substringCheck');
   if (substringDiv) substringDiv.style.display = hasSubstring ? 'block' : 'none';
   if (hasSubstring) {
-    document.getElementById('substringStart').value = transformations.substring[0] || 0;
-    document.getElementById('substringLength').value = transformations.substring[1] || 0;
+    document.getElementById('substringStart').value = transformations.substring.start || 0;
+    document.getElementById('substringLength').value = transformations.substring.end || 0;
   }
 
   // SQL
-  document.getElementById('sqlCheck').checked = !!transformations.sqlCommand;
+  document.getElementById('sqlCheck').checked = !!transformations.sql;
   const sqlDiv = document.getElementById('div-sqlCheck');
-  if (sqlDiv) sqlDiv.style.display = transformations.sqlCommand ? 'block' : 'none';
-  if (transformations.sqlCommand) {
-    document.getElementById('sqlCommand').value = transformations.sqlCommand;
+  if (sqlDiv) sqlDiv.style.display = transformations.sql ? 'block' : 'none';
+  if (transformations.sql) {
+    document.getElementById('sqlCommand').value = transformations.sql;
   }
 
   // Show the modal
@@ -136,26 +151,79 @@ export function deleteConditionConfirmed(index) {
   state.currentConditions.splice(index, 1);
   updateConditionsTable();
 }
-
 // Save a condition (new or edited)
 export function saveCondition() {
   const index = parseInt(document.getElementById('conditionIndex').value);
+
+  // Get values from the modal
+  const parameter = document.getElementById('Parameter').value;
+  const name = document.getElementById('Name').value;
+  const column = document.getElementById('Column').value;
+  const operator = document.getElementById('Operator').value;
+  const ignoreIf = document.getElementById('IgnoreIf').value;
+  const required = !!document.querySelector('input[name="required"]:checked'); // Assuming you have a 'required' checkbox
+  const dataType = document.getElementById('dataType').value; // Assuming you have an input for data_type
+  const category = document.getElementById('category').value; // Assuming you have an input for category
+
+  // Handle transformations (example for each transformation type)
+  const transformations = {};
+  if (document.getElementById('castCheck').checked) {
+    transformations.cast = document.getElementById('cast-Options').value;
+  }
+  if (document.getElementById('trimCheck').checked) {
+    transformations.trim = true;
+  }
+  if (document.getElementById('replaceCheck').checked) {
+    transformations.replace = {
+      from: document.getElementById('replaceOld').value,
+      to: document.getElementById('replaceNew').value
+    };
+  }
+  if (document.getElementById('substringCheck').checked) {
+    transformations.substring = {
+      start: document.getElementById('substringStart').value,
+      end: document.getElementById('substringLength').value
+    };
+  }
+  if (document.getElementById('sqlCheck').checked) {
+    transformations.sql = document.getElementById('sqlCommand').value;
+  }
+
+  // Validation (min, max values)
+  const validation = {};
+  if (document.getElementById('minValidation').value) {
+    validation.min = document.getElementById('minValidation').value;
+  }
+  if (document.getElementById('maxValidation').value) {
+    validation.max = document.getElementById('maxValidation').value;
+  }
+
   const newCondition = {
-    parameter: document.getElementById('conditionParameter').value,
-    display_name: document.getElementById('conditionDisplayName').value,
-    column: document.getElementById('conditionColumn').value,
-    operator: document.getElementById('conditionOperator').value,
-    type: document.getElementById('conditionType').value
+    [parameter]: {
+      action: index === -1 ? 'add_condition' : 'update_condition',
+      parameter: parameter,
+      name: name,
+      display_name: name, // Assuming 'name' is also used as 'display_name'
+      column: column,
+      operator: operator,
+      ignoreIf: ignoreIf,
+      required: required,
+      data_type: dataType,
+      category: category,
+      transformations: transformations,
+      validation: validation
+    }
   };
 
-  // If index === -1, we add. Otherwise update.
+  // If index === -1, we add; otherwise, we update.
   if (index === -1) {
     state.currentConditions.push(newCondition);
   } else {
     state.currentConditions[index] = newCondition;
   }
-
+  console.log(state.currentConditions)
   updateConditionsTable();
   // Hide the modal
-  bootstrap.Modal.getInstance(document.getElementById('addConditionModal')).hide();
+  bootstrap.Modal.getInstance(document.getElementById('ConditionModal')).hide();
 }
+
