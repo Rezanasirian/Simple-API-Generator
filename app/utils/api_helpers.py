@@ -27,7 +27,7 @@ def generate_swagger_spec(api_config_path: str = 'config/ApiDoc.json') -> Dict[s
     # Load API configurations
     with open(api_config_path, 'r', encoding='utf-8') as file:
         api_config = json.load(file)
-    
+
     # Base OpenAPI specification
     swagger_spec = {
         "openapi": "3.0.0",
@@ -71,7 +71,7 @@ def generate_swagger_spec(api_config_path: str = 'config/ApiDoc.json') -> Dict[s
         
         required_fields = []
         
-        for condition_group in config.get('Conditions', []):
+        for condition_group in config.get('conditions', []):
             for param_name, condition in condition_group.items():
                 # Skip duplicate parameters (in case of repeated conditions)
                 if param_name in request_schema["properties"]:
@@ -167,8 +167,9 @@ def generate_swagger_spec(api_config_path: str = 'config/ApiDoc.json') -> Dict[s
             data_schema[field] = {"type": "string"}
         
         # Add transformations as fields
-        for field, _ in config.get('response', {}).get('transformations', {}).items():
-            data_schema[field] = {"type": "string"}
+        for transformation in config.get('response', {}).get('transformations', []):
+            for field, _ in transformation.items():
+                data_schema[field] = {"type": "string"}
         
         # Add path to OpenAPI spec
         swagger_spec["paths"][path] = {
