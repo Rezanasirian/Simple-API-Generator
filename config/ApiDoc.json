@@ -15,10 +15,10 @@
             "max_limit": 100
         },
         "ordering": {
-            "default_field": "",
+            "default_field": "name",
             "default_direction": "ASC"
         },
-        "LastUpdateTableName": "componies",
+        "lastUpdateTableName": "componies",
         "cache": {
             "enabled": false,
             "ttl": 60
@@ -86,9 +86,79 @@
                 "founded_month",
                 "description"
             ],
-            "transformations": {
-                "founded_date": "CONCAT(founded_year, '-', founded_month, '-01')"
-            }
+            "transformations": [
+                {
+                    "founded_date": "CONCAT(founded_year, '-', founded_month, '-01')"
+                }
+            ]
+        }
+    },
+    "API_CUS_Customer": {
+        "id": "API_CUS_Customer",
+        "name": "",
+        "version": "",
+        "description": "",
+        "database": {
+            "type": "mongodb",
+            "name": "testReza",
+            "table": "people",
+            "last_update_table": "people"
+        },
+        "pagination": {
+            "enabled": true,
+            "default_limit": 10,
+            "max_limit": 100
+        },
+        "ordering": {
+            "default_field": "name",
+            "default_direction": "ASC"
+        },
+        "cache": {
+            "enabled": false,
+            "ttl": 60
+        },
+        "conditions": [],
+        "response": {
+            "fields": [
+                "name",
+                "isActive",
+                "registered",
+                "age",
+                "gender",
+                "eyeColor",
+                "favoriteFruit"
+            ],
+            "transformations": []
+        }
+    },
+    "API_loan": {
+        "id": "API_loan",
+        "name": "",
+        "version": "",
+        "description": "",
+        "database": {
+            "type": "mongodb",
+            "name": "testReza",
+            "table": "componies",
+            "last_update_table": "componies"
+        },
+        "pagination": {
+            "enabled": true,
+            "default_limit": 10,
+            "max_limit": 100
+        },
+        "ordering": {
+            "default_field": "image",
+            "default_direction": "ASC"
+        },
+        "cache": {
+            "enabled": false,
+            "ttl": 60
+        },
+        "conditions": [],
+        "response": {
+            "fields": [],
+            "transformations": []
         }
     }
 }
