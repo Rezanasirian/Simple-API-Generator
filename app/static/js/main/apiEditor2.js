@@ -131,9 +131,20 @@ export async function openApiModal(mode, apiId = '') {
   modalInstance.show();
 }
 
+export function saveSelectedColumns() {
+  // Get all checkboxes inside the 'responseFields' container
+  const checkboxes = document.querySelectorAll('#responseFields input[type="checkbox"]');
 
-
-export function createOrSaveApi() {
+  // Collect the values of checked checkboxes
+  const selectedColumns = [];
+  checkboxes.forEach(checkbox => {
+    if (checkbox.checked) {
+      selectedColumns.push(checkbox.value);
+    }
+  });
+  return selectedColumns
+}
+export async function createOrSaveApi() {
   const mode = document.getElementById('apiMode').value;
   // If "add", we need the user-supplied ID
   let newId = '';
@@ -172,14 +183,12 @@ export function createOrSaveApi() {
       enabled: document.getElementById('enableCache').checked,
       ttl: parseInt(document.getElementById('cacheTTL').value) || 60
     },
-    response_fields: Array.from(document.getElementById('responseFields').selectedOptions).map(o => o.value),
     conditions: state.currentConditions,
-    transformations: stateTransform.currentTransformations
+    response: {
+      fields: saveSelectedColumns(),
+      transformations: stateTransform.currentTransformations
+    },
   };
-
-  // Depending on your server endpoints, you might do a different fetch:
-  // e.g. POST to /api/create_api for add, or /api/update_api for edit.
-  // We'll assume a single /api/update_api can handle both.
 
   fetch('/api/update_api', {
     method: 'POST',
@@ -202,7 +211,7 @@ export function createOrSaveApi() {
   });
 }
 
-export async function loadTableColumnsPromise(tableName, responseFieldsId, orderFieldId,apiData) {
+export async function loadTableColumnsPromise(tableName, responseFieldsId, orderFieldId,apiData={}) {
   if (!tableName) return;
   const dbType = document.getElementById('databaseType').value;
   const dbName = document.getElementById('databaseName').value;
@@ -215,20 +224,39 @@ export async function loadTableColumnsPromise(tableName, responseFieldsId, order
   const columns = await resp.json();
   const responseFields = document.getElementById(responseFieldsId);
   if (responseFields) {
-    const currentValues = apiData.response.fields;
+    // Clear any previous content
     responseFields.innerHTML = '';
+
     columns.forEach(col => {
-      const opt = document.createElement('option');
-      opt.value = col;
-      opt.textContent = col;
-      opt.selected = currentValues.includes(col);
-      responseFields.appendChild(opt);
+      // Create a wrapper div for each checkbox
+      const checkboxDiv = document.createElement('div');
+      checkboxDiv.classList.add('form-check');
+
+      // Create the checkbox input element
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.classList.add('form-check-input');
+      checkbox.id = `checkbox-${col}`;
+      checkbox.value = col;
+
+      // Create label for the checkbox
+      const label = document.createElement('label');
+      label.classList.add('form-check-label');
+      label.setAttribute('for', `checkbox-${col}`);
+      label.textContent = col;
+
+      // Append the checkbox and label to the wrapper div
+      checkboxDiv.appendChild(checkbox);
+      checkboxDiv.appendChild(label);
+
+      // Append the wrapper div to the responseFields container
+      responseFields.appendChild(checkboxDiv);
     });
   }
 
+
   const orderField = document.getElementById(orderFieldId);
   if (orderField) {
-    const currentVal = apiData.ordering.default_field;
     orderField.innerHTML = '<option value="">Select Field</option>';
     columns.forEach(col => {
       const opt = document.createElement('option');
@@ -236,12 +264,34 @@ export async function loadTableColumnsPromise(tableName, responseFieldsId, order
       opt.textContent = col;
       orderField.appendChild(opt);
     });
-    if (columns.includes(currentVal)) {
-      orderField.value = currentVal;
-    }
+    // if (apiData){
+    //   const currentVal = apiData.ordering.default_field;
+    //
+    //   if (columns.includes(currentVal)) {
+    //     orderField.value = currentVal;
+    //   }
+    // }
   }
+  if (document.getElementById('ConditionModal'))
+  {
+      let conditionColumn = document.getElementById("Column")
+      // const currentValue = conditionColumn.value;
 
-  return columns;
+      conditionColumn.innerHTML = '<option value="">Select Column</option>';
+
+      columns.forEach(column => {
+          const option = document.createElement('option');
+          option.value = column;
+          option.textContent = column;
+          conditionColumn.appendChild(option);
+      });
+
+      // Restore previous value if possible
+      // if (columns.includes(currentValue)) {
+      //     conditionColumn.value = currentValue;
+      // }
+  }
+  // return columns;
 }
 
 
