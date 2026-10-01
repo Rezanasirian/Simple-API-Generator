@@ -1,214 +1,135 @@
 # Simple API Generator
 
-[//]: # (![License]&#40;https://img.shields.io/badge/license-MIT-blue.svg&#41;)
-![Python](https://img.shields.io/badge/python-3.8+-green.svg)
-![Flask](https://img.shields.io/badge/flask-2.0+-orange.svg)
+Turn tables and collections in your databases into filterable REST APIs, without writing code.
 
-A powerful, easy-to-use web application for generating and managing RESTful APIs without writing code. Built with Flask, this tool streamlines API development for developers and non-developers alike.
+Pick a data source and a table, choose which parameters callers may filter by and which fields
+they get back, try it live, and save. The API is immediately available at `/api/<id>`, protected
+by API keys, documented in OpenAPI, and tracked on the dashboard.
 
-## 📋 Table of Contents
+- **Data sources:** MongoDB, MySQL, PostgreSQL, Trino and SQLite
+- **Filters:** `=`, `!=`, `<`, `<=`, `>`, `>=`, `LIKE`, `CONTAINS`, `STARTS WITH`, `IN`, `NOT IN`,
+  `IS NULL`, with type checking, validation rules, "skip when value is …", and optional SQL column
+  transforms (cast, substring, trim, replace)
+- **Responses:** choose fields, add computed fields (templates, concat, upper/lower, substring,
+  replace), pagination and sorting
+- **Security:** values are always bound as query parameters and identifiers are quoted; API keys
+  are stored hashed; panel login uses JWTs; data source passwords are never sent to the browser
+- **Operations:** dashboard with call volume, error rate and latency; JSON export/import of APIs;
+  OpenAPI docs at `/docs` that include every generated API
 
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Running the Application](#running-the-application)
-- [API Documentation](#api-documentation)
-- [Project Structure](#project-structure)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
-
-## ✨ Features
-
-- **Intuitive API Builder**: Drag-and-drop interface for creating API endpoints
-- **User Authentication System**: Secure login, registration, and profile management
-- **Role-Based Access Control**: Granular permissions for different user types
-- **Automatic Documentation**: Swagger/OpenAPI specs generated automatically
-- **Database Integration**: Connect to various databases with a simple setup
-- **Validation Rules**: Built-in input validation with customizable rules
-- **Versioning**: Support for API versioning and deprecation management
-- **Comprehensive Logging**: Detailed logs for debugging and monitoring
-- **Multi-Environment Configuration**: Different settings for development, testing, and production
-
-## 📸 Screenshots
-
-*Coming soon*
-
-## 🔧 Prerequisites
-
-- Python 3.8 or higher
-- pip (Python package installer)
-- Virtual environment (recommended)
-- Git
-
-## 🚀 Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/Simple-API-Generator.git
-cd Simple-API-Generator
-```
-
-2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## ⚙️ Configuration
-
-Create a `.env` file in the root directory with the following variables:
+## Architecture
 
 ```
-SECRET_KEY=your-secure-secret-key
-FLASK_ENV=development  # Change to production for deployment
-DATABASE_URL=sqlite:///app.db  # Or your preferred database URL
-
-# Email configuration (optional)
-MAIL_SERVER=smtp.example.com
-MAIL_PORT=587
-MAIL_USERNAME=your-email@example.com
-MAIL_PASSWORD=your-email-password
-MAIL_USE_TLS=True
+backend/    FastAPI + SQLAlchemy — panel API (/admin-api), generated APIs (/api/{id}), docs (/docs)
+frontend/   React 19 + Vite + TypeScript + Tailwind + shadcn/ui
 ```
 
-## 🏃‍♂️ Running the Application
+The backend keeps its own data (users, API keys, data sources, API definitions and the call log)
+in an internal database, SQLite by default. In production it also serves the built frontend.
 
-1. Initialize the database:
-```bash
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
-```
+## Getting started
 
-2. Run the development server:
-```bash
-python run.py
-```
-or
-```bash
-flask run
-```
+Requirements: Python 3.11+ and Node.js 20+.
 
-The application will be available at `http://localhost:5000`
-
-## 📚 API Documentation
-
-Once the application is running, access the automatically generated API documentation:
-
-- Swagger UI: `http://localhost:5000/api/docs`
-- ReDoc: `http://localhost:5000/api/redoc`
-
-## 📁 Project Structure
-
-```
-Simple-API-Generator/
-├── app/                  # Application package
-│   ├── __init__.py       # Initialize app and register blueprints
-│   ├── models/           # Database models
-│   ├── routes/           # API routes and view functions
-│   ├── services/         # Business logic
-│   ├── templates/        # HTML templates
-│   └── static/           # CSS, JS, images
-├── config/               # Configuration files
-│   └── config.py         # App configuration
-├── migrations/           # Database migrations
-├── tests/                # Test suite
-│   ├── unit/             # Unit tests
-│   ├── integration/      # Integration tests
-│   └── conftest.py       # Test fixtures
-├── instance/             # Instance-specific files
-├── .env                  # Environment variables (create this)
-├── .gitignore            # Git ignore file
-├── requirements.txt      # Dependencies
-├── run.py                # Application entry point
-└── README.md             # This file
-```
-
-## 🧪 Testing
-
-Run the test suite:
-```bash
-python -m pytest
-```
-
-Run tests with coverage report:
-```bash
-python -m pytest --cov=app tests/
-```
-
-## 🌐 Deployment
-
-### Deploying to Heroku
-
-1. Install the Heroku CLI and log in
-2. In your project directory:
-```bash
-heroku create your-app-name
-git push heroku main
-heroku config:set SECRET_KEY=your-secret-key
-heroku config:set FLASK_ENV=production
-# Set other environment variables as needed
-heroku open
-```
-
-### Deploying with Docker
+### Backend
 
 ```bash
-docker build -t simple-api-generator .
-docker run -p 5000:5000 simple-api-generator
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+cp .env.example .env        # set SECRET_KEY and ADMIN_PASSWORD
+uvicorn app.main:app --reload
 ```
 
-## 🔍 Troubleshooting
+On first start an `admin` user is created with `ADMIN_PASSWORD`. If that variable is not set, a
+random password is generated and printed to the log.
 
-### Common Issues
+### Frontend (development)
 
-1. **Database connection errors**
-   - Check your DATABASE_URL in the .env file
-   - Ensure your database server is running
+```bash
+cd frontend
+npm install
+npm run dev                 # http://localhost:5173, proxies API calls to :8000
+```
 
-2. **Package dependency issues**
-   - Try `pip install -r requirements.txt --upgrade`
-   - Check for conflicting package versions
+### Production
 
-3. **Application not starting**
-   - Check the logs for specific error messages
-   - Verify that the required environment variables are set
+```bash
+cd frontend && npm ci && npm run build      # writes frontend/dist
+cd ../backend && uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
 
-## 👥 Contributing
+The backend serves `frontend/dist` at `/` when it exists. Set `FRONTEND_DIST` to use another path.
 
-We welcome contributions! Please follow these steps:
+## Configuration
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some amazing feature'`)
-5. Push to the branch (`git push origin feature/amazing-feature`)
-6. Open a Pull Request
+Backend settings come from environment variables or `backend/.env`:
 
-Please make sure your code follows our coding standards and includes appropriate tests.
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | `sqlite:///./data/app.db` | Internal database (any SQLAlchemy URL) |
+| `SECRET_KEY` | random per process | Signs login tokens; set it, or everyone is logged out on restart |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | `admin` / random | First admin account |
+| `ALLOW_REGISTRATION` | `false` | Let people create their own (non-admin) accounts |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `720` | Login session length |
+| `CORS_ORIGINS` | `["http://localhost:5173"]` | Origins allowed to call the panel API |
+| `FRONTEND_DIST` | `../frontend/dist` | Built frontend to serve |
 
-## 📄 License
+Target database connections are not configured here: admins add them on the **Data sources** page.
 
+## Calling a generated API
 
-## 🙏 Acknowledgments
+```bash
+curl -X POST 'http://localhost:8000/api/companies?limit=20&offset=0&order_by=name' \
+  -H 'Content-Type: application/json' \
+  -H 'X-API-Key: sag_...' \
+  -d '{"category_code": "web", "since": 2010}'
+```
 
-- Flask and its extensions
-- SQLAlchemy ORM
-- All our contributors and users
+```json
+{
+  "api": "companies",
+  "version": "1.0.0",
+  "data": [{ "name": "Acme", "category_code": "web", "founded_year": 2012 }],
+  "pagination": { "limit": 20, "offset": 0, "total": 57, "page": 1, "total_pages": 3 },
+  "ordering": { "field": "name", "direction": "ASC" }
+}
+```
 
-## 📧 Contact
+- `GET` works too, with filters in the query string.
+- `limit`, `offset`, `order_by` and `order_direction` can be sent in the query string or the body.
+  `limit` is capped at the API's maximum.
+- Invalid parameters return `400` with an `errors` object keyed by parameter.
+- APIs marked public need no key. Signed-in panel users can add `?debug=1` to see the generated query.
 
-For security issues, please email RezaNasirian18@gamil.com
+## Users and roles
 
-For general inquiries, open an issue on GitHub.
+- **admin:** everything, including users and data sources
+- **user:** create, edit and test APIs, and manage their own API keys
+
+## Migrating from the Flask version
+
+API definitions used to live in `config/ApiDoc.json`. To import them:
+
+1. Start the new backend and add the database on **Data sources**, e.g. under the name `Mongo`.
+2. Run:
+
+```bash
+cd backend
+python -m app.cli import-legacy path/to/ApiDoc.json --data-source Mongo
+```
+
+Conditions, validation, paging, ordering, response fields and `CONCAT(...)` transformations are
+converted. The "last update table" setting no longer exists and is skipped with a warning.
+Old user accounts are not migrated. Create them again, or reset a password with
+`python -m app.cli create-admin <username> <password>`.
+
+## Development
+
+```bash
+cd backend && pytest && ruff check . && ruff format --check .
+cd frontend && npm run build && npm run lint
+```
+
+Backend tests run real queries against SQLite and against MongoDB through `mongomock`, and check
+the SQL generated for MySQL, PostgreSQL and Trino.

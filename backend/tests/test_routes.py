@@ -3,7 +3,7 @@ from pathlib import Path
 
 from app.legacy import convert_api
 
-LEGACY_CONFIG = Path(__file__).resolve().parents[2] / "config" / "ApiDoc.json"
+LEGACY_CONFIG = Path(__file__).parent / "fixtures" / "legacy_ApiDoc.json"
 
 
 def create_source(client, headers, path):
